@@ -14,21 +14,41 @@ namespace CSV_to_XML {
 			//Console.WriteLine("Please input a address for the Settlement csv file: ");
 
 			Directory.CreateDirectory(root+"Output");
+			Directory.CreateDirectory(root + "Output\\Languages");
 
-			//string root = "O:\\Games\\SteamLibrary\\steamapps\\common\\Mount & Blade II Bannerlord\\Modules\\TouhouAnalepsia\\";
-			if (File.Exists(root + "Data\\Touhou XML Data - Settlements.csv")) settlement_CSVtoXML(root + "Data\\Touhou XML Data - Settlements.csv", root + "Output\\settlements.xml");
+			XmlWriterSettings localizationSettings = new XmlWriterSettings();
+			localizationSettings.Indent = true;
 
-			if (File.Exists(root + "Data\\Touhou XML Data - Heroes.csv")) heroes_CSVtoXML(root + "Data\\Touhou XML Data - Heroes.csv", root + "Output\\heroes.xml");
-			if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters.csv", root + "Output\\lords.xml");
-			if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv", root + "Output\\companions.xml");
-			if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv", root + "Output\\spspecialcharacters.xml");
+			using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_module_strings_xml.xml", localizationSettings)) {
+				localizationWriter.WriteStartElement("base");
+				localizationWriter.WriteAttributeString("xmlns","xsi",null, "http://www.w3.org/2001/XMLSchema-instance");
+				localizationWriter.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
+				localizationWriter.WriteAttributeString("type", "string");
+				localizationWriter.WriteStartElement("tags");
+				localizationWriter.WriteStartElement("tag");
+				localizationWriter.WriteAttributeString("language","English");
+				localizationWriter.WriteEndElement();
+				localizationWriter.WriteEndElement();
+				localizationWriter.WriteStartElement("strings");
 
-			if (File.Exists(root + "Data\\Touhou XML Data - Kingdoms.csv")) Kingdoms_CSVtoXML(root + "Data\\Touhou XML Data - Kingdoms.csv", root + "Output\\spkingdoms.xml");
-			if (File.Exists(root + "Data\\Touhou XML Data - Clans.csv")) Clans_CSVtoXML(root + "Data\\Touhou XML Data - Clans.csv", root + "Output\\spclans.xml");
+				//string root = "O:\\Games\\SteamLibrary\\steamapps\\common\\Mount & Blade II Bannerlord\\Modules\\TouhouAnalepsia\\";
+				if (File.Exists(root + "Data\\Touhou XML Data - Settlements.csv")) settlement_CSVtoXML(root + "Data\\Touhou XML Data - Settlements.csv", root + "Output\\settlements.xml", localizationWriter);
 
-			if (File.Exists(root + "Data\\Touhou XML Data - Cultures.csv")) Cultures_CSVtoXML(root + "Data\\Touhou XML Data - Cultures.csv", root + "Output\\spcultures.xml");
+				if (File.Exists(root + "Data\\Touhou XML Data - Heroes.csv")) heroes_CSVtoXML(root + "Data\\Touhou XML Data - Heroes.csv", root + "Output\\heroes.xml", localizationWriter);
+
+				if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters.csv", root + "Output\\lords.xml", localizationWriter);
+				if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv", root + "Output\\companions.xml", localizationWriter);
+				if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv", root + "Output\\spspecialcharacters.xml", localizationWriter);
+
+				if (File.Exists(root + "Data\\Touhou XML Data - Kingdoms.csv")) Kingdoms_CSVtoXML(root + "Data\\Touhou XML Data - Kingdoms.csv", root + "Output\\spkingdoms.xml", localizationWriter);
+				if (File.Exists(root + "Data\\Touhou XML Data - Clans.csv")) Clans_CSVtoXML(root + "Data\\Touhou XML Data - Clans.csv", root + "Output\\spclans.xml", localizationWriter);
+
+				if (File.Exists(root + "Data\\Touhou XML Data - Cultures.csv")) Cultures_CSVtoXML(root + "Data\\Touhou XML Data - Cultures.csv", root + "Output\\spcultures.xml", localizationWriter);
+				localizationWriter.WriteEndElement();
+				localizationWriter.WriteEndElement();
+			}
 		}
-		public static void settlement_CSVtoXML(string fileInput, string fileOutput) {
+		public static void settlement_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -53,7 +73,10 @@ namespace CSV_to_XML {
 
 					//Write
 					writer.WriteAttributeString(null, "id", null, record.id);
-					writer.WriteAttributeString(null, "name", null, "{=Settlements.Settlement.name." + record.id + "}" + record.name);
+					writer.WriteAttributeString(null, "name", null, "{=Settlements.Settlement." + record.id + ".name}" + record.name);
+
+					writeLocalizationNode(localizationWriter, "Settlements.Settlement." + record.id + ".name", record.name);
+
 					if (!record.owner.Equals("")) writer.WriteAttributeString(null, "owner", null, record.owner);
 					writer.WriteAttributeString(null, "posX", null, record.posX);
 					writer.WriteAttributeString(null, "posY", null, record.posY);
@@ -63,7 +86,10 @@ namespace CSV_to_XML {
 					if (!record.gate_posX.Equals("")) writer.WriteAttributeString(null, "gate_posY", null, record.gate_posY);
 					if (!record.gate_rotation.Equals("")) writer.WriteAttributeString(null, "gate_rotation", null, record.gate_rotation);
 					if (!record.type.Equals("")) writer.WriteAttributeString(null, "type", null, record.type);
-					if (!record.text.Equals("")) writer.WriteAttributeString(null, "text", null, record.text);
+					if (!record.text.Equals("")) writer.WriteAttributeString(null, "text", null, "{=Settlements.Settlement." + record.id + ".text}" + record.text);
+
+					if (!record.text.Equals("")) writeLocalizationNode(localizationWriter, "Settlements.Settlement." + record.id+ ".text", record.text);
+
 					if (!record.Comp_Town_is_castle.Equals("") || !record.Comp_Village_village_type.Equals("") || !record.Comp_Hideout_map_icon.Equals("")) {
 						writer.WriteStartElement("Component");
 
@@ -406,7 +432,7 @@ namespace CSV_to_XML {
 			public string CommonAreas_Area2_name { get; set; }
 		}
 
-		public static void heroes_CSVtoXML(string fileInput, string fileOutput) {
+		public static void heroes_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -438,6 +464,8 @@ namespace CSV_to_XML {
 					if (!heroRecord.alive.Equals("")) writer.WriteAttributeString(null, "alive", null, heroRecord.alive);
 					if (!heroRecord.text.Equals("")) writer.WriteAttributeString(null, "text", null, heroRecord.text);
 
+					if (!heroRecord.text.Equals("")) writeLocalizationNode(localizationWriter, "Heros.Hero." + record.id + ".text", record.text);
+
 					writer.WriteEndElement();
 				}
 				writer.WriteEndElement();
@@ -456,7 +484,7 @@ namespace CSV_to_XML {
 
 		}
 
-		public static void NPCCharacters_CSVtoXML(string fileInput, string fileOutput) {
+		public static void NPCCharacters_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -501,7 +529,10 @@ namespace CSV_to_XML {
 					if (!record.is_template.Equals("")) writer.WriteAttributeString(null, "is_template", null, record.is_template);//
 					if (!record.is_child_template.Equals("")) writer.WriteAttributeString(null, "is_child_template", null, record.is_child_template);//
 					writer.WriteAttributeString(null, "culture", null, "Culture." + record.culture);
-					writer.WriteAttributeString(null, "name", null, "{=NPCCharacter."+record.id+".name}"+record.name);
+					writer.WriteAttributeString(null, "name", null, "{=NPCCharacters.NPCCharacter." + record.id + ".name}"+record.name);
+
+					writeLocalizationNode(localizationWriter, "NPCCharacters.NPCCharacter." + record.id + ".name", record.name);
+
 					if (!record.banner_symbol_mesh_name.Equals("")) writer.WriteAttributeString(null, "banner_symbol_mesh_name", null, record.banner_symbol_mesh_name);////
 					if (!record.banner_symbol_color.Equals("")) writer.WriteAttributeString(null, "banner_symbol_color", null, record.banner_symbol_color);//
 					if (!record.banner_key.Equals("")) writer.WriteAttributeString(null, "banner_key", null, record.banner_key);////
@@ -517,10 +548,13 @@ namespace CSV_to_XML {
 					if (!record.upgrade_requires.Equals("")) writer.WriteAttributeString(null, "upgrade_requires", null, record.upgrade_requires);//
 
 					//Face
-					if(true) {
+					if (!record.Face_face_key_value.Equals("") || !record.Face_face_key_template_value.Equals("") || !record.Face_BodyProperties_version.Equals("") || 
+						!record.Face_hair_tags_hair_tag0_name.Equals("") || !record.Face_hair_tags_hair_tag1_name.Equals("") || !record.Face_hair_tags_hair_tag2_name.Equals("") ||
+						!record.Face_beard_tags_beard_tag0_name.Equals("") || !record.Face_beard_tags_beard_tag1_name.Equals("") || !record.Face_beard_tags_beard_tag2_name.Equals("") ||
+						!record.Face_tattoo_tags_tattoo_tag0_name.Equals("") || !record.Face_tattoo_tags_tattoo_tag1_name.Equals("") || !record.Face_tattoo_tags_tattoo_tag2_name.Equals("")) {
 						writer.WriteStartElement("face");
 
-						if(!record.Face_face_key_value.Equals("")) {
+						if (!record.Face_face_key_value.Equals("")) {
 							writer.WriteStartElement("face_key");
 
 							writer.WriteAttributeString("value",record.Face_face_key_value);
@@ -535,7 +569,7 @@ namespace CSV_to_XML {
 							writer.WriteEndElement();
 						}
 
-						if(!record.Face_BodyProperties_version.Equals("")) {
+						if (!record.Face_BodyProperties_version.Equals("")) {
 							writer.WriteStartElement("BodyProperties");
 
 							writer.WriteAttributeString("version", record.Face_BodyProperties_version);
@@ -559,7 +593,7 @@ namespace CSV_to_XML {
 							}
 						}
 
-						if(!record.Face_hair_tags_hair_tag0_name.Equals("") || !record.Face_hair_tags_hair_tag1_name.Equals("") || !record.Face_hair_tags_hair_tag2_name.Equals("")) {
+						if (!record.Face_hair_tags_hair_tag0_name.Equals("") || !record.Face_hair_tags_hair_tag1_name.Equals("") || !record.Face_hair_tags_hair_tag2_name.Equals("")) {
 							writer.WriteStartElement("hair_tags");
 
 							if(!record.Face_hair_tags_hair_tag0_name.Equals("")) {
@@ -734,7 +768,7 @@ namespace CSV_to_XML {
 			public string Face_tattoo_tags_tattoo_tag2_name { get; set; }
 		}
 
-		public static void Kingdoms_CSVtoXML(string fileInput, string fileOutput) {
+		public static void Kingdoms_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -769,11 +803,26 @@ namespace CSV_to_XML {
 					writer.WriteAttributeString("culture", "Culture." + record.culture);
 					if (!record.settlement_banner_mesh.Equals("")) writer.WriteAttributeString("settlement_banner_mesh", record.settlement_banner_mesh);
 					if (!record.flag_mesh.Equals("")) writer.WriteAttributeString("flag_mesh", record.flag_mesh);
-					writer.WriteAttributeString("name", "{=Kingdom." + record.id + ".name}" + record.name);
-					if (!record.short_name.Equals("")) writer.WriteAttributeString("short_name", "{=Kingdom." + record.id + ".short_name}" + record.short_name);
-					if (!record.text.Equals("")) writer.WriteAttributeString("text", "{=Kingdom." + record.id + ".text}" + record.text);
-					if (!record.title.Equals("")) writer.WriteAttributeString("title", "{=Kingdom." + record.id + ".title}" + record.title);
-					if (!record.ruler_title.Equals("")) writer.WriteAttributeString("ruler_title", "{=Kingdom." + record.id + ".ruler_title}" + record.ruler_title);
+					writer.WriteAttributeString("name", "{=Kingdoms.Kingdom." + record.id + ".name}" + record.name);
+
+					writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".name", record.name);
+
+					if (!record.short_name.Equals("")) writer.WriteAttributeString("short_name", "{=Kingdoms.Kingdom." + record.id + ".short_name}" + record.short_name);
+
+					if (!record.short_name.Equals("")) writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".short_name", record.short_name);
+
+					if (!record.text.Equals("")) writer.WriteAttributeString("text", "{=Kingdoms.Kingdom." + record.id + ".text}" + record.text);
+
+					if (!record.text.Equals("")) writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".text", record.text);
+
+					if (!record.title.Equals("")) writer.WriteAttributeString("title", "{=Kingdoms.Kingdom." + record.id + ".title}" + record.title);
+
+					if (!record.title.Equals("")) writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".title", record.title);
+
+					if (!record.ruler_title.Equals("")) writer.WriteAttributeString("ruler_title", "{=Kingdoms.Kingdom." + record.id + ".ruler_title}" + record.ruler_title);
+
+					if (!record.ruler_title.Equals("")) writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".ruler_title", record.ruler_title);
+
 
 					if (!record.Policy0.Equals("") || !record.Policy1.Equals("") || !record.Policy2.Equals("") || !record.Policy3.Equals("")) {
 						writer.WriteStartElement("policies");
@@ -858,7 +907,7 @@ namespace CSV_to_XML {
 
 		}
 
-		public static void Clans_CSVtoXML(string fileInput, string fileOutput) {
+		public static void Clans_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -908,9 +957,18 @@ namespace CSV_to_XML {
 					if (!record.is_mafia.Equals("")) writer.WriteAttributeString("is_mafia", record.is_mafia);
 					if (!record.settlement_banner_mesh.Equals("")) writer.WriteAttributeString("settlement_banner_mesh", record.settlement_banner_mesh);
 					if (!record.flag_mesh.Equals("")) writer.WriteAttributeString("flag_mesh", record.flag_mesh);
-					writer.WriteAttributeString("name", "{=Clan." + record.id + ".name}" + record.name);
-					if (!record.short_name.Equals("")) writer.WriteAttributeString("short_name", "{=Clan." + record.id + ".short_name}" + record.short_name);
-					if (!record.text.Equals("")) writer.WriteAttributeString("text", "{=Clan." + record.id + ".text}" + record.text);
+					writer.WriteAttributeString("name", "{=Factions.Faction." + record.id + ".name}" + record.name);
+
+					writeLocalizationNode(localizationWriter, "Factions.Faction." + record.id + ".name", record.name);
+
+					if (!record.short_name.Equals("")) writer.WriteAttributeString("short_name", "{=Factions.Faction." + record.id + ".short_name}" + record.short_name);
+
+					if (!record.short_name.Equals("")) writeLocalizationNode(localizationWriter, "Factions.Faction." + record.id + ".short_name", record.short_name);
+
+					if (!record.text.Equals("")) writer.WriteAttributeString("text", "{=Factions.Faction." + record.id + ".text}" + record.text);
+
+					if (!record.text.Equals("")) writeLocalizationNode(localizationWriter, "Factions.Faction." + record.id + ".text", record.text);
+
 
 					writer.WriteEndElement();
 				}
@@ -943,7 +1001,7 @@ namespace CSV_to_XML {
 			public string text { get; set; }
 		}
 
-		public static void Cultures_CSVtoXML (string fileInput, string fileOutput) {
+		public static void Cultures_CSVtoXML (string fileInput, string fileOutput, XmlWriter localizationWriter) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -971,7 +1029,10 @@ namespace CSV_to_XML {
 
 					//Write
 					writer.WriteAttributeString("id",record.id);
-					writer.WriteAttributeString("name", "{=Culture."+record.id+".name}"+record.name);
+					writer.WriteAttributeString("name", "{=Cultures.Culture."+record.id+".name}"+record.name);
+
+					writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".name", record.name);
+
 					if (!record.is_main_culture.Equals("")) writer.WriteAttributeString("is_main_culture", record.is_main_culture);
 					if (!record.can_have_settlement.Equals("")) writer.WriteAttributeString("can_have_settlement", record.can_have_settlement);
 					if (!record.town_edge_number.Equals("")) writer.WriteAttributeString("town_edge_number", record.town_edge_number);
@@ -993,6 +1054,7 @@ namespace CSV_to_XML {
 						foreach(string name in names) {
 							writer.WriteStartElement("name");
 							writer.WriteAttributeString("name","{Culture.male_names." + name.ToLower() + "}"+name);
+							writeLocalizationNode(localizationWriter, "Culture.male_names." + name.ToLower(), name);
 							writer.WriteEndElement();
 						}
 
@@ -1006,6 +1068,7 @@ namespace CSV_to_XML {
 						foreach (string name in names) {
 							writer.WriteStartElement("name");
 							writer.WriteAttributeString("name", "{Culture.female_names." + name.ToLower() + "}" + name);
+							writeLocalizationNode(localizationWriter, "Culture.female_names." + name.ToLower(), name);
 							writer.WriteEndElement();
 						}
 
@@ -1019,6 +1082,7 @@ namespace CSV_to_XML {
 						foreach (string name in names) {
 							writer.WriteStartElement("name");
 							writer.WriteAttributeString("name", "{Culture.clan_names." + name.ToLower() + "}" + name);
+							writeLocalizationNode(localizationWriter, "Culture.clan_names." + name.ToLower(), name);
 							writer.WriteEndElement();
 						}
 
@@ -1055,6 +1119,13 @@ namespace CSV_to_XML {
 			public string male_names { get; set; }
 			public string female_names { get; set; }
 			public string clan_names { get; set; }
+		}
+
+		public static void writeLocalizationNode(XmlWriter writer, string id, string text) {
+			writer.WriteStartElement("string");
+			writer.WriteAttributeString("id", id);
+			writer.WriteAttributeString("text", text);
+			writer.WriteEndElement();
 		}
 	}
 }
