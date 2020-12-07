@@ -19,36 +19,68 @@ namespace CSV_to_XML {
 			XmlWriterSettings localizationSettings = new XmlWriterSettings();
 			localizationSettings.Indent = true;
 
-			using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_module_strings_xml.xml", localizationSettings)) {
-				localizationWriter.WriteStartElement("base");
-				localizationWriter.WriteAttributeString("xmlns","xsi",null, "http://www.w3.org/2001/XMLSchema-instance");
-				localizationWriter.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
-				localizationWriter.WriteAttributeString("type", "string");
-				localizationWriter.WriteStartElement("tags");
-				localizationWriter.WriteStartElement("tag");
-				localizationWriter.WriteAttributeString("language","English");
-				localizationWriter.WriteEndElement();
-				localizationWriter.WriteEndElement();
-				localizationWriter.WriteStartElement("strings");
+			using (XmlWriter module_stringsWriter = XmlWriter.Create(root + "Output\\module_strings.xml", localizationSettings)) {
+				module_stringsWriter.WriteStartElement("base");
+				module_stringsWriter.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
+				module_stringsWriter.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
+				module_stringsWriter.WriteAttributeString("type", "string");
+				module_stringsWriter.WriteStartElement("strings");
+
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_settlements_xml.xml", localizationSettings)) {
+					initializeLocalizationWriter(localizationWriter);
+					if (File.Exists(root + "Data\\Touhou XML Data - Settlements.csv")) settlement_CSVtoXML(root + "Data\\Touhou XML Data - Settlements.csv", root + "Output\\settlements.xml", localizationWriter, module_stringsWriter);
+					localizationWriter.WriteEndElement();
+					localizationWriter.WriteEndElement();
+				}
 
 				//string root = "O:\\Games\\SteamLibrary\\steamapps\\common\\Mount & Blade II Bannerlord\\Modules\\TouhouAnalepsia\\";
-				if (File.Exists(root + "Data\\Touhou XML Data - Settlements.csv")) settlement_CSVtoXML(root + "Data\\Touhou XML Data - Settlements.csv", root + "Output\\settlements.xml", localizationWriter);
-
-				if (File.Exists(root + "Data\\Touhou XML Data - Heroes.csv")) heroes_CSVtoXML(root + "Data\\Touhou XML Data - Heroes.csv", root + "Output\\heroes.xml", localizationWriter);
-
-				if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters.csv", root + "Output\\lords.xml", localizationWriter);
-				if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv", root + "Output\\companions.xml", localizationWriter);
-				if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv", root + "Output\\spspecialcharacters.xml", localizationWriter);
-
-				if (File.Exists(root + "Data\\Touhou XML Data - Kingdoms.csv")) Kingdoms_CSVtoXML(root + "Data\\Touhou XML Data - Kingdoms.csv", root + "Output\\spkingdoms.xml", localizationWriter);
-				if (File.Exists(root + "Data\\Touhou XML Data - Clans.csv")) Clans_CSVtoXML(root + "Data\\Touhou XML Data - Clans.csv", root + "Output\\spclans.xml", localizationWriter);
-
-				if (File.Exists(root + "Data\\Touhou XML Data - Cultures.csv")) Cultures_CSVtoXML(root + "Data\\Touhou XML Data - Cultures.csv", root + "Output\\spcultures.xml", localizationWriter);
-				localizationWriter.WriteEndElement();
-				localizationWriter.WriteEndElement();
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_heroes_xml.xml", localizationSettings)) {
+					initializeLocalizationWriter(localizationWriter);
+					if (File.Exists(root + "Data\\Touhou XML Data - Heroes.csv")) heroes_CSVtoXML(root + "Data\\Touhou XML Data - Heroes.csv", root + "Output\\heroes.xml", localizationWriter, module_stringsWriter);
+					localizationWriter.WriteEndElement();
+					localizationWriter.WriteEndElement();
+				}
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_lords_xml.xml", localizationSettings)) {
+					initializeLocalizationWriter(localizationWriter);
+					if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters.csv", root + "Output\\lords.xml", localizationWriter, module_stringsWriter);
+					localizationWriter.WriteEndElement();
+					localizationWriter.WriteEndElement();
+				}
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_companions_xml.xml", localizationSettings)) {
+					initializeLocalizationWriter(localizationWriter);
+					if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv", root + "Output\\companions.xml", localizationWriter, module_stringsWriter);
+					localizationWriter.WriteEndElement();
+					localizationWriter.WriteEndElement();
+				}
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_spspecialcharacters_xml.xml", localizationSettings)) {
+					initializeLocalizationWriter(localizationWriter);
+					if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv", root + "Output\\spspecialcharacters.xml", localizationWriter, module_stringsWriter);
+					localizationWriter.WriteEndElement();
+					localizationWriter.WriteEndElement();
+				}
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_spkingdoms_xml.xml", localizationSettings)) {
+					initializeLocalizationWriter(localizationWriter);
+					if (File.Exists(root + "Data\\Touhou XML Data - Kingdoms.csv")) Kingdoms_CSVtoXML(root + "Data\\Touhou XML Data - Kingdoms.csv", root + "Output\\spkingdoms.xml", localizationWriter, module_stringsWriter);
+					localizationWriter.WriteEndElement();
+					localizationWriter.WriteEndElement();
+				}
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_spclans_xml.xml", localizationSettings)) {
+					initializeLocalizationWriter(localizationWriter);
+					if (File.Exists(root + "Data\\Touhou XML Data - Clans.csv")) Clans_CSVtoXML(root + "Data\\Touhou XML Data - Clans.csv", root + "Output\\spclans.xml", localizationWriter, module_stringsWriter);
+					localizationWriter.WriteEndElement();
+					localizationWriter.WriteEndElement();
+				}
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_spcultures_xml.xml", localizationSettings)) {
+					initializeLocalizationWriter(localizationWriter);
+					if (File.Exists(root + "Data\\Touhou XML Data - Cultures.csv")) Cultures_CSVtoXML(root + "Data\\Touhou XML Data - Cultures.csv", root + "Output\\spcultures.xml", localizationWriter, module_stringsWriter);
+					localizationWriter.WriteEndElement();
+					localizationWriter.WriteEndElement();
+				}
+				module_stringsWriter.WriteEndElement();
+				module_stringsWriter.WriteEndElement();
 			}
 		}
-		public static void settlement_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
+		public static void settlement_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -432,7 +464,7 @@ namespace CSV_to_XML {
 			public string CommonAreas_Area2_name { get; set; }
 		}
 
-		public static void heroes_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
+		public static void heroes_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -484,7 +516,7 @@ namespace CSV_to_XML {
 
 		}
 
-		public static void NPCCharacters_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
+		public static void NPCCharacters_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -497,6 +529,8 @@ namespace CSV_to_XML {
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("NPCCharacters");
 				foreach (NPCCharacterRecord record in records) {
+					if (record.id.Equals("")) continue;
+
 					writer.WriteStartElement("NPCCharacter");
 
 					//Changes
@@ -768,7 +802,7 @@ namespace CSV_to_XML {
 			public string Face_tattoo_tags_tattoo_tag2_name { get; set; }
 		}
 
-		public static void Kingdoms_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
+		public static void Kingdoms_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -806,23 +840,29 @@ namespace CSV_to_XML {
 					writer.WriteAttributeString("name", "{=Kingdoms.Kingdom." + record.id + ".name}" + record.name);
 
 					writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".name", record.name);
+					//writeLocalizationNode(module_strings_writer, "str_faction_ruler." + record.id, "{=Kingdoms.Kingdom." + record.id + ".name}" + record.name);
 
-					if (!record.short_name.Equals("")) writer.WriteAttributeString("short_name", "{=Kingdoms.Kingdom." + record.id + ".short_name}" + record.short_name);
+					if (!record.short_name.Equals("")) {
+						writer.WriteAttributeString("short_name", "{=Kingdoms.Kingdom." + record.id + ".short_name}" + record.short_name);
+						writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".short_name", record.short_name);
+						//writeLocalizationNode(module_strings_writer, "."+record.id, "{=Kingdoms.Kingdom." + record.id + ".short_name}" + record.short_name);
+					}
 
-					if (!record.short_name.Equals("")) writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".short_name", record.short_name);
-
-					if (!record.text.Equals("")) writer.WriteAttributeString("text", "{=Kingdoms.Kingdom." + record.id + ".text}" + record.text);
-
-					if (!record.text.Equals("")) writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".text", record.text);
-
-					if (!record.title.Equals("")) writer.WriteAttributeString("title", "{=Kingdoms.Kingdom." + record.id + ".title}" + record.title);
-
-					if (!record.title.Equals("")) writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".title", record.title);
-
-					if (!record.ruler_title.Equals("")) writer.WriteAttributeString("ruler_title", "{=Kingdoms.Kingdom." + record.id + ".ruler_title}" + record.ruler_title);
-
-					if (!record.ruler_title.Equals("")) writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".ruler_title", record.ruler_title);
-
+					if (!record.text.Equals("")) {
+						writer.WriteAttributeString("text", "{=Kingdoms.Kingdom." + record.id + ".text}" + record.text);
+						writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".text", record.text);
+						//writeLocalizationNode(module_strings_writer, "." + record.id, "{=Kingdoms.Kingdom." + record.id + ".text}" + record.text);
+					}
+					if (!record.title.Equals("")) {
+						writer.WriteAttributeString("title", "{=Kingdoms.Kingdom." + record.id + ".title}" + record.title);
+						writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".title", record.title);
+						//writeLocalizationNode(module_strings_writer, "." + record.id, "{=Kingdoms.Kingdom." + record.id + ".title}" + record.title);
+					}
+					if (!record.ruler_title.Equals("")) {
+						writer.WriteAttributeString("ruler_title", "{=Kingdoms.Kingdom." + record.id + ".ruler_title}" + record.ruler_title);
+						writeLocalizationNode(localizationWriter, "Kingdoms.Kingdom." + record.id + ".ruler_title", record.ruler_title);
+						//writeLocalizationNode(module_strings_writer, "." + record.id, "{=Kingdoms.Kingdom." + record.id + ".ruler_title}" + record.ruler_title);
+					}
 
 					if (!record.Policy0.Equals("") || !record.Policy1.Equals("") || !record.Policy2.Equals("") || !record.Policy3.Equals("")) {
 						writer.WriteStartElement("policies");
@@ -907,7 +947,7 @@ namespace CSV_to_XML {
 
 		}
 
-		public static void Clans_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter) {
+		public static void Clans_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -1001,7 +1041,7 @@ namespace CSV_to_XML {
 			public string text { get; set; }
 		}
 
-		public static void Cultures_CSVtoXML (string fileInput, string fileOutput, XmlWriter localizationWriter) {
+		public static void Cultures_CSVtoXML (string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -1022,14 +1062,14 @@ namespace CSV_to_XML {
 					record.can_have_settlement = record.can_have_settlement.ToLower();
 
 					//Defaults
-
+					if (record.default_party_template.Equals("")) record.default_party_template = "kingdom_hero_party_empire_template";
 
 					//Temporary
 
 
 					//Write
-					writer.WriteAttributeString("id",record.id);
-					writer.WriteAttributeString("name", "{=Cultures.Culture."+record.id+".name}"+record.name);
+					writer.WriteAttributeString("id", record.id);
+					writer.WriteAttributeString("name", "{=Cultures.Culture." + record.id + ".name}" + record.name);
 
 					writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".name", record.name);
 
@@ -1040,21 +1080,101 @@ namespace CSV_to_XML {
 					if (!record.prosperity_bonus.Equals("")) writer.WriteAttributeString("prosperity_bonus", record.prosperity_bonus);
 					if (!record.encounter_background_mesh.Equals("")) writer.WriteAttributeString("encounter_background_mesh", record.encounter_background_mesh);
 					writer.WriteAttributeString("basic_troop", "NPCCharacter." + record.basic_troop);
-					writer.WriteAttributeString("elite_basic_troop", "NPCCharacter."+record.elite_basic_troop);
+					writer.WriteAttributeString("elite_basic_troop", "NPCCharacter." + record.elite_basic_troop);
 
-					//Temporary
-					writer.WriteAttributeString("default_party_template", "PartyTemplate.kingdom_hero_party_empire_template");
+					if (!record.is_bandit.Equals("")) writer.WriteAttributeString("is_bandit", record.is_bandit);
+					if (!record.default_face_key.Equals("")) writer.WriteAttributeString("default_face_key", record.default_face_key);
 
-					//Continue Write
+					if (!record.default_party_template.Equals("")) writer.WriteAttributeString("default_party_template", "PartyTemplate." + record.default_party_template);
+					if (!record.villager_party_template.Equals("")) writer.WriteAttributeString("villager_party_template", "PartyTemplate." + record.villager_party_template);
+					if (!record.elite_caravan_party_template.Equals("")) writer.WriteAttributeString("elite_caravan_party_template", "PartyTemplate." + record.elite_caravan_party_template);
+					if (!record.bandit_boss_party_template.Equals("")) writer.WriteAttributeString("bandit_boss_party_template", "PartyTemplate." + record.bandit_boss_party_template);
+					if (!record.caravan_party_template.Equals("")) writer.WriteAttributeString("caravan_party_template", "PartyTemplate." + record.caravan_party_template);
+					if (!record.militia_party_template.Equals("")) writer.WriteAttributeString("militia_party_template", "PartyTemplate." + record.militia_party_template);
+					if (!record.rebels_party_template.Equals("")) writer.WriteAttributeString("rebels_party_template", "PartyTemplate." + record.rebels_party_template);
+
+					if (!record.melee_militia_troop.Equals("")) writer.WriteAttributeString("melee_militia_troop", record.melee_militia_troop);
+					if (!record.melee_elite_militia_troop.Equals("")) writer.WriteAttributeString("melee_elite_militia_troop", record.melee_elite_militia_troop);
+					if (!record.ranged_militia_troop.Equals("")) writer.WriteAttributeString("ranged_militia_troop", record.ranged_militia_troop);
+					if (!record.ranged_elite_militia_troop.Equals("")) writer.WriteAttributeString("ranged_elite_militia_troop", record.ranged_elite_militia_troop);
+
+					if (!record.tournament_master.Equals("")) writer.WriteAttributeString("tournament_master", record.tournament_master);
+					if (!record.caravan_master.Equals("")) writer.WriteAttributeString("caravan_master", record.caravan_master);
+					if (!record.armed_trader.Equals("")) writer.WriteAttributeString("armed_trader", record.armed_trader);
+					if (!record.caravan_guard.Equals("")) writer.WriteAttributeString("caravan_guard", record.caravan_guard);
+					if (!record.veteran_caravan_guard.Equals("")) writer.WriteAttributeString("veteran_caravan_guard", record.veteran_caravan_guard);
+
+					if (!record.duel_preset.Equals("")) writer.WriteAttributeString("duel_preset", "NPCCharacter." + record.duel_preset);
+
+					if (!record.prison_guard.Equals("")) writer.WriteAttributeString("prison_guard", "NPCCharacter." + record.prison_guard);
+					if (!record.guard.Equals("")) writer.WriteAttributeString("guard", "NPCCharacter." + record.guard);
+					if (!record.steward.Equals("")) writer.WriteAttributeString("steward", "NPCCharacter." + record.steward);
+					if (!record.blacksmith.Equals("")) writer.WriteAttributeString("blacksmith", "NPCCharacter." + record.blacksmith);
+					if (!record.weaponsmith.Equals("")) writer.WriteAttributeString("weaponsmith", "NPCCharacter." + record.weaponsmith);
+
+					if (!record.townswoman.Equals("")) writer.WriteAttributeString("townswoman", "NPCCharacter." + record.townswoman);
+					if (!record.townswoman_infant.Equals("")) writer.WriteAttributeString("townswoman_infant", "NPCCharacter." + record.townswoman_infant);
+					if (!record.townswoman_child.Equals("")) writer.WriteAttributeString("townswoman_child", "NPCCharacter." + record.townswoman_child);
+					if (!record.townswoman_teenager.Equals("")) writer.WriteAttributeString("townswoman_teenager", "NPCCharacter." + record.townswoman_teenager);
+					if (!record.townsman.Equals("")) writer.WriteAttributeString("townsman", "NPCCharacter." + record.townsman);
+					if (!record.townsman_infant.Equals("")) writer.WriteAttributeString("townsman_infant", "NPCCharacter." + record.townsman_infant);
+					if (!record.townsman_child.Equals("")) writer.WriteAttributeString("townsman_child", "NPCCharacter." + record.townsman_child);
+					if (!record.townsman_teenager.Equals("")) writer.WriteAttributeString("townsman_teenager", "NPCCharacter." + record.townsman_teenager);
+
+					if (!record.villager.Equals("")) writer.WriteAttributeString("villager", "NPCCharacter." + record.villager);
+					if (!record.villager_woman.Equals("")) writer.WriteAttributeString("villager_woman", "NPCCharacter." + record.villager_woman);
+					if (!record.villager_male_child.Equals("")) writer.WriteAttributeString("villager_male_child", "NPCCharacter." + record.villager_male_child);
+					if (!record.villager_male_teenager.Equals("")) writer.WriteAttributeString("villager_male_teenager", "NPCCharacter." + record.villager_male_teenager);
+					if (!record.villager_female_child.Equals("")) writer.WriteAttributeString("villager_female_child", "NPCCharacter." + record.villager_female_child);
+					if (!record.villager_female_teenager.Equals("")) writer.WriteAttributeString("villager_female_teenager", "NPCCharacter." + record.villager_female_teenager);
+
+					if (!record.ransom_broker.Equals("")) writer.WriteAttributeString("ransom_broker", "NPCCharacter." + record.ransom_broker);
+
+					if (!record.gangleader_bodyguard.Equals("")) writer.WriteAttributeString("gangleader_bodyguard", "NPCCharacter." + record.gangleader_bodyguard);
+
+					if (!record.merchant_notary.Equals("")) writer.WriteAttributeString("merchant_notary", "NPCCharacter." + record.merchant_notary);
+					if (!record.preacher_notary.Equals("")) writer.WriteAttributeString("preacher_notary", "NPCCharacter." + record.preacher_notary);
+					if (!record.rural_notable_notary.Equals("")) writer.WriteAttributeString("rural_notable_notary", "NPCCharacter." + record.rural_notable_notary);
+
+					if (!record.shop_worker.Equals("")) writer.WriteAttributeString("shop_worker", "NPCCharacter." + record.shop_worker);
+
+					if (!record.tavernkeeper.Equals("")) writer.WriteAttributeString("tavernkeeper", "NPCCharacter." + record.tavernkeeper);
+					if (!record.taverngamehost.Equals("")) writer.WriteAttributeString("taverngamehost", "NPCCharacter." + record.taverngamehost);
+					if (!record.musician.Equals("")) writer.WriteAttributeString("musician", "NPCCharacter." + record.musician);
+					if (!record.tavern_wench.Equals("")) writer.WriteAttributeString("tavern_wench", "NPCCharacter." + record.tavern_wench);
+
+					if (!record.armorer.Equals("")) writer.WriteAttributeString("armorer", "NPCCharacter." + record.armorer);
+					if (!record.horseMerchant.Equals("")) writer.WriteAttributeString("horseMerchant", "NPCCharacter." + record.horseMerchant);
+					if (!record.barber.Equals("")) writer.WriteAttributeString("barber", "NPCCharacter." + record.barber);
+					if (!record.merchant.Equals("")) writer.WriteAttributeString("merchant", "NPCCharacter." + record.merchant);
+
+					if (!record.beggar.Equals("")) writer.WriteAttributeString("beggar", "NPCCharacter." + record.beggar);
+					if (!record.female_beggar.Equals("")) writer.WriteAttributeString("female_beggar", "NPCCharacter." + record.female_beggar);
+
+					if (!record.female_dancer.Equals("")) writer.WriteAttributeString("female_dancer", "NPCCharacter." + record.female_dancer);
+
+					if (!record.gear_practice_dummy.Equals("")) writer.WriteAttributeString("gear_practice_dummy", "NPCCharacter." + record.gear_practice_dummy);
+					if (!record.weapon_practice_stage_1.Equals("")) writer.WriteAttributeString("weapon_practice_stage_1", "NPCCharacter." + record.weapon_practice_stage_1);
+					if (!record.weapon_practice_stage_2.Equals("")) writer.WriteAttributeString("weapon_practice_stage_2", "NPCCharacter." + record.weapon_practice_stage_2);
+					if (!record.weapon_practice_stage_3.Equals("")) writer.WriteAttributeString("weapon_practice_stage_3", "NPCCharacter." + record.weapon_practice_stage_3);
+					if (!record.gear_dummy.Equals("")) writer.WriteAttributeString("gear_dummy", "NPCCharacter." + record.gear_dummy);
+
+					if (!record.bandit_bandit.Equals("")) writer.WriteAttributeString("bandit_bandit", "NPCCharacter." + record.bandit_bandit);
+					if (!record.bandit_chief.Equals("")) writer.WriteAttributeString("bandit_chief", "NPCCharacter." + record.bandit_chief);
+					if (!record.bandit_raider.Equals("")) writer.WriteAttributeString("bandit_raider", "NPCCharacter." + record.bandit_raider);
+					if (!record.bandit_boss.Equals("")) writer.WriteAttributeString("bandit_boss", "NPCCharacter." + record.bandit_boss);
+
+					if (!record.board_game_type.Equals("")) writer.WriteAttributeString("board_game_type", "NPCCharacter." + record.board_game_type);
+
 					if (!record.male_names.Equals("")) {
 						writer.WriteStartElement("male_names");
 
 						string[] names = record.male_names.Split(";");
-						
-						foreach(string name in names) {
+
+						foreach (string name in names) {
 							writer.WriteStartElement("name");
-							writer.WriteAttributeString("name","{Culture.male_names." + name.ToLower() + "}"+name);
-							writeLocalizationNode(localizationWriter, "Culture.male_names." + name.ToLower(), name);
+							writer.WriteAttributeString("name", "{Cultures.Culture." + record.id + ".male_names." + name.ToLower() + "}" + name);
+							writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".male_names." + name.ToLower(), name);
 							writer.WriteEndElement();
 						}
 
@@ -1067,8 +1187,8 @@ namespace CSV_to_XML {
 
 						foreach (string name in names) {
 							writer.WriteStartElement("name");
-							writer.WriteAttributeString("name", "{Culture.female_names." + name.ToLower() + "}" + name);
-							writeLocalizationNode(localizationWriter, "Culture.female_names." + name.ToLower(), name);
+							writer.WriteAttributeString("name", "{Cultures.Culture." + record.id + ".female_names." + name.ToLower() + "}" + name);
+							writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".female_names." + name.ToLower(), name);
 							writer.WriteEndElement();
 						}
 
@@ -1081,12 +1201,146 @@ namespace CSV_to_XML {
 
 						foreach (string name in names) {
 							writer.WriteStartElement("name");
-							writer.WriteAttributeString("name", "{Culture.clan_names." + name.ToLower() + "}" + name);
-							writeLocalizationNode(localizationWriter, "Culture.clan_names." + name.ToLower(), name);
+							writer.WriteAttributeString("name", "{Cultures.Culture." + record.id + ".clan_names." + name.ToLower() + "}" + name);
+							writeLocalizationNode(localizationWriter, "Culture.Culture." + record.id + ".clan_names." + name.ToLower(), name);
 							writer.WriteEndElement();
 						}
 
 						writer.WriteEndElement();
+					}
+
+					if (!record.tournament_template_two_participant_set_v1.Equals("") || !record.tournament_template_two_participant_set_v2.Equals("") || !record.tournament_template_two_participant_set_v3.Equals("") || !record.tournament_template_two_participant_set_v4.Equals("")) {
+						writer.WriteStartElement("tournament_team_templates_two_participant");
+
+						if (!record.tournament_template_two_participant_set_v1.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_two_participant_set_v1);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_two_participant_set_v2.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_two_participant_set_v2);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_two_participant_set_v3.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_two_participant_set_v3);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_two_participant_set_v4.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_two_participant_set_v4);
+							writer.WriteEndElement();
+						}
+
+						writer.WriteEndElement();
+					}
+
+					if (!record.tournament_template_four_participant_set_v1.Equals("") || !record.tournament_template_four_participant_set_v2.Equals("") || !record.tournament_template_four_participant_set_v3.Equals("") || !record.tournament_template_four_participant_set_v4.Equals("")) {
+						writer.WriteStartElement("tournament_team_templates_four_participant");
+
+						if (!record.tournament_template_four_participant_set_v1.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_four_participant_set_v1);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_four_participant_set_v2.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_four_participant_set_v2);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_four_participant_set_v3.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_four_participant_set_v3);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_four_participant_set_v4.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_four_participant_set_v4);
+							writer.WriteEndElement();
+						}
+
+						writer.WriteEndElement();
+					}
+
+					if (!record.tournament_template_one_participant_set_v1.Equals("") || !record.tournament_template_one_participant_set_v2.Equals("") || !record.tournament_template_one_participant_set_v3.Equals("") || !record.tournament_template_one_participant_set_v4.Equals("")) {
+						writer.WriteStartElement("tournament_team_templates_one_participant");
+
+						if (!record.tournament_template_one_participant_set_v1.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_one_participant_set_v1);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_one_participant_set_v2.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_one_participant_set_v2);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_one_participant_set_v3.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_one_participant_set_v3);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_one_participant_set_v4.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", record.tournament_template_one_participant_set_v4);
+							writer.WriteEndElement();
+						}
+
+						writer.WriteEndElement();
+					}
+
+					if(!record.str_culture_description.Equals("")) { 
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_culture_description", record.str_culture_description);
+						writeLocalizationNode(module_strings_writer, "str_culture_description." + record.id, "{=Cultures.Culture." + record.id + ".str_culture_description}" + record.str_culture_description);
+					}
+					if (!record.str_culture_rich_name.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_culture_rich_name", record.str_culture_rich_name);
+						writeLocalizationNode(module_strings_writer, "str_culture_rich_name." + record.id, "{=Cultures.Culture." + record.id + ".str_culture_rich_name}" + record.str_culture_rich_name);
+					}
+					if (!record.str_faction_official.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_faction_official", record.str_faction_official);
+						writeLocalizationNode(module_strings_writer, "str_faction_official." + record.id, "{=Cultures.Culture." + record.id + ".str_faction_official}" + record.str_faction_official);
+					}
+					if (!record.str_faction_official_f.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_faction_official_f", record.str_faction_official_f);
+						writeLocalizationNode(module_strings_writer, "str_faction_official_f." + record.id, "{=Cultures.Culture." + record.id + ".str_faction_official_f}" + record.str_faction_official_f);
+					}
+					if (!record.str_faction_ruler.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_faction_ruler", record.str_faction_ruler);
+						writeLocalizationNode(module_strings_writer, "str_faction_ruler." + record.id, "{=Cultures.Culture." + record.id + ".str_faction_ruler}" + record.str_faction_ruler);
+					}
+					if (!record.str_faction_ruler_f.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_faction_ruler_f", record.str_faction_ruler_f);
+						writeLocalizationNode(module_strings_writer, "str_faction_ruler_f." + record.id, "{=Cultures.Culture." + record.id + ".str_faction_ruler_f}" + record.str_faction_ruler_f);
+					}
+					if (!record.str_faction_ruler_term_in_speech.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_faction_ruler_term_in_speech", record.str_faction_ruler_term_in_speech);
+						writeLocalizationNode(module_strings_writer, "str_faction_ruler_term_in_speech." + record.id, "{=Cultures.Culture." + record.id + ".str_faction_ruler_term_in_speech}" + record.str_faction_ruler_term_in_speech);
+					}
+					if (!record.str_faction_ruler_name_with_title.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_faction_ruler_name_with_title", record.str_faction_ruler_name_with_title);
+						writeLocalizationNode(module_strings_writer, "str_faction_ruler_name_with_title." + record.id, "{=Cultures.Culture." + record.id + ".str_faction_ruler_name_with_title}" + record.str_faction_ruler_name_with_title);
+					}
+					if (!record.str_faction_noble_name_with_title.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_faction_noble_name_with_title", record.str_faction_noble_name_with_title);
+						writeLocalizationNode(module_strings_writer, "str_faction_noble_name_with_title." + record.id, "{=Cultures.Culture." + record.id + ".str_faction_noble_name_with_title}" + record.str_faction_noble_name_with_title);
+					}
+					if (!record.str_adjective_for_faction.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_adjective_for_faction", record.str_adjective_for_faction);
+						writeLocalizationNode(module_strings_writer, "str_adjective_for_faction." + record.id, "{=Cultures.Culture." + record.id + ".str_adjective_for_faction}" + record.str_adjective_for_faction);
+					}
+					if (!record.str_short_term_for_faction.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_short_term_for_faction", record.str_short_term_for_faction);
+						writeLocalizationNode(module_strings_writer, "str_short_term_for_faction." + record.id, "{=Cultures.Culture." + record.id + ".str_short_term_for_faction}" + record.str_short_term_for_faction);
+					}
+					if (!record.str_faction_formal_name_for_culture.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_faction_formal_name_for_culture", record.str_faction_formal_name_for_culture);
+						writeLocalizationNode(module_strings_writer, "str_faction_formal_name_for_culture." + record.id, "{=Cultures.Culture." + record.id + ".str_faction_formal_name_for_culture}" + record.str_faction_formal_name_for_culture);
+					}
+					if (!record.str_neutral_term_for_culture.Equals("")) {
+						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_neutral_term_for_culture", record.str_neutral_term_for_culture);
+						writeLocalizationNode(module_strings_writer, "str_neutral_term_for_culture." + record.id, "{=Cultures.Culture." + record.id + ".str_neutral_term_for_culture}" + record.str_neutral_term_for_culture);
 					}
 
 					writer.WriteEndElement();
@@ -1116,9 +1370,97 @@ namespace CSV_to_XML {
 			public string militia_party_template { get; set; }
 			public string rebels_party_template { get; set; }
 
+			public string melee_militia_troop { get; set; }
+			public string melee_elite_militia_troop { get; set; }
+			public string ranged_militia_troop { get; set; }
+			public string ranged_elite_militia_troop { get; set; }
+			public string tournament_master { get; set; }
+			public string caravan_master { get; set; }
+			public string armed_trader { get; set; }
+			public string caravan_guard { get; set; }
+			public string veteran_caravan_guard { get; set; }
+
+			public string duel_preset { get; set; }
+			public string prison_guard { get; set; }
+			public string guard { get; set; }
+			public string steward { get; set; }
+			public string blacksmith { get; set; }
+			public string weaponsmith { get; set; }
+			public string townswoman { get; set; }
+			public string townswoman_infant { get; set; }
+			public string townswoman_child { get; set; }
+			public string townswoman_teenager { get; set; }
+			public string townsman { get; set; }
+			public string townsman_infant { get; set; }
+			public string townsman_child { get; set; }
+			public string townsman_teenager { get; set; }
+			public string villager { get; set; }
+			public string villager_woman { get; set; }
+			public string villager_male_child { get; set; }
+			public string villager_male_teenager { get; set; }
+			public string villager_female_child { get; set; }
+			public string villager_female_teenager { get; set; }
+
+			public string ransom_broker { get; set; }
+			public string gangleader_bodyguard { get; set; }
+			public string merchant_notary { get; set; }
+			public string preacher_notary { get; set; }
+			public string rural_notable_notary { get; set; }
+			public string shop_worker { get; set; }
+			public string tavernkeeper { get; set; }
+			public string taverngamehost { get; set; }
+			public string musician { get; set; }
+			public string tavern_wench { get; set; }
+			public string armorer { get; set; }
+			public string horseMerchant { get; set; }
+			public string barber { get; set; }
+			public string merchant { get; set; }
+			public string beggar { get; set; }
+			public string female_beggar { get; set; }
+			public string female_dancer { get; set; }
+			public string gear_practice_dummy { get; set; }
+			public string weapon_practice_stage_1 { get; set; }
+			public string weapon_practice_stage_2 { get; set; }
+			public string weapon_practice_stage_3 { get; set; }
+			public string gear_dummy { get; set; }
+			public string bandit_bandit { get; set; }
+			public string bandit_chief { get; set; }
+			public string bandit_raider { get; set; }
+			public string bandit_boss { get; set; }
+			public string board_game_type { get; set; }
+
+			public string tournament_template_one_participant_set_v1 { get; set; }
+			public string tournament_template_one_participant_set_v2 { get; set; }
+			public string tournament_template_one_participant_set_v3 { get; set; }
+			public string tournament_template_one_participant_set_v4 { get; set; }
+			public string tournament_template_two_participant_set_v1 { get; set; }
+			public string tournament_template_two_participant_set_v2 { get; set; }
+			public string tournament_template_two_participant_set_v3 { get; set; }
+			public string tournament_template_two_participant_set_v4 { get; set; }
+			public string tournament_template_four_participant_set_v1 { get; set; }
+			public string tournament_template_four_participant_set_v2 { get; set; }
+			public string tournament_template_four_participant_set_v3 { get; set; }
+			public string tournament_template_four_participant_set_v4 { get; set; }
+
 			public string male_names { get; set; }
 			public string female_names { get; set; }
 			public string clan_names { get; set; }
+
+			public string str_culture_description { get; set; }
+			public string str_culture_rich_name { get; set; }
+			public string str_faction_official { get; set; }
+			public string str_faction_official_f { get; set; }
+			public string str_faction_ruler { get; set; }
+			public string str_faction_ruler_f { get; set; }
+			public string str_faction_ruler_term_in_speech { get; set; }
+			public string str_faction_ruler_name_with_title { get; set; }
+			public string str_faction_noble_name_with_title { get; set; }
+			public string str_adjective_for_faction { get; set; }
+			public string str_short_term_for_faction { get; set; }
+			public string str_faction_formal_name_for_culture { get; set; }
+			public string str_neutral_term_for_culture { get; set; }
+
+			                  
 		}
 
 		public static void writeLocalizationNode(XmlWriter writer, string id, string text) {
@@ -1126,6 +1468,19 @@ namespace CSV_to_XML {
 			writer.WriteAttributeString("id", id);
 			writer.WriteAttributeString("text", text);
 			writer.WriteEndElement();
+		}
+
+		public static void initializeLocalizationWriter(XmlWriter localizationWriter) {
+			localizationWriter.WriteStartElement("base");
+			localizationWriter.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
+			localizationWriter.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
+			localizationWriter.WriteAttributeString("type", "string");
+			localizationWriter.WriteStartElement("tags");
+			localizationWriter.WriteStartElement("tag");
+			localizationWriter.WriteAttributeString("language", "English");
+			localizationWriter.WriteEndElement();
+			localizationWriter.WriteEndElement();
+			localizationWriter.WriteStartElement("strings");
 		}
 	}
 }
