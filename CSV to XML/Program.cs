@@ -93,12 +93,16 @@ namespace CSV_to_XML {
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("Settlements");
 				foreach (SettlementRecord record in records) {
+					if (record.id.Equals("TODO")) break;
+					if (record.id.Equals("")) continue;
+
 					writer.WriteStartElement("Settlement");
 
 					//Changes
 					record.Comp_Town_is_castle = record.Comp_Town_is_castle.ToLower();
 
 					//Defaults
+					if (record.culture.Equals("")) record.culture="youkai";
 
 					//Temporary
 
@@ -203,12 +207,12 @@ namespace CSV_to_XML {
 					}
 					if (!record.Locations_complex_template.Equals("")) {
 						writer.WriteStartElement("Locations");
-						writer.WriteAttributeString(null, "complex_template", null, record.Locations_complex_template);
+						writer.WriteAttributeString(null, "complex_template", null, "LocationComplexTemplate."+record.Locations_complex_template);
 						if (!record.Locations_Location0_id.Equals("")) {
 							writer.WriteStartElement("Locations");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location0_id);
-							if (!record.Locations_Location0_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location0_id);
+							if (!record.Locations_Location0_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location0_scene_name);
 							if (!record.Locations_Location0_scene_name_1.Equals("")) writer.WriteAttributeString(null, "scene_name_1", null, record.Locations_Location0_scene_name_1);
 							if (!record.Locations_Location0_scene_name_2.Equals("")) writer.WriteAttributeString(null, "scene_name_2", null, record.Locations_Location0_scene_name_2);
 							if (!record.Locations_Location0_scene_name_3.Equals("")) writer.WriteAttributeString(null, "scene_name_3", null, record.Locations_Location0_scene_name_3);
@@ -220,7 +224,7 @@ namespace CSV_to_XML {
 							writer.WriteStartElement("Locations");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location1_id);
-							if (!record.Locations_Location1_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location1_id);
+							if (!record.Locations_Location1_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location1_scene_name);
 							if (!record.Locations_Location1_scene_name_1.Equals("")) writer.WriteAttributeString(null, "scene_name_1", null, record.Locations_Location1_scene_name_1);
 							if (!record.Locations_Location1_scene_name_2.Equals("")) writer.WriteAttributeString(null, "scene_name_2", null, record.Locations_Location1_scene_name_2);
 							if (!record.Locations_Location1_scene_name_3.Equals("")) writer.WriteAttributeString(null, "scene_name_3", null, record.Locations_Location1_scene_name_3);
@@ -232,7 +236,7 @@ namespace CSV_to_XML {
 							writer.WriteStartElement("Locations");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location2_id);
-							if (!record.Locations_Location2_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location2_id);
+							if (!record.Locations_Location2_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location2_scene_name);
 							if (!record.Locations_Location2_scene_name_1.Equals("")) writer.WriteAttributeString(null, "scene_name_1", null, record.Locations_Location2_scene_name_1);
 							if (!record.Locations_Location2_scene_name_2.Equals("")) writer.WriteAttributeString(null, "scene_name_2", null, record.Locations_Location2_scene_name_2);
 							if (!record.Locations_Location2_scene_name_3.Equals("")) writer.WriteAttributeString(null, "scene_name_3", null, record.Locations_Location2_scene_name_3);
@@ -244,7 +248,7 @@ namespace CSV_to_XML {
 							writer.WriteStartElement("Locations");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location3_id);
-							if (!record.Locations_Location3_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location3_id);
+							if (!record.Locations_Location3_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location3_scene_name);
 							if (!record.Locations_Location3_scene_name_1.Equals("")) writer.WriteAttributeString(null, "scene_name_1", null, record.Locations_Location3_scene_name_1);
 							if (!record.Locations_Location3_scene_name_2.Equals("")) writer.WriteAttributeString(null, "scene_name_2", null, record.Locations_Location3_scene_name_2);
 							if (!record.Locations_Location3_scene_name_3.Equals("")) writer.WriteAttributeString(null, "scene_name_3", null, record.Locations_Location3_scene_name_3);
@@ -256,7 +260,7 @@ namespace CSV_to_XML {
 							writer.WriteStartElement("Locations");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location4_id);
-							if (!record.Locations_Location4_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location4_id);
+							if (!record.Locations_Location4_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location4_scene_name);
 							if (!record.Locations_Location4_scene_name_1.Equals("")) writer.WriteAttributeString(null, "scene_name_1", null, record.Locations_Location4_scene_name_1);
 							if (!record.Locations_Location4_scene_name_2.Equals("")) writer.WriteAttributeString(null, "scene_name_2", null, record.Locations_Location4_scene_name_2);
 							if (!record.Locations_Location4_scene_name_3.Equals("")) writer.WriteAttributeString(null, "scene_name_3", null, record.Locations_Location4_scene_name_3);
@@ -268,7 +272,7 @@ namespace CSV_to_XML {
 							writer.WriteStartElement("Locations");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location5_id);
-							if (!record.Locations_Location5_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location5_id);
+							if (!record.Locations_Location5_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location5_scene_name);
 							if (!record.Locations_Location5_scene_name_1.Equals("")) writer.WriteAttributeString(null, "scene_name_1", null, record.Locations_Location5_scene_name_1);
 							if (!record.Locations_Location5_scene_name_2.Equals("")) writer.WriteAttributeString(null, "scene_name_2", null, record.Locations_Location5_scene_name_2);
 							if (!record.Locations_Location5_scene_name_3.Equals("")) writer.WriteAttributeString(null, "scene_name_3", null, record.Locations_Location5_scene_name_3);
@@ -280,7 +284,7 @@ namespace CSV_to_XML {
 							writer.WriteStartElement("Locations");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location6_id);
-							if (!record.Locations_Location6_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location6_id);
+							if (!record.Locations_Location6_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location6_scene_name);
 							if (!record.Locations_Location6_scene_name_1.Equals("")) writer.WriteAttributeString(null, "scene_name_1", null, record.Locations_Location6_scene_name_1);
 							if (!record.Locations_Location6_scene_name_2.Equals("")) writer.WriteAttributeString(null, "scene_name_2", null, record.Locations_Location6_scene_name_2);
 							if (!record.Locations_Location6_scene_name_3.Equals("")) writer.WriteAttributeString(null, "scene_name_3", null, record.Locations_Location6_scene_name_3);
@@ -292,7 +296,7 @@ namespace CSV_to_XML {
 							writer.WriteStartElement("Locations");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location7_id);
-							if (!record.Locations_Location7_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location7_id);
+							if (!record.Locations_Location7_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location7_scene_name);
 							if (!record.Locations_Location7_scene_name_1.Equals("")) writer.WriteAttributeString(null, "scene_name_1", null, record.Locations_Location7_scene_name_1);
 							if (!record.Locations_Location7_scene_name_2.Equals("")) writer.WriteAttributeString(null, "scene_name_2", null, record.Locations_Location7_scene_name_2);
 							if (!record.Locations_Location7_scene_name_3.Equals("")) writer.WriteAttributeString(null, "scene_name_3", null, record.Locations_Location7_scene_name_3);
@@ -312,34 +316,34 @@ namespace CSV_to_XML {
 						if (!record.Comp_Village_village_type.Equals("") && automatic_common_areas_village) {
 							if (record.CommonAreas_Area0_type.Equals("")) {
 								record.CommonAreas_Area0_type = "Pasture";
-								record.CommonAreas_Area0_name = "{=fOUsLdZR}Pasture";
+								record.CommonAreas_Area0_name = "Pasture";
 							}
 							if (record.CommonAreas_Area1_type.Equals("")) {
 								record.CommonAreas_Area1_type = "Thicket";
-								record.CommonAreas_Area1_name = "{=66Mzk0NZ}Thicket";
+								record.CommonAreas_Area1_name = "Thicket";
 							}
 							if (record.CommonAreas_Area2_type.Equals("")) {
 								record.CommonAreas_Area2_type = "Bog";
-								record.CommonAreas_Area2_name = "{=iXA5SttU}Bog";
+								record.CommonAreas_Area2_name = "Bog";
 							}
 						}
 
 						if (!record.CommonAreas_Area0_type.Equals("")) {
 							writer.WriteStartElement("Area");
 							writer.WriteAttributeString(null, "type", null, record.CommonAreas_Area0_type);
-							writer.WriteAttributeString(null, "name", null, record.CommonAreas_Area0_name);
+							writer.WriteAttributeString(null, "name", null, "{=CommonAreas.Area." + record.CommonAreas_Area0_name + "}" + record.CommonAreas_Area0_name);
 							writer.WriteEndElement();
 						}
 						if (!record.CommonAreas_Area1_type.Equals("")) {
 							writer.WriteStartElement("Area");
 							writer.WriteAttributeString(null, "type", null, record.CommonAreas_Area1_type);
-							writer.WriteAttributeString(null, "name", null, record.CommonAreas_Area1_name);
+							writer.WriteAttributeString(null, "name", null, "{=CommonAreas.Area." + record.CommonAreas_Area0_name + "}" + record.CommonAreas_Area1_name);
 							writer.WriteEndElement();
 						}
 						if (!record.CommonAreas_Area2_type.Equals("")) {
 							writer.WriteStartElement("Area");
 							writer.WriteAttributeString(null, "type", null, record.CommonAreas_Area2_type);
-							writer.WriteAttributeString(null, "name", null, record.CommonAreas_Area2_name);
+							writer.WriteAttributeString(null, "name", null, "{=CommonAreas.Area." + record.CommonAreas_Area0_name + "}" + record.CommonAreas_Area2_name);
 							writer.WriteEndElement();
 						}
 						writer.WriteEndElement();
@@ -477,6 +481,9 @@ namespace CSV_to_XML {
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("Heroes");
 				foreach (HeroRecord heroRecord in records) {
+					if (record.id.Equals("TODO")) break;
+					if (record.id.Equals("")) continue;
+
 					writer.WriteStartElement("Hero");
 
 					//Changes
@@ -529,6 +536,7 @@ namespace CSV_to_XML {
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("NPCCharacters");
 				foreach (NPCCharacterRecord record in records) {
+					if (record.id.Equals("TODO")) break;
 					if (record.id.Equals("")) continue;
 
 					writer.WriteStartElement("NPCCharacter");
@@ -815,6 +823,9 @@ namespace CSV_to_XML {
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("Kingdoms");
 				foreach (KingdomRecord record in records) {
+					if (record.id.Equals("TODO")) break;
+					if (record.id.Equals("")) continue;
+
 					writer.WriteStartElement("Kingdom");
 
 					//Changes
@@ -960,6 +971,9 @@ namespace CSV_to_XML {
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("Factions");
 				foreach (ClanRecord record in records) {
+					if (record.id.Equals("TODO")) break;
+					if (record.id.Equals("")) continue;
+
 					writer.WriteStartElement("Faction");
 
 					//Changes
@@ -1054,6 +1068,9 @@ namespace CSV_to_XML {
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("SPCultures");
 				foreach (CultureRecord record in records) {
+					if (record.id.Equals("TODO")) break;
+					if (record.id.Equals("")) continue;
+
 					writer.WriteStartElement("Culture");
 
 					//Changes
