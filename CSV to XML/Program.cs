@@ -3,76 +3,80 @@ using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
 using System.Xml;
+using System.Linq;
 using System.Text;
 using CsvHelper;
 
 namespace CSV_to_XML {
 	class Program {
 		static void Main(string[] args) {
+			Console.WriteLine("~~~NEW PROGRAM~~~");
+
 			//Console.WriteLine("What is your root directory?");
 			string root = AppDomain.CurrentDomain.BaseDirectory;
+			string DSC = Path.DirectorySeparatorChar.ToString(); //For berevity's sake. 
 			//Console.WriteLine("Please input a address for the Settlement csv file: ");
 
 			Directory.CreateDirectory(root+"Output");
-			Directory.CreateDirectory(root + "Output\\Languages");
+			Directory.CreateDirectory(root + "Output" + DSC + "Languages");
 
 			XmlWriterSettings localizationSettings = new XmlWriterSettings();
 			localizationSettings.Indent = true;
 
-			using (XmlWriter module_stringsWriter = XmlWriter.Create(root + "Output\\module_strings.xml", localizationSettings)) {
+			using (XmlWriter module_stringsWriter = XmlWriter.Create(root + "Output" + DSC + "module_strings.xml", localizationSettings)) {
 				module_stringsWriter.WriteStartElement("base");
 				module_stringsWriter.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
 				module_stringsWriter.WriteAttributeString("xmlns", "xsd", null, "http://www.w3.org/2001/XMLSchema");
 				module_stringsWriter.WriteAttributeString("type", "string");
 				module_stringsWriter.WriteStartElement("strings");
 
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_settlements_xml.xml", localizationSettings)) {
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_settlements_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data\\Touhou XML Data - Settlements.csv")) settlement_CSVtoXML(root + "Data\\Touhou XML Data - Settlements.csv", root + "Output\\settlements.xml", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Settlements.csv")) settlement_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Settlements.csv", root + "Output" + DSC + "settlements.xml", root + "Data" + DSC + "scene.xscene", root + "Output" + DSC + "scene.xscene", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
 
-				//string root = "O:\\Games\\SteamLibrary\\steamapps\\common\\Mount & Blade II Bannerlord\\Modules\\TouhouAnalepsia\\";
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_heroes_xml.xml", localizationSettings)) {
+				//string root = "O:" + DSC + "Games" + DSC + "SteamLibrary" + DSC + "steamapps" + DSC + "common" + DSC + "Mount & Blade II Bannerlord" + DSC + "Modules" + DSC + "TouhouAnalepsia" + DSC + "";
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_heroes_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data\\Touhou XML Data - Heroes.csv")) heroes_CSVtoXML(root + "Data\\Touhou XML Data - Heroes.csv", root + "Output\\heroes.xml", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Heroes.csv")) heroes_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Heroes.csv", root + "Output" + DSC + "heroes.xml", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_lords_xml.xml", localizationSettings)) {
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_lords_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters.csv", root + "Output\\lords.xml", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - NPCCharacters.csv")) NPCCharacters_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - NPCCharacters.csv", root + "Output" + DSC + "lords.xml", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_companions_xml.xml", localizationSettings)) {
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_companions_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Companions.csv", root + "Output\\companions.xml", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - NPCCharacters - Companions.csv")) NPCCharacters_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - NPCCharacters - Companions.csv", root + "Output" + DSC + "companions.xml", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_spspecialcharacters_xml.xml", localizationSettings)) {
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_spspecialcharacters_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv")) NPCCharacters_CSVtoXML(root + "Data\\Touhou XML Data - NPCCharacters - Units.csv", root + "Output\\spspecialcharacters.xml", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - NPCCharacters - Units.csv")) NPCCharacters_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - NPCCharacters - Units.csv", root + "Output" + DSC + "spspecialcharacters.xml", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_spkingdoms_xml.xml", localizationSettings)) {
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_spkingdoms_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data\\Touhou XML Data - Kingdoms.csv")) Kingdoms_CSVtoXML(root + "Data\\Touhou XML Data - Kingdoms.csv", root + "Output\\spkingdoms.xml", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Kingdoms.csv")) Kingdoms_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Kingdoms.csv", root + "Output" + DSC + "spkingdoms.xml", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_spclans_xml.xml", localizationSettings)) {
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_spclans_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data\\Touhou XML Data - Clans.csv")) Clans_CSVtoXML(root + "Data\\Touhou XML Data - Clans.csv", root + "Output\\spclans.xml", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Clans.csv")) Clans_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Clans.csv", root + "Output" + DSC + "spclans.xml", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output\\Languages\\std_spcultures_xml.xml", localizationSettings)) {
+				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_spcultures_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data\\Touhou XML Data - Cultures.csv")) Cultures_CSVtoXML(root + "Data\\Touhou XML Data - Cultures.csv", root + "Output\\spcultures.xml", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Cultures.csv")) Cultures_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Cultures.csv", root + "Output" + DSC + "spcultures.xml", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
@@ -80,15 +84,339 @@ namespace CSV_to_XML {
 				module_stringsWriter.WriteEndElement();
 			}
 		}
-		public static void settlement_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
-			StreamReader reader = new StreamReader(fileInput);
-			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+		public static void settlement_CSVtoXML(string fileInput, string fileOutput, string sceneFileInput, string sceneFileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
+			StreamReader csvReader = new StreamReader(fileInput);
+			CsvReader csv = new CsvReader(csvReader, CultureInfo.InvariantCulture);
 
-			SettlementRecord settlementRecord = new SettlementRecord();
-			IEnumerable<SettlementRecord> records = csv.EnumerateRecords(settlementRecord);
+			IEnumerable<SettlementRecord> enumerableRecords = csv.GetRecords<SettlementRecord>();
+
+			List<SettlementRecord> records = enumerableRecords.ToList();
 
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Indent = true;
+			settings.IndentChars="    ";
+
+			XmlReaderSettings settings1 = new XmlReaderSettings();
+
+			using (XmlReader sceneReader = XmlReader.Create(sceneFileInput, settings1)) {
+				using (XmlWriter sceneWriter = XmlWriter.Create(sceneFileOutput, settings)) {
+                    while (sceneReader.Read()) {
+                        if (sceneReader.NodeType == XmlNodeType.Element) {
+							if (sceneReader.Name.Equals("scene")) {
+								sceneWriter.WriteStartElement("scene");
+								sceneWriter.WriteAttributes(sceneReader, false);
+								//Do stuff here
+
+								while (sceneReader.Read()) {
+									if (sceneReader.NodeType.Equals(XmlNodeType.Element)) {
+										Console.WriteLine("Currently at node {0}", sceneReader.Name);
+										if (sceneReader.Name.Equals("entities")) {
+											sceneWriter.WriteStartElement("entities");
+											sceneWriter.WriteAttributes(sceneReader, false);
+											List<SettlementRecord> addedRecords = new List<SettlementRecord>();
+
+
+
+											while (sceneReader.Read()) {
+												if (sceneReader.NodeType.Equals(XmlNodeType.EndElement) && sceneReader.Name.Equals("entities")) {
+													//Handle non-initialized entities
+
+													int positionCounterX = 1;
+													int positionCounterY = 1;
+
+													foreach (SettlementRecord record in records.Except(addedRecords)) {
+														break;//Get rid of this for the more so... experimental portions of the code.
+
+														sceneWriter.WriteStartElement("game_entity");
+
+														sceneWriter.WriteAttributeString("name", record.id);
+
+														switch (record.getSettlementType()) {
+															case "castle":
+																sceneWriter.WriteAttributeString("old_prefab_name", "map_icon_castle_battania");
+																break;
+															case "village":
+																sceneWriter.WriteAttributeString("old_prefab_name", "map_icon_full_battania_village");
+																break;
+															case "town":
+																sceneWriter.WriteAttributeString("old_prefab_name", "__empty_object");
+																break;
+														}
+														sceneWriter.WriteAttributeString("season_mask", "255");
+
+														//Nodes - Start
+
+														//Transform - Start
+														sceneWriter.WriteStartElement("transform");
+
+														string[] positions = new string[3];
+														positions[2] = "30.000"; //Constant Parameter
+
+														if (record.posX.Equals("") || record.posY.Equals("")) {
+															positions[0] = (4*positionCounterX).ToString();
+															positions[1] = (4*positionCounterY).ToString();
+
+															record.posX = positions[0];
+															record.posY = positions[1];
+
+															positionCounterX++;
+															if (positionCounterX > 200) {
+																positionCounterX = 1;
+																positionCounterY++;
+															}
+														} else {
+															positions[0] = record.posX;
+															positions[1] = record.posY;
+														}
+
+
+														sceneWriter.WriteAttributeString("position", positions[0] + ", " + positions[1] + ", " + positions[2]);
+														sceneWriter.WriteAttributeString("rotation_euler", "0.000, 0.000, -1.601");
+														//Skip Scale
+
+														sceneWriter.WriteEndElement();
+														//Transform - End
+
+														//Physics - Start
+														sceneWriter.WriteStartElement("physics");
+														sceneWriter.WriteAttributeString("mass", "1.000");
+														sceneWriter.WriteEndElement();
+														//Physics - End
+
+														//Children - Start
+														sceneWriter.WriteStartElement("children");
+														switch(record.getSettlementType()) {
+															case "castle":
+																using (XmlReader sample = XmlReader.Create(AppDomain.CurrentDomain.BaseDirectory + "sampleCastleChildren.xml", settings1)) {
+																	while (sample.Read() && (!sample.NodeType.Equals(XmlNodeType.Element) || (sample.NodeType.Equals(XmlNodeType.Element) && !sample.Name.Equals("child_entities"))));
+																	while (sample.Read()) {
+																		if(sample.NodeType.Equals(XmlNodeType.Element)) {
+																			if (sample.Name.Equals("child_entities")) continue;
+																			sceneWriter.WriteNode(sample, false);
+                                                                        }
+                                                                    }
+                                                                }
+																break;
+															case "village":
+																using (XmlReader sample = XmlReader.Create(AppDomain.CurrentDomain.BaseDirectory + "sampleVillageChildren.xml", settings1)) {
+																	while (sample.Read() && (!sample.NodeType.Equals(XmlNodeType.Element) || (sample.NodeType.Equals(XmlNodeType.Element) && !sample.Name.Equals("child_entities")))) ;
+																	while (sample.Read()) {
+																		if (sample.NodeType.Equals(XmlNodeType.Element)) {
+																			if (sample.Name.Equals("child_entities")) continue;
+																			sceneWriter.WriteNode(sample, false);
+																		}
+																	}
+																}
+																break;
+															case "town":
+																using (XmlReader sample = XmlReader.Create(AppDomain.CurrentDomain.BaseDirectory + "sampleTownChildren.xml", settings1)) {
+																	while (sample.Read() && (!sample.NodeType.Equals(XmlNodeType.Element) || (sample.NodeType.Equals(XmlNodeType.Element) && !sample.Name.Equals("child_entities")))) ;
+																	while (sample.Read()) {
+																		if (sample.NodeType.Equals(XmlNodeType.Element)) {
+																			if (sample.Name.Equals("child_entities")) continue;
+																			sceneWriter.WriteNode(sample, false);
+																		}
+																	}
+																}
+																break;
+
+														}
+														sceneWriter.WriteEndElement();
+														//Children - End
+
+														sceneWriter.WriteEndElement();
+
+
+														//OTHER METHOD STARTS HERE
+														/*
+														using (XmlReader sample = XmlReader.Create(AppDomain.CurrentDomain.BaseDirectory+"sampleCastle.xml", settings1)) {
+															while (sample.Read()) {
+																if (!sample.NodeType.Equals(XmlNodeType.Element)) continue;
+																if (!sample.Name.Equals("game_entity")) continue;
+																//if (sample.GetAttribute("name") == null) continue;
+
+																//Console.WriteLine("Hello? {0}", record.id);
+
+																sceneWriter.WriteStartElement("game_entity");
+
+																sceneWriter.WriteAttributeString("name", record.id);
+
+																if (sample.GetAttribute("old_prefab_name") != null) sceneWriter.WriteAttributeString("old_prefab_name", sample.GetAttribute("old_prefab_name"));
+																if (sample.GetAttribute("prefab") != null) sceneWriter.WriteAttributeString("prefab", sample.GetAttribute("prefab"));
+																if (sample.GetAttribute("season_mask") != null) sceneWriter.WriteAttributeString("season_mask", sample.GetAttribute("season_mask"));
+
+																while (sample.Read()) {
+																	if (sample.NodeType.Equals(XmlNodeType.EndElement) && sample.Name.Equals("game_entity")) {
+																		sceneWriter.WriteEndElement();
+																		break;
+																	}
+																	//if (sample.Name.Equals("children")) Console.WriteLine("Marco 4"); ;
+																	//Console.WriteLine("We're reading a {1} node of type {0}.", sample.Name, sample.NodeType);
+																	if (sample.NodeType.Equals(XmlNodeType.Element)) {
+																		//Console.WriteLine("Marco 3");
+																		switch (sample.Name) {
+																			case "transform":
+																				sceneWriter.WriteStartElement("transform");
+
+																				string[] positions = sample.GetAttribute("position").Split(", ");
+
+																				if(record.posX.Equals("") || record.posY.Equals("")) {
+																					positions[0] = positionCounterX.ToString();
+																					positions[1] = positionCounterY.ToString();
+
+																					record.posX = positions[0];
+																					record.posY = positions[1];
+
+																					positionCounterX++;
+																					if(positionCounterX > 200) {
+																						positionCounterX = 1;
+																						positionCounterY++;
+                                                                                    }
+																				} else {
+																					positions[0] = record.posX;
+																					positions[1] = record.posY;
+																				}
+
+
+																				sceneWriter.WriteAttributeString("position", positions[0] + ", " + positions[1] + ", " + positions[2]);
+
+																				sceneWriter.WriteAttributeString("rotation_euler", "0.000, 0.000, -1.601");
+
+																				//if (sample.GetAttribute("rotation_euler") != null) sceneWriter.WriteAttributeString("rotation_euler", sample.GetAttribute("rotation_euler"));
+																				//if (sample.GetAttribute("scale") != null) sceneWriter.WriteAttributeString("scale", sample.GetAttribute("scale"));
+
+																				sceneWriter.WriteEndElement();
+																				break;
+																			case "physics":
+																				sceneWriter.WriteNode(sample, false);
+																				break;
+																			case "children":
+																				sceneWriter.WriteStartElement("children");
+																				//sceneWriter.WriteAttributes(sample, false);
+																				while(sample.Read()) {
+																					if(sample.NodeType.Equals(XmlNodeType.EndElement)&&sample.Name.Equals("children")) {
+																						//Console.WriteLine("Marco 1");
+																						sceneWriter.WriteEndElement();
+																						break;
+																					}
+																					//Console.WriteLine("Marco 2");
+																					if (sample.NodeType.Equals(XmlNodeType.Element) && sample.Name.Equals("game_entity")) sceneWriter.WriteNode(sample, false);
+																				}
+																				break;
+																			default:
+																				Console.WriteLine("You shouldn't be seeing this. We're reading a type {0}.", sample.Name);
+																				//sceneWriter.WriteNode(sample, false);
+																				return;
+																		}
+																	}
+																}
+															}
+														}
+														*/
+													}
+													//Stop
+													sceneWriter.WriteEndElement();
+													break;
+												}
+
+												if (sceneReader.NodeType.Equals(XmlNodeType.Element)) {
+													//Do stuff here 2: Electric Boogaloo
+													if (!sceneReader.Name.Equals("game_entity")) continue;
+													if (sceneReader.GetAttribute("name") == null) continue;
+
+
+													if (sceneReader.GetAttribute("name").StartsWith("castle_") || sceneReader.GetAttribute("name").StartsWith("village_") || sceneReader.GetAttribute("name").StartsWith("town_")) {
+														/* // Check to ensure all attributes are taken care of.
+														int count=1;
+														if (sceneReader.GetAttribute("old_prefab_name") != null) count++;
+														if (sceneReader.GetAttribute("prefab") != null) count++;
+														if (sceneReader.GetAttribute("season_mask") != null) count++;
+														if (sceneReader.AttributeCount != count) {
+															for (int i = 0; i < sceneReader.AttributeCount; i++) Console.Write((i + 1) + ": " + sceneReader.GetAttribute(i) + "\n");
+														}
+														//*/
+														SettlementRecord record=null;
+														foreach(SettlementRecord r in records) {
+															if (r.id_scene.Equals(sceneReader.GetAttribute("name"))) {
+																record = r;
+																break;
+															}
+                                                        }
+														if (record!=null) {
+															addedRecords.Add(record);
+
+
+															sceneWriter.WriteStartElement("game_entity");
+
+															sceneWriter.WriteAttributeString("name", record.id);
+
+															if (sceneReader.GetAttribute("old_prefab_name") != null) sceneWriter.WriteAttributeString("old_prefab_name", sceneReader.GetAttribute("old_prefab_name"));
+															if (sceneReader.GetAttribute("prefab") != null) sceneWriter.WriteAttributeString("prefab", sceneReader.GetAttribute("prefab"));
+															if (sceneReader.GetAttribute("season_mask") != null) sceneWriter.WriteAttributeString("season_mask", sceneReader.GetAttribute("season_mask"));
+
+															while (sceneReader.Read()) {
+																if (sceneReader.NodeType.Equals(XmlNodeType.EndElement) && sceneReader.Name.Equals("game_entity")) {
+																	sceneWriter.WriteEndElement();
+																	break;
+																}
+																if (sceneReader.NodeType.Equals(XmlNodeType.Element)) {
+																	switch (sceneReader.Name) {
+																		case "transform":
+																			int count = 0;
+																			if (sceneReader.GetAttribute("position") != null) count++;
+																			if (sceneReader.GetAttribute("rotation_euler") != null) count++;
+																			if (count!=2) {
+																				for (int i = 0; i < sceneReader.AttributeCount; i++) Console.Write((i + 1) + " - "+record.id+": " + sceneReader.GetAttribute(i) + "\n");
+																			}
+
+																			sceneWriter.WriteStartElement("transform");
+
+																			string[] positions = sceneReader.GetAttribute("position").Split(", ");
+
+																			record.posX = positions[0];
+																			record.posY = positions[1];
+
+																			sceneWriter.WriteAttributeString("position", sceneReader.GetAttribute("position"));
+																			if (sceneReader.GetAttribute("rotation_euler") != null) sceneWriter.WriteAttributeString("rotation_euler", sceneReader.GetAttribute("rotation_euler"));
+																			if (sceneReader.GetAttribute("scale") != null) sceneWriter.WriteAttributeString("scale", sceneReader.GetAttribute("scale"));
+
+																			sceneWriter.WriteEndElement();
+																			break;
+																		default:
+																			sceneWriter.WriteNode(sceneReader, false);
+																			break;
+																	}
+																}
+															}
+														} else { //TODO Handle excess castles and whatnot.
+															sceneReader.Skip();
+														}
+
+														//sceneReader.Skip();
+													} else {
+														sceneWriter.WriteNode(sceneReader, false);
+													}
+
+
+
+													//Stop doing stuff 2: Electric Boogaloo
+												}
+											}
+										} else {
+											sceneWriter.WriteNode(sceneReader, false);
+										}
+									}
+								}
+
+								//Stop doing stuff
+								sceneWriter.WriteEndElement();
+							}
+						}
+                    }
+
+                    sceneWriter.Flush();
+				}
+			}
 
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("Settlements");
@@ -129,7 +457,7 @@ namespace CSV_to_XML {
 					if (!record.Comp_Town_is_castle.Equals("") || !record.Comp_Village_village_type.Equals("") || !record.Comp_Hideout_map_icon.Equals("")) {
 						writer.WriteStartElement("Component");
 
-						if (!record.Comp_Town_is_castle.Equals("")) { // Town
+						if (!record.Comp_Town_is_castle.Equals("")) { // Town or Castle
 							writer.WriteStartElement("Town");
 
 							//Set up defaults
@@ -357,10 +685,14 @@ namespace CSV_to_XML {
 		public class SettlementRecord {
 			//Basic
 			public string id { get; set; }
+			public string id_scene { get; set; }
 			public string name { get; set; }
 			public string owner { get; set; }
 			public string posX { get; set; }
 			public string posY { get; set; }
+			public string sceneX { get; set; }
+			public string sceneY { get; set; }
+			public string sceneZ { get; set; }
 			public string prosperity { get; set; }
 			public string culture { get; set; }
 			public string gate_posX { get; set; }
@@ -466,7 +798,20 @@ namespace CSV_to_XML {
 			//Area 2
 			public string CommonAreas_Area2_type { get; set; }
 			public string CommonAreas_Area2_name { get; set; }
-		}
+
+            public override bool Equals(object obj) {
+				if (obj is SettlementRecord) return this.id.Equals(((SettlementRecord)obj).id);
+                return base.Equals(obj);
+            }
+			public string getSettlementType() {
+				Console.WriteLine(Comp_Town_is_castle);
+				if (Comp_Town_is_castle.Equals("true")) return "castle";
+				if (Comp_Town_is_castle.Equals("false")) return "town";
+				if (!Comp_Village_village_type.Equals("")) return "village";
+
+				return "other";
+            }
+        }
 
 		public static void heroes_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
