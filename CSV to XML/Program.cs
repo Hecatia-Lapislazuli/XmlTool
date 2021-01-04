@@ -32,7 +32,7 @@ namespace CSV_to_XML {
 
 				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_settlements_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Settlements.csv")) settlement_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Settlements.csv", root + "Output" + DSC + "settlements.xml", root + "Data" + DSC + "scene.xscene", root + "Output" + DSC + "scene.xscene", localizationWriter, module_stringsWriter);
+					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Settlements.csv")) settlement_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Settlements.csv", root + "Output" + DSC + "Touhou XML Data - Settlements.csv", root + "Output" + DSC + "settlements.xml", root + "Data" + DSC + "scene.xscene", root + "Output" + DSC + "scene.xscene", localizationWriter, module_stringsWriter);
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
@@ -84,8 +84,8 @@ namespace CSV_to_XML {
 				module_stringsWriter.WriteEndElement();
 			}
 		}
-		public static void settlement_CSVtoXML(string fileInput, string fileOutput, string sceneFileInput, string sceneFileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
-			StreamReader csvReader = new StreamReader(fileInput);
+		public static void settlement_CSVtoXML(string csvInput, string csvOutput, string xmlOutput, string sceneFileInput, string sceneFileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
+			StreamReader csvReader = new StreamReader(csvInput);
 			CsvReader csv = new CsvReader(csvReader, CultureInfo.InvariantCulture);
 
 			IEnumerable<SettlementRecord> enumerableRecords = csv.GetRecords<SettlementRecord>();
@@ -94,7 +94,7 @@ namespace CSV_to_XML {
 
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Indent = true;
-			settings.IndentChars="    ";
+            settings.IndentChars = "\t";
 
 			XmlReaderSettings settings1 = new XmlReaderSettings();
 
@@ -125,13 +125,13 @@ namespace CSV_to_XML {
 													int positionCounterY = 1;
 
 													foreach (SettlementRecord record in records.Except(addedRecords)) {
-														break;//Get rid of this for the more so... experimental portions of the code.
+														//break;//Get rid of this for the more so... experimental portions of the code.
 
 														sceneWriter.WriteStartElement("game_entity");
 
 														sceneWriter.WriteAttributeString("name", record.id);
 
-														switch (record.getSettlementType()) {
+														switch (record.GetSettlementType()) {
 															case "castle":
 																sceneWriter.WriteAttributeString("old_prefab_name", "map_icon_castle_battania");
 																break;
@@ -150,9 +150,44 @@ namespace CSV_to_XML {
 														sceneWriter.WriteStartElement("transform");
 
 														string[] positions = new string[3];
-														positions[2] = "30.000"; //Constant Parameter
+														positions[2] = "50.000"; //Constant Parameter
 
 														if (record.posX.Equals("") || record.posY.Equals("")) {
+															if(record.GetSettlementType().Equals("village")) {//record.id.Replace("castle_village_", "castle_").Remove(record.id.Replace("castle_village_", "castle_").Length - 2, 2)
+																//if (record.id.Contains("castle_village_")) {
+																//	writer.WriteAttributeString(null, "trade_bound", null, record.id.Replace("castle_village_", "castle_").Remove(record.id.Replace("castle_village_", "castle_").Length - 2, 2));
+																//	writer.WriteAttributeString(null, "bound", null, record.id.Replace("castle_village_", "castle_").Remove(record.id.Replace("castle_village_", "castle_").Length - 2, 2));
+																//} else {
+																//	writer.WriteAttributeString(null, "trade_bound", null, record.id.Replace("village_", "town_").Remove(record.id.Replace("village_", "town_").Length - 2, 2));
+																//	writer.WriteAttributeString(null, "bound", null, record.id.Replace("village_", "town_").Remove(record.id.Replace("village_", "town_").Length - 2, 2));
+																//}
+
+																foreach(SettlementRecord r in records) {
+																	if (r.id.Equals(record.id.Replace("castle_village_", "castle_").Remove(record.id.Replace("castle_village_", "castle_").Length - 2, 2)) || r.id.Equals(record.id.Replace("village_", "town_").Remove(record.id.Replace("village_", "town_").Length - 2, 2))) {
+																		if (r.auto_assigned || r.posX.Equals("") || r.posY.Equals("")) break;
+
+																		double centerX = Double.Parse(r.posX);
+																		double centerY = Double.Parse(r.posY);
+
+																		int offsetX = (r.auto_position_counter%3)-1;
+																		int offsetY = (int) Math.Floor(r.auto_position_counter/3d)-1;
+
+																		positions[0] = (4 * offsetX + centerX).ToString();
+																		positions[1] = (4 * offsetY + centerY).ToString();
+
+																		record.posX = positions[0];
+																		record.posY = positions[1];
+
+																		r.auto_position_counter++;
+																		if (r.auto_position_counter == 4) r.auto_position_counter++;
+																		
+																		goto AfterPositionHandling;
+																	}
+                                                                }
+															}
+
+															record.auto_assigned = true;
+
 															positions[0] = (4*positionCounterX).ToString();
 															positions[1] = (4*positionCounterY).ToString();
 
@@ -169,7 +204,7 @@ namespace CSV_to_XML {
 															positions[1] = record.posY;
 														}
 
-
+                                                    AfterPositionHandling:
 														sceneWriter.WriteAttributeString("position", positions[0] + ", " + positions[1] + ", " + positions[2]);
 														sceneWriter.WriteAttributeString("rotation_euler", "0.000, 0.000, -1.601");
 														//Skip Scale
@@ -185,7 +220,7 @@ namespace CSV_to_XML {
 
 														//Children - Start
 														sceneWriter.WriteStartElement("children");
-														switch(record.getSettlementType()) {
+														switch(record.GetSettlementType()) {
 															case "castle":
 																using (XmlReader sample = XmlReader.Create(AppDomain.CurrentDomain.BaseDirectory + "sampleCastleChildren.xml", settings1)) {
 																	while (sample.Read() && (!sample.NodeType.Equals(XmlNodeType.Element) || (sample.NodeType.Equals(XmlNodeType.Element) && !sample.Name.Equals("child_entities"))));
@@ -219,7 +254,9 @@ namespace CSV_to_XML {
 																	}
 																}
 																break;
-
+															default:
+																Console.WriteLine("You... Shouldn't be here. {0}", record.GetSettlementType());
+																break;
 														}
 														sceneWriter.WriteEndElement();
 														//Children - End
@@ -341,7 +378,17 @@ namespace CSV_to_XML {
 																record = r;
 																break;
 															}
-                                                        }
+														}
+														foreach (SettlementRecord r in records) {
+															if (r.id.Equals(sceneReader.GetAttribute("name"))) {
+																if(record!=null && record != r) {
+																	throw new Exception("There already exists an id "+r.id+".");
+                                                                }
+																record = r;
+																break;
+															}
+														}
+
 														if (record!=null) {
 															addedRecords.Add(record);
 
@@ -362,13 +409,14 @@ namespace CSV_to_XML {
 																if (sceneReader.NodeType.Equals(XmlNodeType.Element)) {
 																	switch (sceneReader.Name) {
 																		case "transform":
+																			/*
 																			int count = 0;
 																			if (sceneReader.GetAttribute("position") != null) count++;
 																			if (sceneReader.GetAttribute("rotation_euler") != null) count++;
 																			if (count!=2) {
 																				for (int i = 0; i < sceneReader.AttributeCount; i++) Console.Write((i + 1) + " - "+record.id+": " + sceneReader.GetAttribute(i) + "\n");
 																			}
-
+																			*/
 																			sceneWriter.WriteStartElement("transform");
 
 																			string[] positions = sceneReader.GetAttribute("position").Split(", ");
@@ -391,8 +439,6 @@ namespace CSV_to_XML {
 														} else { //TODO Handle excess castles and whatnot.
 															sceneReader.Skip();
 														}
-
-														//sceneReader.Skip();
 													} else {
 														sceneWriter.WriteNode(sceneReader, false);
 													}
@@ -418,7 +464,12 @@ namespace CSV_to_XML {
 				}
 			}
 
-			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
+			using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(csvOutput), CultureInfo.InvariantCulture)) {
+				csvWriter.WriteRecords(records);
+				csvWriter.Flush();
+			}
+
+			using (XmlWriter writer = XmlWriter.Create(xmlOutput, settings)) {
 				writer.WriteStartElement("Settlements");
 				foreach (SettlementRecord record in records) {
 					if (record.id.Equals("TODO")) break;
@@ -430,7 +481,7 @@ namespace CSV_to_XML {
 					record.Comp_Town_is_castle = record.Comp_Town_is_castle.ToLower();
 
 					//Defaults
-					if (record.culture.Equals("")) record.culture="youkai";
+					if (record.culture.Equals("")) record.culture = "youkai";
 
 					//Temporary
 
@@ -441,21 +492,21 @@ namespace CSV_to_XML {
 
 					writeLocalizationNode(localizationWriter, "Settlements.Settlement." + record.id + ".name", record.name);
 
-					if (!record.owner.Equals("")) writer.WriteAttributeString(null, "owner", null, record.owner);
+					if (!record.owner.Equals("")) writer.WriteAttributeString(null, "owner", null, "Faction." + record.owner);
 					writer.WriteAttributeString(null, "posX", null, record.posX);
 					writer.WriteAttributeString(null, "posY", null, record.posY);
 					if (!record.prosperity.Equals("")) writer.WriteAttributeString(null, "prosperity", null, record.prosperity);
-					if (!record.culture.Equals("")) writer.WriteAttributeString(null, "culture", null, record.culture);
+					if (!record.culture.Equals("")) writer.WriteAttributeString(null, "culture", null, "Culture."+record.culture);
 					if (!record.gate_posX.Equals("")) writer.WriteAttributeString(null, "gate_posX", null, record.gate_posX);
 					if (!record.gate_posX.Equals("")) writer.WriteAttributeString(null, "gate_posY", null, record.gate_posY);
 					if (!record.gate_rotation.Equals("")) writer.WriteAttributeString(null, "gate_rotation", null, record.gate_rotation);
 					if (!record.type.Equals("")) writer.WriteAttributeString(null, "type", null, record.type);
 					if (!record.text.Equals("")) writer.WriteAttributeString(null, "text", null, "{=Settlements.Settlement." + record.id + ".text}" + record.text);
 
-					if (!record.text.Equals("")) writeLocalizationNode(localizationWriter, "Settlements.Settlement." + record.id+ ".text", record.text);
+					if (!record.text.Equals("")) writeLocalizationNode(localizationWriter, "Settlements.Settlement." + record.id + ".text", record.text);
 
 					if (!record.Comp_Town_is_castle.Equals("") || !record.Comp_Village_village_type.Equals("") || !record.Comp_Hideout_map_icon.Equals("")) {
-						writer.WriteStartElement("Component");
+						writer.WriteStartElement("Components");
 
 						if (!record.Comp_Town_is_castle.Equals("")) { // Town or Castle
 							writer.WriteStartElement("Town");
@@ -495,11 +546,11 @@ namespace CSV_to_XML {
 							if (!record.Comp_Village_gate_rotation.Equals("")) writer.WriteAttributeString(null, "gate_rotation", null, record.Comp_Village_gate_rotation);
 							writer.WriteAttributeString(null, "hearth", null, record.Comp_Village_hearth);
 							if (record.id.Contains("castle_village_")) {
-								writer.WriteAttributeString(null, "trade_bound", null, record.id.Replace("castle_village_", "castle_").Remove(record.id.Replace("castle_village_", "castle_").Length - 2, 2));
-								writer.WriteAttributeString(null, "bound", null, record.id.Replace("castle_village_", "castle_").Remove(record.id.Replace("castle_village_", "castle_").Length - 2, 2));
+								writer.WriteAttributeString(null, "trade_bound", null, "Settlement." + record.id.Replace("castle_village_", "castle_").Remove(record.id.Replace("castle_village_", "castle_").Length - 2, 2));
+								writer.WriteAttributeString(null, "bound", null, "Settlement." + record.id.Replace("castle_village_", "castle_").Remove(record.id.Replace("castle_village_", "castle_").Length - 2, 2));
 							} else {
-								writer.WriteAttributeString(null, "trade_bound", null, record.id.Replace("village_", "town_").Remove(record.id.Replace("village_", "town_").Length - 2, 2));
-								writer.WriteAttributeString(null, "bound", null, record.id.Replace("village_", "town_").Remove(record.id.Replace("village_", "town_").Length - 2, 2));
+								writer.WriteAttributeString(null, "trade_bound", null, "Settlement." + record.id.Replace("village_", "town_").Remove(record.id.Replace("village_", "town_").Length - 2, 2));
+								writer.WriteAttributeString(null, "bound", null, "Settlement." + record.id.Replace("village_", "town_").Remove(record.id.Replace("village_", "town_").Length - 2, 2));
 							}
 							writer.WriteAttributeString(null, "background_crop_position", null, record.Comp_Village_background_crop_position);
 							writer.WriteAttributeString(null, "background_mesh", null, record.Comp_Village_background_mesh);
@@ -535,9 +586,9 @@ namespace CSV_to_XML {
 					}
 					if (!record.Locations_complex_template.Equals("")) {
 						writer.WriteStartElement("Locations");
-						writer.WriteAttributeString(null, "complex_template", null, "LocationComplexTemplate."+record.Locations_complex_template);
+						writer.WriteAttributeString(null, "complex_template", null, "LocationComplexTemplate." + record.Locations_complex_template);
 						if (!record.Locations_Location0_id.Equals("")) {
-							writer.WriteStartElement("Locations");
+							writer.WriteStartElement("Location");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location0_id);
 							if (!record.Locations_Location0_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location0_scene_name);
@@ -549,7 +600,7 @@ namespace CSV_to_XML {
 							writer.WriteEndElement();
 						}
 						if (!record.Locations_Location1_id.Equals("")) {
-							writer.WriteStartElement("Locations");
+							writer.WriteStartElement("Location");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location1_id);
 							if (!record.Locations_Location1_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location1_scene_name);
@@ -561,7 +612,7 @@ namespace CSV_to_XML {
 							writer.WriteEndElement();
 						}
 						if (!record.Locations_Location2_id.Equals("")) {
-							writer.WriteStartElement("Locations");
+							writer.WriteStartElement("Location");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location2_id);
 							if (!record.Locations_Location2_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location2_scene_name);
@@ -573,7 +624,7 @@ namespace CSV_to_XML {
 							writer.WriteEndElement();
 						}
 						if (!record.Locations_Location3_id.Equals("")) {
-							writer.WriteStartElement("Locations");
+							writer.WriteStartElement("Location");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location3_id);
 							if (!record.Locations_Location3_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location3_scene_name);
@@ -585,7 +636,7 @@ namespace CSV_to_XML {
 							writer.WriteEndElement();
 						}
 						if (!record.Locations_Location4_id.Equals("")) {
-							writer.WriteStartElement("Locations");
+							writer.WriteStartElement("Location");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location4_id);
 							if (!record.Locations_Location4_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location4_scene_name);
@@ -597,7 +648,7 @@ namespace CSV_to_XML {
 							writer.WriteEndElement();
 						}
 						if (!record.Locations_Location5_id.Equals("")) {
-							writer.WriteStartElement("Locations");
+							writer.WriteStartElement("Location");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location5_id);
 							if (!record.Locations_Location5_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location5_scene_name);
@@ -609,7 +660,7 @@ namespace CSV_to_XML {
 							writer.WriteEndElement();
 						}
 						if (!record.Locations_Location6_id.Equals("")) {
-							writer.WriteStartElement("Locations");
+							writer.WriteStartElement("Location");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location6_id);
 							if (!record.Locations_Location6_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location6_scene_name);
@@ -621,7 +672,7 @@ namespace CSV_to_XML {
 							writer.WriteEndElement();
 						}
 						if (!record.Locations_Location7_id.Equals("")) {
-							writer.WriteStartElement("Locations");
+							writer.WriteStartElement("Location");
 
 							writer.WriteAttributeString(null, "id", null, record.Locations_Location7_id);
 							if (!record.Locations_Location7_scene_name.Equals("")) writer.WriteAttributeString(null, "scene_name", null, record.Locations_Location7_scene_name);
@@ -682,7 +733,7 @@ namespace CSV_to_XML {
 				writer.Flush();
 			}
 		}
-		public class SettlementRecord {
+        public class SettlementRecord {
 			//Basic
 			public string id { get; set; }
 			public string id_scene { get; set; }
@@ -690,9 +741,6 @@ namespace CSV_to_XML {
 			public string owner { get; set; }
 			public string posX { get; set; }
 			public string posY { get; set; }
-			public string sceneX { get; set; }
-			public string sceneY { get; set; }
-			public string sceneZ { get; set; }
 			public string prosperity { get; set; }
 			public string culture { get; set; }
 			public string gate_posX { get; set; }
@@ -803,14 +851,20 @@ namespace CSV_to_XML {
 				if (obj is SettlementRecord) return this.id.Equals(((SettlementRecord)obj).id);
                 return base.Equals(obj);
             }
-			public string getSettlementType() {
-				Console.WriteLine(Comp_Town_is_castle);
-				if (Comp_Town_is_castle.Equals("true")) return "castle";
-				if (Comp_Town_is_castle.Equals("false")) return "town";
+
+            public override int GetHashCode() {
+                return HashCode.Combine(id, name);
+            }
+
+            public string GetSettlementType() {//Just in case... return other if not village in case of crash.
+				if (Comp_Town_is_castle.ToLowerInvariant().Equals("true")) return "castle";
+				if (Comp_Town_is_castle.ToLowerInvariant().Equals("false")) return "town";
 				if (!Comp_Village_village_type.Equals("")) return "village";
 
 				return "other";
             }
+			public bool auto_assigned = false;
+			public int auto_position_counter = 0;
         }
 
 		public static void heroes_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
