@@ -1274,8 +1274,84 @@ namespace CSV_to_XML {
 						//writeLocalizationNode(module_strings_writer, "." + record.id, "{=Kingdoms.Kingdom." + record.id + ".ruler_title}" + record.ruler_title);
 					}
 
+					writer.WriteStartElement("relationships");
+					if (!record.Relationships_Kingdom0_name.Equals("")) {
+						writer.WriteStartElement("relationship");
+
+						writer.WriteAttributeString("kingdom", "Kingdom." + record.Relationships_Kingdom0_name);
+						writer.WriteAttributeString("value", record.Relationships_Kingdom0_value);
+						if (!record.Relationships_Kingdom0_isAtWar.Equals("")) writer.WriteAttributeString("isAtWar", record.Relationships_Kingdom0_value.ToLower());
+
+						writer.WriteEndElement();
+					}
+					if (!record.Relationships_Kingdom1_name.Equals("")) {
+						writer.WriteStartElement("relationship");
+
+						writer.WriteAttributeString("kingdom", "Kingdom." + record.Relationships_Kingdom1_name);
+						writer.WriteAttributeString("value", record.Relationships_Kingdom1_value);
+						if (!record.Relationships_Kingdom1_isAtWar.Equals("")) writer.WriteAttributeString("isAtWar", record.Relationships_Kingdom1_isAtWar.ToLower());
+
+						writer.WriteEndElement();
+					}
+					if (!record.Relationships_Kingdom2_name.Equals("")) {
+						writer.WriteStartElement("relationship");
+
+						writer.WriteAttributeString("kingdom", "Kingdom." + record.Relationships_Kingdom2_name);
+						writer.WriteAttributeString("value", record.Relationships_Kingdom2_value);
+						if (!record.Relationships_Kingdom2_isAtWar.Equals("")) writer.WriteAttributeString("isAtWar", record.Relationships_Kingdom2_isAtWar.ToLower());
+
+						writer.WriteEndElement();
+					}
+					if (!record.Relationships_Kingdom3_name.Equals("")) {
+						writer.WriteStartElement("relationship");
+
+						writer.WriteAttributeString("kingdom", "Kingdom." + record.Relationships_Kingdom3_name);
+						writer.WriteAttributeString("value", record.Relationships_Kingdom3_value);
+						if (!record.Relationships_Kingdom3_isAtWar.Equals("")) writer.WriteAttributeString("isAtWar", record.Relationships_Kingdom3_isAtWar.ToLower());
+
+						writer.WriteEndElement();
+					}
+					//~~~
+					if (!record.Relationships_Clan0_name.Equals("")) {
+						writer.WriteStartElement("relationship");
+
+						writer.WriteAttributeString("clan", "Faction." + record.Relationships_Clan0_name);
+						writer.WriteAttributeString("value", record.Relationships_Clan0_value);
+						if (!record.Relationships_Clan0_isAtWar.Equals("")) writer.WriteAttributeString("isAtWar", record.Relationships_Clan0_value.ToLower());
+
+						writer.WriteEndElement();
+					}
+					if (!record.Relationships_Clan1_name.Equals("")) {
+						writer.WriteStartElement("relationship");
+
+						writer.WriteAttributeString("clan", "Faction." + record.Relationships_Clan1_name);
+						writer.WriteAttributeString("value", record.Relationships_Clan1_value);
+						if (!record.Relationships_Clan1_isAtWar.Equals("")) writer.WriteAttributeString("isAtWar", record.Relationships_Clan1_isAtWar.ToLower());
+
+						writer.WriteEndElement();
+					}
+					if (!record.Relationships_Clan2_name.Equals("")) {
+						writer.WriteStartElement("relationship");
+
+						writer.WriteAttributeString("clan", "Faction." + record.Relationships_Clan2_name);
+						writer.WriteAttributeString("value", record.Relationships_Clan2_value);
+						if (!record.Relationships_Clan2_isAtWar.Equals("")) writer.WriteAttributeString("isAtWar", record.Relationships_Clan2_isAtWar.ToLower());
+
+						writer.WriteEndElement();
+					}
+					if (!record.Relationships_Clan3_name.Equals("")) {
+						writer.WriteStartElement("relationship");
+
+						writer.WriteAttributeString("clan", "Faction." + record.Relationships_Clan3_name);
+						writer.WriteAttributeString("value", record.Relationships_Clan3_value);
+						if (!record.Relationships_Clan3_isAtWar.Equals("")) writer.WriteAttributeString("isAtWar", record.Relationships_Clan3_isAtWar.ToLower());
+
+						writer.WriteEndElement();
+					}
+					writer.WriteEndElement();
+
+					writer.WriteStartElement("policies");
 					if (!record.Policy0.Equals("") || !record.Policy1.Equals("") || !record.Policy2.Equals("") || !record.Policy3.Equals("")) {
-						writer.WriteStartElement("policies");
 						if (!record.Policy0.Equals("")) {
 							writer.WriteStartElement("policy");
 							writer.WriteAttributeString("id", record.Policy0);
@@ -1296,8 +1372,8 @@ namespace CSV_to_XML {
 							writer.WriteAttributeString("id", record.Policy3);
 							writer.WriteEndElement();
 						}
-						writer.WriteEndElement();
 					}
+					writer.WriteEndElement();
 
 					writer.WriteEndElement();
 				}
