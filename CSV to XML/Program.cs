@@ -23,6 +23,34 @@ namespace CSV_to_XML {
 			XmlWriterSettings localizationSettings = new XmlWriterSettings();
 			localizationSettings.Indent = true;
 
+			if (File.Exists(root + "Data" + DSC + "settlements.xml")) settlement_XMLtoCSV(root + "Data" + DSC + "settlements.xml", root + "Output" + DSC + "settlements.csv");
+
+			if (Directory.Exists(root + "Data" + DSC + "NPCCharacters")) {
+				foreach(string file in Directory.GetFiles(root + "Data" + DSC + "NPCCharacters")) {
+					if (!file.Split(".").Last().Equals("xml")) continue;
+					Console.WriteLine(file.Split(DSC).Last());
+					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "NPCCharacters");
+                    NPCCharacters_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "NPCCharacters" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+				}
+			}
+
+			if (Directory.Exists(root + "Data" + DSC + "partyTemplates")) {
+				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "partyTemplates")) {
+					if (!file.Split(".").Last().Equals("xml")) continue;
+					Console.WriteLine(file.Split(DSC).Last());
+					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "partyTemplates");
+					PartyTemplates_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+				}
+			}
+			if (Directory.Exists(root + "Data" + DSC + "SPCultures")) {
+				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "SPCultures")) {
+					if (!file.Split(".").Last().Equals("xml")) continue;
+					Console.WriteLine(file.Split(DSC).Last());
+					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "SPCultures");
+					Cultures_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "SPCultures" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+				}
+			}
+
 			using (XmlWriter module_stringsWriter = XmlWriter.Create(root + "Output" + DSC + "module_strings.xml", localizationSettings)) {
 				module_stringsWriter.WriteStartElement("base");
 				module_stringsWriter.WriteAttributeString("xmlns", "xsi", null, "http://www.w3.org/2001/XMLSchema-instance");
@@ -62,6 +90,32 @@ namespace CSV_to_XML {
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
+
+				if (Directory.Exists(root + "Data" + DSC + "NPCCharacters")) {
+					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "NPCCharacters")) {
+						if (!file.Split(".").Last().Equals("csv")) continue;
+						Console.WriteLine(file.Split(DSC).Last().Split(".").First());
+
+						Directory.CreateDirectory(root + "Output" + DSC + "NPCCharacters" + DSC + "Languages");
+						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "NPCCharacters" + DSC + "Languages" + DSC + "std_" + file.Split(DSC).Last().Split(".").First() + "_xml.xml", localizationSettings)) {
+							initializeLocalizationWriter(localizationWriter);
+							NPCCharacters_CSVtoXML(file, root + "Output" + DSC + "NPCCharacters" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml", localizationWriter, module_stringsWriter);
+							localizationWriter.WriteEndElement();
+							localizationWriter.WriteEndElement();
+						}
+					}
+				}
+
+				if (Directory.Exists(root + "Data" + DSC + "partyTemplates")) {
+					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "partyTemplates")) {
+						if (!file.Split(".").Last().Equals("csv")) continue;
+						Console.WriteLine(file.Split(DSC).Last().Split(".").First());
+
+						Directory.CreateDirectory(root + "Output" + DSC + "partyTemplates");
+						PartyTemplates_CSVtoXML(file, root + "Output" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml");
+					}
+				}
+
 				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_spkingdoms_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
 					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Kingdoms.csv")) Kingdoms_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Kingdoms.csv", root + "Output" + DSC + "spkingdoms.xml", localizationWriter, module_stringsWriter);
@@ -84,13 +138,355 @@ namespace CSV_to_XML {
 				module_stringsWriter.WriteEndElement();
 			}
 		}
+		public static void PartyTemplates_CSVtoXML(string fileInput, string fileOutput) {
+			StreamReader reader = new StreamReader(fileInput);
+			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+
+			PartyTemplateRecord record = new PartyTemplateRecord();
+			IEnumerable<PartyTemplateRecord> records = csv.EnumerateRecords(record);
+
+			XmlWriterSettings settings = new XmlWriterSettings();
+			settings.Indent = true;
+
+			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
+				writer.WriteStartElement("partyTemplates");
+				foreach (PartyTemplateRecord partyTemplateRecord in records) {
+					if (record.id.Equals("TODO")) break;
+					if (record.id.Equals("")) continue;
+
+					writer.WriteStartElement("MBPartyTemplate");
+
+					//Changes
+
+					//Temporary
+
+					//Write
+					writer.WriteAttributeString("id", partyTemplateRecord.id);
+					if (!partyTemplateRecord.stack0.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack0.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack1.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack1.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack2.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack2.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack3.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack3.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack4.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack4.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack5.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack5.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack6.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack6.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack7.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack7.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack8.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack8.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+					if (!partyTemplateRecord.stack9.Equals("")) {
+						string[] templateStack = partyTemplateRecord.stack9.Split(";");
+
+						if (templateStack.Length > 1) {
+							writer.WriteStartElement("stacks");
+							for (int i = 0; i < templateStack.Length; i++) {
+								switch (i % 3) {
+									case 0:
+										writer.WriteStartElement("PartyTemplateStack");
+										writer.WriteAttributeString("min_value", templateStack[i]);
+										break;
+									case 1:
+										writer.WriteAttributeString("max_value", templateStack[i]);
+										break;
+									case 2:
+										writer.WriteAttributeString("troop", "NPCCharacter." + templateStack[i]);
+										writer.WriteEndElement();
+										break;
+								}
+							}
+							writer.WriteEndElement();
+						}
+					}
+
+					writer.WriteEndElement();
+				}
+				writer.WriteEndElement();
+			}
+		}
+		public static void PartyTemplates_XMLtoCSV(string xmlInput, string csvOutput) {
+			List<PartyTemplateRecord> records = new List<PartyTemplateRecord>();
+
+			using (XmlReader xmlReader = XmlReader.Create(xmlInput)) {
+				while (xmlReader.Read()) {
+					if (xmlReader.NodeType != XmlNodeType.Element) continue;
+					//Console.WriteLine(xmlReader.Name);
+
+					if (xmlReader.Name.Equals("MBPartyTemplate")) {
+					NewPartyRecord:
+						PartyTemplateRecord record = new PartyTemplateRecord();
+
+						record.id = xmlReader.GetAttribute("id");
+
+						while (xmlReader.Read() && !(xmlReader.NodeType.Equals(XmlNodeType.Element) || xmlReader.NodeType.Equals(XmlNodeType.EndElement)));
+
+						if(xmlReader.Name.Equals("MBPartyTemplate")) {
+							records.Add(record);
+
+							if (!xmlReader.NodeType.Equals(XmlNodeType.EndElement)) goto NewPartyRecord;
+							continue;
+                        }
+
+						if (!xmlReader.Name.Equals("stacks")) Console.WriteLine("Error: Node name {0} of type {2} belonging to {1} was unexpected!", xmlReader.Name, xmlReader.GetAttribute("id"), xmlReader.NodeType.ToString());
+
+						int counter = 0;
+						while (xmlReader.Read() && !(xmlReader.NodeType.Equals(XmlNodeType.EndElement) && xmlReader.Name.Equals("stacks"))) {
+							if (!xmlReader.NodeType.Equals(XmlNodeType.Element)) continue;
+							if (xmlReader.Name.Equals("stacks")) continue;
+							switch (counter) {
+								case 0:
+									record.stack0 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 1:
+									record.stack1 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 2:
+									record.stack2 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 3:
+									record.stack3 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 4:
+									record.stack4 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 5:
+									record.stack5 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 6:
+									record.stack6 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 7:
+									record.stack7 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 8:
+									record.stack8 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+								case 9:
+									record.stack9 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									break;
+							}
+							counter++;
+						}
+						records.Add(record);
+					}
+				}
+				using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(csvOutput), CultureInfo.InvariantCulture)) {
+					csvWriter.WriteRecords(records);
+					csvWriter.Flush();
+				}
+			}
+		}
+		public class PartyTemplateRecord {
+			public string id { get; set; }
+
+			public string stack0 { get; set; }
+			public string stack1 { get; set; }
+			public string stack2 { get; set; }
+			public string stack3 { get; set; }
+			public string stack4 { get; set; }
+			public string stack5 { get; set; }
+			public string stack6 { get; set; }
+			public string stack7 { get; set; }
+			public string stack8 { get; set; }
+			public string stack9 { get; set; }
+		}
+
 		public static void settlement_CSVtoXML(string csvInput, string csvOutput, string xmlOutput, string sceneFileInput, string sceneFileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
-			StreamReader csvReader = new StreamReader(csvInput);
-			CsvReader csv = new CsvReader(csvReader, CultureInfo.InvariantCulture);
-
-			IEnumerable<SettlementRecord> enumerableRecords = csv.GetRecords<SettlementRecord>();
-
-			List<SettlementRecord> records = enumerableRecords.ToList();
+			List<SettlementRecord> records = new CsvReader(new StreamReader(csvInput), CultureInfo.InvariantCulture).GetRecords<SettlementRecord>().ToList();
 
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Indent = true;
@@ -109,7 +505,7 @@ namespace CSV_to_XML {
 
 								while (sceneReader.Read()) {
 									if (sceneReader.NodeType.Equals(XmlNodeType.Element)) {
-										Console.WriteLine("Currently at node {0}", sceneReader.Name);
+										//Console.WriteLine("Currently at node {0}", sceneReader.Name);
 										if (sceneReader.Name.Equals("entities")) {
 											sceneWriter.WriteStartElement("entities");
 											sceneWriter.WriteAttributes(sceneReader, false);
@@ -733,7 +1129,203 @@ namespace CSV_to_XML {
 				writer.Flush();
 			}
 		}
-        public class SettlementRecord {
+
+		public static void settlement_XMLtoCSV(string xmlInput, string csvOutput) {
+			List<SettlementRecord> records = new List<SettlementRecord>();
+
+			using (XmlReader xmlReader = XmlReader.Create(xmlInput)) {
+				while(xmlReader.Read()) {
+					if (xmlReader.NodeType != XmlNodeType.Element) continue;
+
+					if(xmlReader.Name.Equals("Settlement")) {
+						SettlementRecord record = new SettlementRecord();
+
+						record.id = xmlReader.GetAttribute("id");
+						record.name = xmlReader.GetAttribute("name").Split("}").Last();
+						if (xmlReader.GetAttribute("owner") != null) record.owner = xmlReader.GetAttribute("owner").Split(".").Last();
+
+						record.posX = xmlReader.GetAttribute("posX");
+						record.posY = xmlReader.GetAttribute("posY");
+
+						if (xmlReader.GetAttribute("prosperity") != null) record.prosperity = xmlReader.GetAttribute("prosperity");
+						if (xmlReader.GetAttribute("culture") != null) record.culture = xmlReader.GetAttribute("culture").Split(".").Last();
+
+						if (xmlReader.GetAttribute("gate_posX") != null) record.gate_posX = xmlReader.GetAttribute("gate_posX");
+						if (xmlReader.GetAttribute("gate_posY") != null) record.gate_posY = xmlReader.GetAttribute("gate_posY");
+
+						if (xmlReader.GetAttribute("gate_rotation") != null) record.gate_rotation = xmlReader.GetAttribute("gate_rotation");
+
+						if (xmlReader.GetAttribute("type") != null) record.type = xmlReader.GetAttribute("type");
+						if (xmlReader.GetAttribute("text") != null) record.text = xmlReader.GetAttribute("text").Split("}").Last();
+
+						SettlementNodeSwitch:
+						while (xmlReader.Read()) {
+							if (!xmlReader.NodeType.Equals(XmlNodeType.Element)) continue;
+							switch(xmlReader.Name) {
+								case "Components":
+									while (xmlReader.Read()) {
+										if (!xmlReader.NodeType.Equals(XmlNodeType.Element)) continue;
+										switch(xmlReader.Name) {
+											case "Town":
+												if (xmlReader.GetAttribute("is_castle") != null) record.Comp_Town_is_castle = xmlReader.GetAttribute("is_castle");
+												if (xmlReader.GetAttribute("level") != null) record.Comp_Town_level = xmlReader.GetAttribute("level");
+												if (xmlReader.GetAttribute("background_crop_position") != null) record.Comp_Town_background_crop_position = xmlReader.GetAttribute("background_crop_position");
+												if (xmlReader.GetAttribute("background_mesh") != null) record.Comp_Town_background_mesh = xmlReader.GetAttribute("background_mesh");
+												if (xmlReader.GetAttribute("wait_mesh") != null) record.Comp_Town_wait_mesh = xmlReader.GetAttribute("wait_mesh");
+												if (xmlReader.GetAttribute("gate_rotation") != null) record.Comp_Town_gate_rotation = xmlReader.GetAttribute("gate_rotation");
+
+												break;
+											case "Village":
+												if (xmlReader.GetAttribute("background_crop_position") != null) record.Comp_Village_background_crop_position = xmlReader.GetAttribute("background_crop_position");
+												if (xmlReader.GetAttribute("background_mesh") != null) record.Comp_Village_background_mesh = xmlReader.GetAttribute("background_mesh");
+												if (xmlReader.GetAttribute("bound") != null) record.Comp_Village_bound = xmlReader.GetAttribute("bound").Split(".").Last();
+												if (xmlReader.GetAttribute("castle_background_mesh") != null) record.Comp_Village_castle_background_mesh = xmlReader.GetAttribute("castle_background_mesh");
+												if (xmlReader.GetAttribute("gate_rotation") != null) record.Comp_Village_gate_rotation = xmlReader.GetAttribute("gate_rotation");
+												if (xmlReader.GetAttribute("hearth") != null) record.Comp_Village_hearth = xmlReader.GetAttribute("hearth");
+												if (xmlReader.GetAttribute("trade_bound") != null) record.Comp_Village_trade_bound = xmlReader.GetAttribute("trade_bound").Split(".").Last();
+												if (xmlReader.GetAttribute("village_type") != null) record.Comp_Village_village_type = xmlReader.GetAttribute("village_type").Split(".").Last();
+												if (xmlReader.GetAttribute("wait_mesh") != null) record.Comp_Village_wait_mesh = xmlReader.GetAttribute("wait_mesh");
+
+												break;
+											case "Hideout":
+												if (xmlReader.GetAttribute("background_crop_position") != null) record.Comp_Hideout_background_crop_position = xmlReader.GetAttribute("background_crop_position");
+												if (xmlReader.GetAttribute("background_mesh") != null) record.Comp_Hideout_background_mesh = xmlReader.GetAttribute("background_mesh");
+												if (xmlReader.GetAttribute("gate_rotation") != null) record.Comp_Hideout_gate_rotation = xmlReader.GetAttribute("gate_rotation");
+												if (xmlReader.GetAttribute("map_icon") != null) record.Comp_Hideout_map_icon = xmlReader.GetAttribute("map_icon");
+												if (xmlReader.GetAttribute("scene_name") != null) record.Comp_Hideout_scene_name = xmlReader.GetAttribute("scene_name");
+												if (xmlReader.GetAttribute("wait_mesh") != null) record.Comp_Hideout_wait_mesh = xmlReader.GetAttribute("wait_mesh");
+
+												break;
+											default:
+												goto SettlementNodeSwitch;
+                                        }
+									}
+									break;
+								case "Locations":
+									if (xmlReader.GetAttribute("complex_template") != null) record.Locations_complex_template = xmlReader.GetAttribute("complex_template").Split(".").Last();
+
+									int counterLocations = 0;
+									while (xmlReader.Read()) {
+										if (!xmlReader.NodeType.Equals(XmlNodeType.Element)) continue;
+										switch (xmlReader.Name) {
+											case "Location":
+												switch (counterLocations) {
+													case 0:
+														if (xmlReader.GetAttribute("id") != null) record.Locations_Location0_id = xmlReader.GetAttribute("id");
+														if (xmlReader.GetAttribute("max_prosperity") != null) record.Locations_Location0_max_prosperity = xmlReader.GetAttribute("max_prosperity");
+														if (xmlReader.GetAttribute("scene_name") != null) record.Locations_Location0_scene_name = xmlReader.GetAttribute("scene_name");
+														if (xmlReader.GetAttribute("scene_name_1") != null) record.Locations_Location0_scene_name_1 = xmlReader.GetAttribute("scene_name_1");
+														if (xmlReader.GetAttribute("scene_name_2") != null) record.Locations_Location0_scene_name_2 = xmlReader.GetAttribute("scene_name_2");
+														if (xmlReader.GetAttribute("scene_name_3") != null) record.Locations_Location0_scene_name_3 = xmlReader.GetAttribute("scene_name_3");
+														break;
+													case 1:
+														if (xmlReader.GetAttribute("id") != null) record.Locations_Location1_id = xmlReader.GetAttribute("id");
+														if (xmlReader.GetAttribute("max_prosperity") != null) record.Locations_Location1_max_prosperity = xmlReader.GetAttribute("max_prosperity");
+														if (xmlReader.GetAttribute("scene_name") != null) record.Locations_Location1_scene_name = xmlReader.GetAttribute("scene_name");
+														if (xmlReader.GetAttribute("scene_name_1") != null) record.Locations_Location1_scene_name_1 = xmlReader.GetAttribute("scene_name_1");
+														if (xmlReader.GetAttribute("scene_name_2") != null) record.Locations_Location1_scene_name_2 = xmlReader.GetAttribute("scene_name_2");
+														if (xmlReader.GetAttribute("scene_name_3") != null) record.Locations_Location1_scene_name_3 = xmlReader.GetAttribute("scene_name_3");
+														break;
+													case 2:
+														if (xmlReader.GetAttribute("id") != null) record.Locations_Location2_id = xmlReader.GetAttribute("id");
+														if (xmlReader.GetAttribute("max_prosperity") != null) record.Locations_Location2_max_prosperity = xmlReader.GetAttribute("max_prosperity");
+														if (xmlReader.GetAttribute("scene_name") != null) record.Locations_Location2_scene_name = xmlReader.GetAttribute("scene_name");
+														if (xmlReader.GetAttribute("scene_name_1") != null) record.Locations_Location2_scene_name_1 = xmlReader.GetAttribute("scene_name_1");
+														if (xmlReader.GetAttribute("scene_name_2") != null) record.Locations_Location2_scene_name_2 = xmlReader.GetAttribute("scene_name_2");
+														if (xmlReader.GetAttribute("scene_name_3") != null) record.Locations_Location2_scene_name_3 = xmlReader.GetAttribute("scene_name_3");
+														break;
+													case 3:
+														if (xmlReader.GetAttribute("id") != null) record.Locations_Location3_id = xmlReader.GetAttribute("id");
+														if (xmlReader.GetAttribute("max_prosperity") != null) record.Locations_Location3_max_prosperity = xmlReader.GetAttribute("max_prosperity");
+														if (xmlReader.GetAttribute("scene_name") != null) record.Locations_Location3_scene_name = xmlReader.GetAttribute("scene_name");
+														if (xmlReader.GetAttribute("scene_name_1") != null) record.Locations_Location3_scene_name_1 = xmlReader.GetAttribute("scene_name_1");
+														if (xmlReader.GetAttribute("scene_name_2") != null) record.Locations_Location3_scene_name_2 = xmlReader.GetAttribute("scene_name_2");
+														if (xmlReader.GetAttribute("scene_name_3") != null) record.Locations_Location3_scene_name_3 = xmlReader.GetAttribute("scene_name_3");
+														break;
+													case 4:
+														if (xmlReader.GetAttribute("id") != null) record.Locations_Location4_id = xmlReader.GetAttribute("id");
+														if (xmlReader.GetAttribute("max_prosperity") != null) record.Locations_Location4_max_prosperity = xmlReader.GetAttribute("max_prosperity");
+														if (xmlReader.GetAttribute("scene_name") != null) record.Locations_Location4_scene_name = xmlReader.GetAttribute("scene_name");
+														if (xmlReader.GetAttribute("scene_name_1") != null) record.Locations_Location4_scene_name_1 = xmlReader.GetAttribute("scene_name_1");
+														if (xmlReader.GetAttribute("scene_name_2") != null) record.Locations_Location4_scene_name_2 = xmlReader.GetAttribute("scene_name_2");
+														if (xmlReader.GetAttribute("scene_name_3") != null) record.Locations_Location4_scene_name_3 = xmlReader.GetAttribute("scene_name_3");
+														break;
+													case 5:
+														if (xmlReader.GetAttribute("id") != null) record.Locations_Location5_id = xmlReader.GetAttribute("id");
+														if (xmlReader.GetAttribute("max_prosperity") != null) record.Locations_Location5_max_prosperity = xmlReader.GetAttribute("max_prosperity");
+														if (xmlReader.GetAttribute("scene_name") != null) record.Locations_Location5_scene_name = xmlReader.GetAttribute("scene_name");
+														if (xmlReader.GetAttribute("scene_name_1") != null) record.Locations_Location5_scene_name_1 = xmlReader.GetAttribute("scene_name_1");
+														if (xmlReader.GetAttribute("scene_name_2") != null) record.Locations_Location5_scene_name_2 = xmlReader.GetAttribute("scene_name_2");
+														if (xmlReader.GetAttribute("scene_name_3") != null) record.Locations_Location5_scene_name_3 = xmlReader.GetAttribute("scene_name_3");
+														break;
+													case 6:
+														if (xmlReader.GetAttribute("id") != null) record.Locations_Location6_id = xmlReader.GetAttribute("id");
+														if (xmlReader.GetAttribute("max_prosperity") != null) record.Locations_Location6_max_prosperity = xmlReader.GetAttribute("max_prosperity");
+														if (xmlReader.GetAttribute("scene_name") != null) record.Locations_Location6_scene_name = xmlReader.GetAttribute("scene_name");
+														if (xmlReader.GetAttribute("scene_name_1") != null) record.Locations_Location6_scene_name_1 = xmlReader.GetAttribute("scene_name_1");
+														if (xmlReader.GetAttribute("scene_name_2") != null) record.Locations_Location6_scene_name_2 = xmlReader.GetAttribute("scene_name_2");
+														if (xmlReader.GetAttribute("scene_name_3") != null) record.Locations_Location6_scene_name_3 = xmlReader.GetAttribute("scene_name_3");
+														break;
+													case 7:
+														if (xmlReader.GetAttribute("id") != null) record.Locations_Location7_id = xmlReader.GetAttribute("id");
+														if (xmlReader.GetAttribute("max_prosperity") != null) record.Locations_Location7_max_prosperity = xmlReader.GetAttribute("max_prosperity");
+														if (xmlReader.GetAttribute("scene_name") != null) record.Locations_Location7_scene_name = xmlReader.GetAttribute("scene_name");
+														if (xmlReader.GetAttribute("scene_name_1") != null) record.Locations_Location7_scene_name_1 = xmlReader.GetAttribute("scene_name_1");
+														if (xmlReader.GetAttribute("scene_name_2") != null) record.Locations_Location7_scene_name_2 = xmlReader.GetAttribute("scene_name_2");
+														if (xmlReader.GetAttribute("scene_name_3") != null) record.Locations_Location7_scene_name_3 = xmlReader.GetAttribute("scene_name_3");
+														break;
+												}
+												counterLocations++;
+												break;
+											default:
+												goto SettlementNodeSwitch;
+										}
+									}
+									break;
+								case "CommonAreas":
+									int counterCommonAreas = 0;
+									while (xmlReader.Read()) {
+										if (!xmlReader.NodeType.Equals(XmlNodeType.Element)) continue;
+										switch (xmlReader.Name) {
+											case "Area":
+												switch(counterCommonAreas) {
+													case 0:
+														if (xmlReader.GetAttribute("name") != null) record.CommonAreas_Area0_name = xmlReader.GetAttribute("name").Split("}").Last();
+														if (xmlReader.GetAttribute("type") != null) record.CommonAreas_Area0_type = xmlReader.GetAttribute("type");
+														break;
+													case 1:
+														if (xmlReader.GetAttribute("name") != null) record.CommonAreas_Area1_name = xmlReader.GetAttribute("name").Split("}").Last();
+														if (xmlReader.GetAttribute("type") != null) record.CommonAreas_Area1_type = xmlReader.GetAttribute("type");
+														break;
+													case 2:
+														if (xmlReader.GetAttribute("name") != null) record.CommonAreas_Area2_name = xmlReader.GetAttribute("name").Split("}").Last();
+														if (xmlReader.GetAttribute("type") != null) record.CommonAreas_Area2_type = xmlReader.GetAttribute("type");
+														break;
+                                                }
+												counterCommonAreas++;
+												break;
+											default:
+												goto SettlementNodeSwitch;
+										}
+									}
+									break;
+								default:
+									goto AfterSettlementNodeSwitch;
+							}
+						}
+					AfterSettlementNodeSwitch:
+						records.Add(record);
+                    }
+                }
+            }
+
+			using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(csvOutput), CultureInfo.InvariantCulture)) {
+				csvWriter.WriteRecords(records);
+				csvWriter.Flush();
+			}
+		}
+
+		public class SettlementRecord {
 			//Basic
 			public string id { get; set; }
 			public string id_scene { get; set; }
@@ -770,7 +1362,7 @@ namespace CSV_to_XML {
 			public string Comp_Village_castle_background_mesh { get; set; }
 			public string Comp_Village_wait_mesh { get; set; }
 			//Hideout
-			public string Comp_Hideout_id { get; set; }
+			//public string Comp_Hideout_id { get; set; }
 			public string Comp_Hideout_map_icon { get; set; }
 			public string Comp_Hideout_scene_name { get; set; }
 			public string Comp_Hideout_background_crop_position { get; set; }
@@ -919,7 +1511,6 @@ namespace CSV_to_XML {
 			public string spouse { get; set; }
 			public string alive { get; set; }
 			public string text { get; set; }
-
 		}
 
 		public static void NPCCharacters_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
@@ -951,9 +1542,9 @@ namespace CSV_to_XML {
 
 					//Defaults
 					if (record.default_group.Equals("")) record.default_group = "Infantry";
-					if (record.civilianTemplate.Equals("")) record.civilianTemplate = "npc_armed_wanderer_equipment_template_empire";
-					if (record.battleTemplate.Equals("")) record.battleTemplate = "emp_bat_template_lady";
-					if (record.level.Equals("")) record.level = "15";
+					//if (record.civilianTemplate.Equals("")) record.civilianTemplate = "npc_armed_wanderer_equipment_template_empire";
+					//if (record.battleTemplate.Equals("")) record.battleTemplate = "emp_bat_template_lady";
+					//if (record.level.Equals("")) record.level = "15";
 
 					//Temporary
 					if (record.age.Equals("")) record.age = "23";
@@ -961,7 +1552,7 @@ namespace CSV_to_XML {
 					//Write
 					writer.WriteAttributeString(null, "id", null, record.id);
 					writer.WriteAttributeString(null, "default_group", null, record.default_group);
-					writer.WriteAttributeString(null, "level", null, record.level);
+					if (!record.level.Equals("")) writer.WriteAttributeString(null, "level", null, record.level);
 					if (!record.age.Equals("")) writer.WriteAttributeString(null, "age", null, record.age);////
 					if (!record.voice.Equals("")) writer.WriteAttributeString(null, "voice", null, record.voice);//
 					writer.WriteAttributeString(null, "is_hero", null, record.is_hero);
@@ -1110,9 +1701,381 @@ namespace CSV_to_XML {
 						writer.WriteEndElement();
 					}
 
-					//Equipment Set - Is this actually needed?
-					writer.WriteStartElement("equipmentSet");
-					writer.WriteEndElement();
+					if(!record.skills_skill0.Equals("")) {
+						writer.WriteStartElement("skills");
+
+						if (!record.skills_skill0.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill0.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill0.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill1.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill1.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill1.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill2.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill2.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill2.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill3.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill3.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill3.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill4.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill4.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill4.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill5.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill5.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill5.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill6.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill6.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill6.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill7.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill7.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill7.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill8.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill8.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill8.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.skills_skill9.Equals("")) {
+							writer.WriteStartElement("skill");
+							writer.WriteAttributeString("id", record.skills_skill9.Split(";")[0]);
+							writer.WriteAttributeString("value", record.skills_skill9.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+
+						writer.WriteEndElement();
+                    }
+
+					if (!record.Traits_trait0.Equals("")) {
+						writer.WriteStartElement("Traits");
+
+						if (!record.Traits_trait0.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait0.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait0.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait1.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait1.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait1.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait2.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait2.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait2.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait3.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait3.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait3.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait4.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait4.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait4.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait5.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait5.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait5.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait6.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait6.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait6.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait7.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait7.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait7.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait8.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait8.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait8.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+						if (!record.Traits_trait9.Equals("")) {
+							writer.WriteStartElement("Trait");
+							writer.WriteAttributeString("id", record.Traits_trait9.Split(";")[0]);
+							writer.WriteAttributeString("value", record.Traits_trait9.Split(";")[1]);
+							writer.WriteEndElement();
+						}
+
+						writer.WriteEndElement();
+					}
+
+					//Equipment Set
+					if(!record.equipmentSet0.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet0.Split(";");
+
+						if("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch(i%3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot",eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+                            }
+                        }
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet1.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet1.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet2.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet2.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet3.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet3.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet4.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet4.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet5.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet5.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet6.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet6.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet7.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet7.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet8.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet8.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
+					if (!record.equipmentSet9.Equals("")) {
+						writer.WriteStartElement("equipmentSet");
+						string[] eqData = record.equipmentSet9.Split(";");
+
+						if ("true".Equals(eqData[0])) writer.WriteAttributeString("civilian", "true");
+
+						for (int i = 1; i < eqData.Length; i++) {
+							switch (i % 3) {
+								case 1:
+									writer.WriteStartElement("equipment");
+									writer.WriteAttributeString("slot", eqData[i]);
+									break;
+								case 2:
+									writer.WriteAttributeString("id", eqData[i]);
+									break;
+								case 0:
+									if (!eqData[i].Equals("-1")) writer.WriteAttributeString("amount", eqData[i]);
+									writer.WriteEndElement();
+									break;
+							}
+						}
+
+						writer.WriteEndElement();
+					}
 
 					if (!record.upgrade_targets_upgrade_target0_id.Equals("") || !record.upgrade_targets_upgrade_target1_id.Equals("") ||
 						!record.upgrade_targets_upgrade_target2_id.Equals("") || !record.upgrade_targets_upgrade_target3_id.Equals("")) {
@@ -1147,8 +2110,374 @@ namespace CSV_to_XML {
 				writer.WriteEndElement();
 			}
 		} //Unfinished
+
+        public static void NPCCharacters_XMLtoCSV(string xmlInput, string csvOutput) {
+			List<NPCCharacterRecord> records = new List<NPCCharacterRecord>();
+
+			using (XmlReader xmlReader = XmlReader.Create(xmlInput)) {
+				while (xmlReader.Read()) {
+				StartLoop:
+					if (xmlReader.NodeType != XmlNodeType.Element) continue;
+					//Console.WriteLine(xmlReader.Name);
+
+					if (xmlReader.Name.Equals("NPCCharacter")) {
+						NPCCharacterRecord record = new NPCCharacterRecord();
+
+						record.id = xmlReader.GetAttribute("id");
+						record.default_group = xmlReader.GetAttribute("default_group");
+						record.voice = xmlReader.GetAttribute("voice");
+
+						record.is_hero = xmlReader.GetAttribute("is_hero");
+						record.is_female = xmlReader.GetAttribute("is_female");
+						record.is_basic_troop = xmlReader.GetAttribute("is_basic_troop");
+						record.is_template = xmlReader.GetAttribute("is_template");
+						record.is_child_template = xmlReader.GetAttribute("is_child_template");
+
+						record.culture = Trim(xmlReader.GetAttribute("culture"));
+						record.name = Trim(xmlReader.GetAttribute("name"));
+						record.banner_symbol_mesh_name = Trim(xmlReader.GetAttribute("banner_symbol_mesh_name"));
+						record.banner_symbol_color = Trim(xmlReader.GetAttribute("banner_symbol_color"));
+						record.banner_key = Trim(xmlReader.GetAttribute("banner_key"));
+						record.occupation = Trim(xmlReader.GetAttribute("occupation"));
+						record.civilianTemplate = Trim(xmlReader.GetAttribute("civilianTemplate"));
+						record.battleTemplate = Trim(xmlReader.GetAttribute("battleTemplate"));
+
+						record.is_companion = Trim(xmlReader.GetAttribute("is_companion"));
+
+						record.offset = Trim(xmlReader.GetAttribute("offset"));
+						record.level = Trim(xmlReader.GetAttribute("level"));
+						record.age = Trim(xmlReader.GetAttribute("age"));
+
+						record.is_mercenary = Trim(xmlReader.GetAttribute("is_mercenary"));
+
+						record.formation_position_preference = Trim(xmlReader.GetAttribute("formation_position_preference"));
+						record.default_equipment_set = Trim(xmlReader.GetAttribute("default_equipment_set"));
+						record.skill_template = Trim(xmlReader.GetAttribute("skill_template"));
+						record.upgrade_requires = Trim(xmlReader.GetAttribute("upgrade_requires"));
+
+						int equipmentSet_counter = 0;
+
+						while (xmlReader.Read()) {
+						NextIteration:;
+							if (xmlReader.NodeType != XmlNodeType.Element) continue;
+							//Console.WriteLine("\t"+xmlReader.Name);
+
+							switch (xmlReader.Name) {
+								case "face":
+									while (xmlReader.Read()) {
+										if (xmlReader.NodeType != XmlNodeType.Element) continue;
+										//Console.WriteLine("\t\t" + xmlReader.Name);
+
+										switch (xmlReader.Name) {
+											case "face_key":
+												record.Face_face_key_value = xmlReader.GetAttribute("value");
+												record.Face_face_key_max_value = xmlReader.GetAttribute("max_value");
+												break;
+											case "BodyProperties":
+												record.Face_BodyProperties_version = xmlReader.GetAttribute("version");
+												record.Face_BodyProperties_age = xmlReader.GetAttribute("age");
+												record.Face_BodyProperties_weight = xmlReader.GetAttribute("weight");
+												record.Face_BodyProperties_build = xmlReader.GetAttribute("build");
+												record.Face_BodyProperties_key = xmlReader.GetAttribute("key");
+												break;
+											case "BodyPropertiesMax":
+												record.Face_BodyPropertiesMax_version = xmlReader.GetAttribute("version");
+												record.Face_BodyPropertiesMax_age = xmlReader.GetAttribute("age");
+												record.Face_BodyPropertiesMax_weight = xmlReader.GetAttribute("weight");
+												record.Face_BodyPropertiesMax_build = xmlReader.GetAttribute("build");
+												record.Face_BodyPropertiesMax_key = xmlReader.GetAttribute("key");
+												break;
+											case "face_key_template":
+												record.Face_face_key_template_value = Trim(xmlReader.GetAttribute("value"));
+												break;
+											case "hair_tags":
+												int hair_tags_counter=0;
+												while(xmlReader.Read() && !(xmlReader.NodeType.Equals(XmlNodeType.EndElement) && xmlReader.Name.Equals("hair_tags"))) {
+													if (xmlReader.NodeType != XmlNodeType.Element) continue;
+
+													if (xmlReader.Name.Equals("hair_tag")) {
+														switch (hair_tags_counter) {
+															case 0:
+																record.Face_hair_tags_hair_tag0_name = xmlReader.GetAttribute("name");
+																break;
+															case 1:
+																record.Face_hair_tags_hair_tag1_name = xmlReader.GetAttribute("name");
+																break;
+															case 2:
+																record.Face_hair_tags_hair_tag2_name = xmlReader.GetAttribute("name");
+																break;
+														}
+														hair_tags_counter++;
+													} else Console.WriteLine("You... Shouldn't be here.");
+												}
+												break;
+											case "beard_tags":
+												int beard_tags_counter = 0;
+												while (xmlReader.Read() && !(xmlReader.NodeType.Equals(XmlNodeType.EndElement) && xmlReader.Name.Equals("beard_tags"))) {
+													if (xmlReader.NodeType != XmlNodeType.Element) continue;
+
+													if (xmlReader.Name.Equals("beard_tag")) {
+														switch (beard_tags_counter) {
+															case 0:
+																record.Face_beard_tags_beard_tag0_name = xmlReader.GetAttribute("name");
+																break;
+															case 1:
+																record.Face_beard_tags_beard_tag1_name = xmlReader.GetAttribute("name");
+																break;
+															case 2:
+																record.Face_beard_tags_beard_tag2_name = xmlReader.GetAttribute("name");
+																break;
+														}
+														beard_tags_counter++;
+													} else Console.WriteLine("You... Shouldn't be here.");
+												}
+												break;
+											case "tattoo_tags":
+												int tattoo_tags_counter = 0;
+												while (xmlReader.Read() && !(xmlReader.NodeType.Equals(XmlNodeType.EndElement) && xmlReader.Name.Equals("tattoo_tags"))) {
+													if (xmlReader.NodeType != XmlNodeType.Element) continue;
+
+													if (xmlReader.Name.Equals("hair_tag")) {
+														switch (tattoo_tags_counter) {
+															case 0:
+																record.Face_tattoo_tags_tattoo_tag0_name = xmlReader.GetAttribute("name");
+																break;
+															case 1:
+																record.Face_tattoo_tags_tattoo_tag1_name = xmlReader.GetAttribute("name");
+																break;
+															case 2:
+																record.Face_tattoo_tags_tattoo_tag2_name = xmlReader.GetAttribute("name");
+																break;
+														}
+														tattoo_tags_counter++;
+													} else Console.WriteLine("You... Shouldn't be here.");
+												}
+												break;
+											default:
+												goto NextIteration;
+										}
+									}
+									break;
+								case "Hero": // No vanilla NPCCharacters use this anymore - think it's for if you don't want to add 'em to heroes.xml, don't support this, just have that be used instead.
+									xmlReader.Skip();
+									break;
+								case "Components": // Also doesn't seem to be used - implement eventually, though
+									xmlReader.Skip();
+									break;
+								case "skills":
+									int skills_counter = 0;
+									while (xmlReader.Read()) {
+										if (xmlReader.NodeType != XmlNodeType.Element) continue;
+										//Console.WriteLine("\t\t" + xmlReader.Name);
+
+										switch (xmlReader.Name) {
+											case "skill":
+												switch (skills_counter) {
+													case 0:
+														record.skills_skill0 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 1:
+														record.skills_skill1 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 2:
+														record.skills_skill2 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 3:
+														record.skills_skill3 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 4:
+														record.skills_skill4 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 5:
+														record.skills_skill5 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 6:
+														record.skills_skill6 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 7:
+														record.skills_skill7 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 8:
+														record.skills_skill8 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 9:
+														record.skills_skill9 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+												}
+
+												skills_counter++;
+												break;
+											default:
+												goto NextIteration;
+										}
+									}
+									break;
+								case "Traits":
+									int Traits_counter = 0;
+									while (xmlReader.Read()) {
+										if (xmlReader.NodeType != XmlNodeType.Element) continue;
+										//Console.WriteLine("\t\t" + xmlReader.Name);
+
+										switch (xmlReader.Name) {
+											case "Trait":
+												switch (Traits_counter) {
+													case 0:
+														record.Traits_trait0 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 1:
+														record.Traits_trait1 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 2:
+														record.Traits_trait2 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 3:
+														record.Traits_trait3 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 4:
+														record.Traits_trait4 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 5:
+														record.Traits_trait5 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 6:
+														record.Traits_trait6 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 7:
+														record.Traits_trait7 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 8:
+														record.Traits_trait8 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+													case 9:
+														record.Traits_trait9 = xmlReader.GetAttribute("id") + ";" + xmlReader.GetAttribute("value");
+														break;
+												}
+
+												Traits_counter++;
+												break;
+											default:
+												goto NextIteration;
+										}
+									}
+									break;
+								case "feats": // And again, doesn't seem to be used - implement eventually, though.
+									xmlReader.Skip();
+									break;
+								case "equipmentSet":
+									string equipmentSet_result="";
+
+									if (xmlReader.GetAttribute("civilian") is null || xmlReader.GetAttribute("civilian").Equals("false")) equipmentSet_result += "false";
+									else equipmentSet_result += "true";
+
+									while(xmlReader.Read()) {
+										if (xmlReader.NodeType != XmlNodeType.Element) continue;
+										//Console.WriteLine("\t\t" + xmlReader.Name);
+
+										switch (xmlReader.Name) {
+											case "equipment":
+												equipmentSet_result += ";" + xmlReader.GetAttribute("slot")+";"+xmlReader.GetAttribute("id");
+												if (xmlReader.GetAttribute("amount") is null) equipmentSet_result += ";-1";
+												else equipmentSet_result += ";" + xmlReader.GetAttribute("amount");
+												break;
+											default:
+												goto equipmentSet_end;
+										}
+									}
+								equipmentSet_end:
+									switch(equipmentSet_counter) {
+										case 0:
+											record.equipmentSet0 = equipmentSet_result;
+											break;
+										case 1:
+											record.equipmentSet1 = equipmentSet_result;
+											break;
+										case 2:
+											record.equipmentSet2 = equipmentSet_result;
+											break;
+										case 3:
+											record.equipmentSet3 = equipmentSet_result;
+											break;
+										case 4:
+											record.equipmentSet4 = equipmentSet_result;
+											break;
+										case 5:
+											record.equipmentSet5 = equipmentSet_result;
+											break;
+										case 6:
+											record.equipmentSet6 = equipmentSet_result;
+											break;
+										case 7:
+											record.equipmentSet7 = equipmentSet_result;
+											break;
+										case 8:
+											record.equipmentSet8 = equipmentSet_result;
+											break;
+										case 9:
+											record.equipmentSet9 = equipmentSet_result;
+											break;
+									}
+									equipmentSet_counter++;
+									goto NextIteration;
+								case "equipment": //TODO probably implement it as raw data, rather than something for a csv, though... Or perhaps create a format for it in the csv?
+									xmlReader.Skip();
+									break;
+								case "upgrade_targets":
+									int upgrade_targets_counter = 0;
+									while (xmlReader.Read()) {
+										if (xmlReader.NodeType != XmlNodeType.Element) continue;
+										//Console.WriteLine("\t\t" + xmlReader.Name);
+
+										switch (xmlReader.Name) {
+											case "upgrade_target":
+												switch(upgrade_targets_counter) {
+													case 0:
+														record.upgrade_targets_upgrade_target0_id = Trim(xmlReader.GetAttribute("id"));
+														break;
+													case 1:
+														record.upgrade_targets_upgrade_target1_id = Trim(xmlReader.GetAttribute("id"));
+														break;
+													case 2:
+														record.upgrade_targets_upgrade_target2_id = Trim(xmlReader.GetAttribute("id"));
+														break;
+													case 3:
+														record.upgrade_targets_upgrade_target3_id = Trim(xmlReader.GetAttribute("id"));
+														break;
+												}
+
+												upgrade_targets_counter++;
+												break;
+											default:
+												goto NextIteration;
+										}
+									}
+									break;
+								default:
+									records.Add(record);
+									goto StartLoop;
+							}
+						}
+
+						if(!records.Contains(record)) records.Add(record);
+					}
+				}
+			}
+
+			using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(csvOutput), CultureInfo.InvariantCulture)) {
+				csvWriter.WriteRecords(records);
+				csvWriter.Flush();
+			}
+		}
+
+		public static string Trim(string s) {
+			if (s == null) return null;
+			return s.Split(".").Last().Split("}").Last();
+		}
+
 		public class NPCCharacterRecord {
 			public string id { get; set; }
+			public string name { get; set; }
+			public string level { get; set; }
+			public string age { get; set; }
 			public string default_group { get; set; }
 			public string voice { get; set; }
 			public string is_hero { get; set; }
@@ -1157,7 +2486,6 @@ namespace CSV_to_XML {
 			public string is_template { get; set; }
 			public string is_child_template { get; set; }
 			public string culture { get; set; }
-			public string name { get; set; }
 			public string banner_symbol_mesh_name { get; set; }
 			public string banner_symbol_color { get; set; }
 			public string banner_key { get; set; }
@@ -1166,8 +2494,6 @@ namespace CSV_to_XML {
 			public string battleTemplate { get; set; }
 			public string is_companion { get; set; }
 			public string offset { get; set; }
-			public string level { get; set; }
-			public string age { get; set; }
 			public string is_mercenary { get; set; }
 			public string formation_position_preference { get; set; }
 			public string default_equipment_set { get; set; }
@@ -1207,6 +2533,43 @@ namespace CSV_to_XML {
 			public string Face_tattoo_tags_tattoo_tag0_name { get; set; }
 			public string Face_tattoo_tags_tattoo_tag1_name { get; set; }
 			public string Face_tattoo_tags_tattoo_tag2_name { get; set; }
+
+			//skills
+			public string skills_skill0 { get; set; }
+			public string skills_skill1 { get; set; }
+			public string skills_skill2 { get; set; }
+			public string skills_skill3 { get; set; }
+			public string skills_skill4 { get; set; }
+			public string skills_skill5 { get; set; }
+			public string skills_skill6 { get; set; }
+			public string skills_skill7 { get; set; }
+			public string skills_skill8 { get; set; }
+			public string skills_skill9 { get; set; }
+
+			//Traits
+			public string Traits_trait0 { get; set; }
+			public string Traits_trait1 { get; set; }
+			public string Traits_trait2 { get; set; }
+			public string Traits_trait3 { get; set; }
+			public string Traits_trait4 { get; set; }
+			public string Traits_trait5 { get; set; }
+			public string Traits_trait6 { get; set; }
+			public string Traits_trait7 { get; set; }
+			public string Traits_trait8 { get; set; }
+			public string Traits_trait9 { get; set; }
+
+			//equipmentSet
+			public string equipmentSet0 { get; set; }
+			public string equipmentSet1 { get; set; }
+			public string equipmentSet2 { get; set; }
+			public string equipmentSet3 { get; set; }
+			public string equipmentSet4 { get; set; }
+			public string equipmentSet5 { get; set; }
+			public string equipmentSet6 { get; set; }
+			public string equipmentSet7 { get; set; }
+			public string equipmentSet8 { get; set; }
+			public string equipmentSet9 { get; set; }
+
 		}
 
 		public static void Kingdoms_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
@@ -1614,7 +2977,7 @@ namespace CSV_to_XML {
 					if (!record.townsman_teenager.Equals("")) writer.WriteAttributeString("townsman_teenager", "NPCCharacter." + record.townsman_teenager);
 
 					if (!record.villager.Equals("")) writer.WriteAttributeString("villager", "NPCCharacter." + record.villager);
-					if (!record.villager_woman.Equals("")) writer.WriteAttributeString("villager_woman", "NPCCharacter." + record.villager_woman);
+					if (!record.village_woman.Equals("")) writer.WriteAttributeString("villager_woman", "NPCCharacter." + record.village_woman);
 					if (!record.villager_male_child.Equals("")) writer.WriteAttributeString("villager_male_child", "NPCCharacter." + record.villager_male_child);
 					if (!record.villager_male_teenager.Equals("")) writer.WriteAttributeString("villager_male_teenager", "NPCCharacter." + record.villager_male_teenager);
 					if (!record.villager_female_child.Equals("")) writer.WriteAttributeString("villager_female_child", "NPCCharacter." + record.villager_female_child);
@@ -1840,6 +3203,218 @@ namespace CSV_to_XML {
 				writer.WriteEndElement();
 			}
 		}
+
+		public static void Cultures_XMLtoCSV(string xmlInput, string csvOutput) {
+			List<CultureRecord> records = new List<CultureRecord>();
+
+			using (XmlReader xmlReader = XmlReader.Create(xmlInput)) {
+				while (xmlReader.Read()) {
+					if (xmlReader.NodeType != XmlNodeType.Element) continue;
+					//Console.WriteLine(xmlReader.Name);
+
+					if (xmlReader.Name.Equals("Culture")) {
+					NewPartyRecord:
+						CultureRecord record = new CultureRecord();
+
+						record.id = xmlReader.GetAttribute("id");
+						record.name = Trim(xmlReader.GetAttribute("name"));
+						record.is_main_culture = xmlReader.GetAttribute("is_main_culture");
+						record.can_have_settlement = xmlReader.GetAttribute("can_have_settlement");
+						record.town_edge_number = xmlReader.GetAttribute("town_edge_number");
+						record.militia_bonus = xmlReader.GetAttribute("militia_bonus");
+						record.prosperity_bonus = xmlReader.GetAttribute("prosperity_bonus");
+						record.encounter_background_mesh = xmlReader.GetAttribute("encounter_background_mesh");
+
+						record.basic_troop = Trim(xmlReader.GetAttribute("basic_troop"));
+						record.elite_basic_troop = Trim(xmlReader.GetAttribute("elite_basic_troop"));
+
+						record.is_bandit = xmlReader.GetAttribute("is_bandit");
+						record.default_face_key = xmlReader.GetAttribute("default_face_key");
+
+						record.default_party_template = Trim(xmlReader.GetAttribute("default_party_template"));
+						record.villager_party_template = Trim(xmlReader.GetAttribute("villager_party_template"));
+						record.elite_caravan_party_template = Trim(xmlReader.GetAttribute("elite_caravan_party_template"));
+						record.bandit_boss_party_template = Trim(xmlReader.GetAttribute("bandit_boss_party_template"));
+						record.caravan_party_template = Trim(xmlReader.GetAttribute("caravan_party_template"));
+						record.militia_party_template = Trim(xmlReader.GetAttribute("militia_party_template"));
+						record.rebels_party_template = Trim(xmlReader.GetAttribute("rebels_party_template"));
+
+						record.melee_militia_troop = Trim(xmlReader.GetAttribute("melee_militia_troop"));
+						record.melee_elite_militia_troop = Trim(xmlReader.GetAttribute("melee_elite_militia_troop"));
+						record.ranged_militia_troop = Trim(xmlReader.GetAttribute("ranged_militia_troop"));
+						record.ranged_elite_militia_troop = Trim(xmlReader.GetAttribute("ranged_elite_militia_troop"));
+						record.tournament_master = Trim(xmlReader.GetAttribute("tournament_master"));
+						record.caravan_master = Trim(xmlReader.GetAttribute("caravan_master"));
+						record.armed_trader = Trim(xmlReader.GetAttribute("armed_trader"));
+						record.caravan_guard = Trim(xmlReader.GetAttribute("caravan_guard"));
+						record.veteran_caravan_guard = Trim(xmlReader.GetAttribute("veteran_caravan_guard"));
+
+						record.duel_preset = Trim(xmlReader.GetAttribute("duel_preset"));
+						record.prison_guard = Trim(xmlReader.GetAttribute("prison_guard"));
+						record.guard = Trim(xmlReader.GetAttribute("guard"));
+						record.steward = Trim(xmlReader.GetAttribute("steward"));
+						record.blacksmith = Trim(xmlReader.GetAttribute("blacksmith"));
+						record.weaponsmith = Trim(xmlReader.GetAttribute("weaponsmith"));
+
+						record.townswoman = Trim(xmlReader.GetAttribute("townswoman"));
+						record.townswoman_infant = Trim(xmlReader.GetAttribute("townswoman_infant"));
+						record.townswoman_child = Trim(xmlReader.GetAttribute("townswoman_child"));
+						record.townswoman_teenager = Trim(xmlReader.GetAttribute("townswoman_teenager"));
+						record.townsman = Trim(xmlReader.GetAttribute("townsman"));
+						record.townsman_infant = Trim(xmlReader.GetAttribute("townsman_infant"));
+						record.townsman_child = Trim(xmlReader.GetAttribute("townsman_child"));
+						record.townsman_teenager = Trim(xmlReader.GetAttribute("townsman_teenager"));
+						record.villager = Trim(xmlReader.GetAttribute("villager"));
+						record.village_woman = Trim(xmlReader.GetAttribute("village_woman"));//This may be in error in CSV to XML
+						record.villager_male_child = Trim(xmlReader.GetAttribute("villager_male_child"));
+						record.villager_male_teenager = Trim(xmlReader.GetAttribute("villager_male_teenager"));
+						record.villager_female_child = Trim(xmlReader.GetAttribute("villager_female_child"));
+						record.villager_female_teenager = Trim(xmlReader.GetAttribute("villager_female_teenager"));
+
+						record.ransom_broker = Trim(xmlReader.GetAttribute("ransom_broker"));
+						record.gangleader_bodyguard = Trim(xmlReader.GetAttribute("gangleader_bodyguard"));
+						record.merchant_notary = Trim(xmlReader.GetAttribute("merchant_notary"));
+						record.preacher_notary = Trim(xmlReader.GetAttribute("preacher_notary"));
+						record.rural_notable_notary = Trim(xmlReader.GetAttribute("rural_notable_notary"));
+						record.shop_worker = Trim(xmlReader.GetAttribute("shop_worker"));
+						record.tavernkeeper = Trim(xmlReader.GetAttribute("tavernkeeper"));
+						record.taverngamehost = Trim(xmlReader.GetAttribute("taverngamehost"));
+						record.musician = Trim(xmlReader.GetAttribute("musician"));
+						record.tavern_wench = Trim(xmlReader.GetAttribute("tavern_wench"));
+
+						record.armorer = Trim(xmlReader.GetAttribute("armorer"));
+						record.horseMerchant = Trim(xmlReader.GetAttribute("horseMerchant"));
+						record.barber = Trim(xmlReader.GetAttribute("barber"));
+						record.merchant = Trim(xmlReader.GetAttribute("merchant"));
+
+						record.beggar = Trim(xmlReader.GetAttribute("beggar"));
+						record.female_beggar = Trim(xmlReader.GetAttribute("female_beggar"));
+						record.female_dancer = Trim(xmlReader.GetAttribute("female_dancer"));
+						record.gear_practice_dummy = Trim(xmlReader.GetAttribute("gear_practice_dummy"));
+						record.weapon_practice_stage_1 = Trim(xmlReader.GetAttribute("weapon_practice_stage_1"));
+						record.weapon_practice_stage_2 = Trim(xmlReader.GetAttribute("weapon_practice_stage_2"));
+						record.weapon_practice_stage_3 = Trim(xmlReader.GetAttribute("weapon_practice_stage_3"));
+						record.gear_dummy = Trim(xmlReader.GetAttribute("gear_dummy"));
+
+						record.bandit_bandit = Trim(xmlReader.GetAttribute("bandit_bandit"));
+						record.bandit_chief = Trim(xmlReader.GetAttribute("bandit_chief"));
+						record.bandit_raider = Trim(xmlReader.GetAttribute("bandit_raider"));
+						record.bandit_boss = Trim(xmlReader.GetAttribute("bandit_boss"));
+						record.board_game_type = xmlReader.GetAttribute("board_game_type");
+
+						int c0 = 0;
+						int c1 = 0;
+						int c2 = 0;
+
+					Lazyloop:
+						while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
+						if(!xmlReader.Name.Equals("name"))Console.WriteLine("\t {0}", xmlReader.Name);
+					LazyloopSwitch:
+						switch (xmlReader.Name) {
+							case "Culture":
+								records.Add(record);
+
+								if (!xmlReader.NodeType.Equals(XmlNodeType.EndElement)) goto NewPartyRecord;
+								continue;
+							case "tournament_team_templates_one_participant":
+								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
+								Console.WriteLine("\t >{0}", xmlReader.Name);
+								if (!xmlReader.Name.Equals("template")) {
+									if (xmlReader.Name.Equals("Culture")) goto case "Culture";
+									goto LazyloopSwitch;
+								}
+
+								switch(c0) {
+									case 0:
+										record.tournament_template_one_participant_set_v1 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 1:
+										record.tournament_template_one_participant_set_v2 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 2:
+										record.tournament_template_one_participant_set_v3 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 3:
+										record.tournament_template_one_participant_set_v4 = Trim(xmlReader.GetAttribute("name"));
+										break;
+								}
+
+								c0++;
+								goto case "tournament_team_templates_one_participant";
+							case "tournament_team_templates_two_participant":
+								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
+								Console.WriteLine("\t >>{0}", xmlReader.Name);
+								if (!xmlReader.Name.Equals("template")) {
+									if (xmlReader.Name.Equals("Culture")) goto case "Culture";
+									goto LazyloopSwitch;
+								}
+
+								switch (c1) {
+									case 0:
+										record.tournament_template_two_participant_set_v1 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 1:
+										record.tournament_template_two_participant_set_v2 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 2:
+										record.tournament_template_two_participant_set_v3 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 3:
+										record.tournament_template_two_participant_set_v4 = Trim(xmlReader.GetAttribute("name"));
+										break;
+								}
+
+								c1++;
+								goto case "tournament_team_templates_two_participant";
+							case "tournament_team_templates_four_participant":
+								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
+								Console.WriteLine("\t >>>{0}", xmlReader.Name);
+								if (!xmlReader.Name.Equals("template")) {
+									if (xmlReader.Name.Equals("Culture")) goto case "Culture";
+									goto LazyloopSwitch;
+								}
+
+								switch (c2) {
+									case 0:
+										record.tournament_template_four_participant_set_v1 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 1:
+										record.tournament_template_four_participant_set_v2 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 2:
+										record.tournament_template_four_participant_set_v3 = Trim(xmlReader.GetAttribute("name"));
+										break;
+									case 3:
+										record.tournament_template_four_participant_set_v4 = Trim(xmlReader.GetAttribute("name"));
+										break;
+								}
+
+								c2++;
+								goto case "tournament_team_templates_four_participant";
+						}
+						if (xmlReader.EOF) {
+							if (!records.Contains(record)) records.Add(record);
+							break;
+						}
+						goto Lazyloop;
+						/*
+						if (!xmlReader.Name.Equals("stacks")) Console.WriteLine("Error: Node name {0} of type {2} belonging to {1} was unexpected!", xmlReader.Name, xmlReader.GetAttribute("id"), xmlReader.NodeType.ToString());
+
+						while (xmlReader.Read() && !(xmlReader.NodeType.Equals(XmlNodeType.EndElement) && xmlReader.Name.Equals("stacks"))) {
+							if (!xmlReader.NodeType.Equals(XmlNodeType.Element)) continue;
+							if (xmlReader.Name.Equals("stacks")) continue;
+						}
+						*/
+					}
+				}
+				using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(csvOutput), CultureInfo.InvariantCulture)) {
+					csvWriter.WriteRecords(records);
+					csvWriter.Flush();
+				}
+			}
+		}
+
+
 		public class CultureRecord {
 			public string id { get; set; }
 			public string name { get; set; }
@@ -1854,6 +3429,7 @@ namespace CSV_to_XML {
 
 			public string is_bandit { get; set; }
 			public string default_face_key { get; set; }
+
 			public string default_party_template { get; set; }
 			public string villager_party_template { get; set; }
 			public string elite_caravan_party_template { get; set; }
@@ -1887,7 +3463,7 @@ namespace CSV_to_XML {
 			public string townsman_child { get; set; }
 			public string townsman_teenager { get; set; }
 			public string villager { get; set; }
-			public string villager_woman { get; set; }
+			public string village_woman { get; set; }
 			public string villager_male_child { get; set; }
 			public string villager_male_teenager { get; set; }
 			public string villager_female_child { get; set; }
