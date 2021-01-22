@@ -1555,6 +1555,93 @@ namespace CSV_to_XML {
 
 					//Defaults
 					if (record.default_party_template.Equals("")) record.default_party_template = "kingdom_hero_party_empire_template";
+					if (record.villager_party_template.Equals("")) record.villager_party_template = "kingdom_hero_party_empire_template";
+					if (record.elite_caravan_party_template.Equals("")) record.elite_caravan_party_template = "kingdom_hero_party_empire_template";
+					if (record.bandit_boss_party_template.Equals("")) record.bandit_boss_party_template = "kingdom_hero_party_empire_template";
+					if (record.caravan_party_template.Equals("")) record.caravan_party_template = "kingdom_hero_party_empire_template";
+					if (record.militia_party_template.Equals("")) record.militia_party_template = "kingdom_hero_party_empire_template";
+					if (record.rebels_party_template.Equals("")) record.rebels_party_template = "kingdom_hero_party_empire_template";
+
+					if (record.melee_militia_troop.Equals("")) record.melee_militia_troop = record.basic_troop;
+					if (record.melee_elite_militia_troop.Equals("")) record.melee_elite_militia_troop = record.elite_basic_troop;
+					if (record.ranged_militia_troop.Equals("")) record.ranged_militia_troop = record.basic_troop;
+					if (record.ranged_elite_militia_troop.Equals("")) record.ranged_elite_militia_troop = record.elite_basic_troop;
+
+					if (record.tournament_master.Equals("")) record.tournament_master = record.elite_basic_troop;
+					if (record.caravan_master.Equals("")) record.caravan_master = record.elite_basic_troop;
+					if (record.armed_trader.Equals("")) record.armed_trader = record.elite_basic_troop;
+					if (record.caravan_guard.Equals("")) record.caravan_guard = record.elite_basic_troop;
+					if (record.veteran_caravan_guard.Equals("")) record.veteran_caravan_guard = record.elite_basic_troop;
+					if (record.duel_preset.Equals("")) record.duel_preset = record.elite_basic_troop;
+					if (record.prison_guard.Equals("")) record.prison_guard = record.elite_basic_troop;
+					if (record.guard.Equals("")) record.guard = record.elite_basic_troop;
+					if (record.steward.Equals("")) record.steward = record.elite_basic_troop;
+					if (record.blacksmith.Equals("")) record.blacksmith = record.elite_basic_troop;
+					if (record.weaponsmith.Equals("")) record.weaponsmith = record.elite_basic_troop;
+
+					if (record.townswoman.Equals("")) record.townswoman = record.elite_basic_troop;
+					if (record.townswoman_infant.Equals("")) record.townswoman_infant = record.elite_basic_troop;
+					if (record.townswoman_child.Equals("")) record.townswoman_child = record.elite_basic_troop;
+					if (record.townswoman_teenager.Equals("")) record.townswoman_teenager = record.elite_basic_troop;
+					if (record.townsman.Equals("")) record.townsman = record.elite_basic_troop;
+					if (record.townsman_infant.Equals("")) record.townsman_infant = record.elite_basic_troop;
+					if (record.townsman_child.Equals("")) record.townsman_child = record.elite_basic_troop;
+					if (record.townsman_teenager.Equals("")) record.townsman_teenager = record.elite_basic_troop;
+
+					if (record.villager.Equals("")) record.villager = record.elite_basic_troop;
+					if (record.villager_woman.Equals("")) record.villager_woman = record.elite_basic_troop;
+					if (record.villager_male_child.Equals("")) record.villager_male_child = record.elite_basic_troop;
+					if (record.villager_male_teenager.Equals("")) record.villager_male_teenager = record.elite_basic_troop;
+					if (record.villager_female_child.Equals("")) record.villager_female_child = record.elite_basic_troop;
+					if (record.villager_female_teenager.Equals("")) record.villager_female_teenager = record.elite_basic_troop;
+
+					if (record.ransom_broker.Equals("")) record.ransom_broker = record.elite_basic_troop;
+					if (record.gangleader_bodyguard.Equals("")) record.gangleader_bodyguard = record.elite_basic_troop;
+					if (record.merchant_notary.Equals("")) record.merchant_notary = record.elite_basic_troop;
+					if (record.preacher_notary.Equals("")) record.preacher_notary = record.elite_basic_troop;
+					if (record.rural_notable_notary.Equals("")) record.rural_notable_notary = record.elite_basic_troop;
+					if (record.shop_worker.Equals("")) record.shop_worker = record.elite_basic_troop;
+
+					if (record.tavernkeeper.Equals("")) record.tavernkeeper = record.elite_basic_troop;
+					if (record.taverngamehost.Equals("")) record.taverngamehost = record.elite_basic_troop;
+					if (record.musician.Equals("")) record.musician = record.elite_basic_troop;
+					if (record.tavern_wench.Equals("")) record.tavern_wench = record.elite_basic_troop;
+
+					if (record.armorer.Equals("")) record.armorer = record.elite_basic_troop;
+					if (record.horseMerchant.Equals("")) record.horseMerchant = record.elite_basic_troop;
+					if (record.barber.Equals("")) record.barber = record.elite_basic_troop;
+					if (record.merchant.Equals("")) record.merchant = record.elite_basic_troop;
+					if (record.beggar.Equals("")) record.beggar = record.elite_basic_troop;
+					if (record.female_beggar.Equals("")) record.female_beggar = record.elite_basic_troop;
+					if (record.female_dancer.Equals("")) record.female_dancer = record.elite_basic_troop;
+
+					if (record.gear_practice_dummy.Equals("")) record.gear_practice_dummy = record.elite_basic_troop;
+					if (record.weapon_practice_stage_1.Equals("")) record.weapon_practice_stage_1 = record.elite_basic_troop;
+					if (record.weapon_practice_stage_2.Equals("")) record.weapon_practice_stage_2 = record.elite_basic_troop;
+					if (record.weapon_practice_stage_3.Equals("")) record.weapon_practice_stage_3 = record.elite_basic_troop;
+
+					if (record.gear_dummy.Equals("")) record.gear_dummy = record.elite_basic_troop;
+					if (record.bandit_bandit.Equals("")) record.bandit_bandit = record.elite_basic_troop;
+					if (record.bandit_chief.Equals("")) record.bandit_chief = record.elite_basic_troop;
+					if (record.bandit_raider.Equals("")) record.bandit_raider = record.elite_basic_troop;
+					if (record.bandit_boss.Equals("")) record.bandit_boss = record.elite_basic_troop;
+					//if (record.board_game_type.Equals("")) record.board_game_type = "";
+					/*
+					if (record.tournament_template_one_participant_set_v1.Equals("")) record.tournament_template_one_participant_set_v1 = record.elite_basic_troop;
+					if (record.tournament_template_one_participant_set_v2.Equals("")) record.tournament_template_one_participant_set_v2 = record.elite_basic_troop;
+					if (record.tournament_template_one_participant_set_v3.Equals("")) record.tournament_template_one_participant_set_v3 = record.elite_basic_troop;
+					if (record.tournament_template_one_participant_set_v4.Equals("")) record.tournament_template_one_participant_set_v4 = record.elite_basic_troop;
+
+					if (record.tournament_template_two_participant_set_v1.Equals("")) record.tournament_template_two_participant_set_v1 = record.elite_basic_troop;
+					if (record.tournament_template_two_participant_set_v2.Equals("")) record.tournament_template_two_participant_set_v2 = record.elite_basic_troop;
+					if (record.tournament_template_two_participant_set_v3.Equals("")) record.tournament_template_two_participant_set_v3 = record.elite_basic_troop;
+					if (record.tournament_template_two_participant_set_v4.Equals("")) record.tournament_template_two_participant_set_v4 = record.elite_basic_troop;
+
+					if (record.tournament_template_four_participant_set_v1.Equals("")) record.tournament_template_four_participant_set_v1 = record.elite_basic_troop;
+					if (record.tournament_template_four_participant_set_v2.Equals("")) record.tournament_template_four_participant_set_v2 = record.elite_basic_troop;
+					if (record.tournament_template_four_participant_set_v3.Equals("")) record.tournament_template_four_participant_set_v3 = record.elite_basic_troop;
+					if (record.tournament_template_four_participant_set_v4.Equals("")) record.tournament_template_four_participant_set_v4 = record.elite_basic_troop;
+					*/
 
 					//Temporary
 
@@ -1585,16 +1672,16 @@ namespace CSV_to_XML {
 					if (!record.militia_party_template.Equals("")) writer.WriteAttributeString("militia_party_template", "PartyTemplate." + record.militia_party_template);
 					if (!record.rebels_party_template.Equals("")) writer.WriteAttributeString("rebels_party_template", "PartyTemplate." + record.rebels_party_template);
 
-					if (!record.melee_militia_troop.Equals("")) writer.WriteAttributeString("melee_militia_troop", record.melee_militia_troop);
-					if (!record.melee_elite_militia_troop.Equals("")) writer.WriteAttributeString("melee_elite_militia_troop", record.melee_elite_militia_troop);
-					if (!record.ranged_militia_troop.Equals("")) writer.WriteAttributeString("ranged_militia_troop", record.ranged_militia_troop);
-					if (!record.ranged_elite_militia_troop.Equals("")) writer.WriteAttributeString("ranged_elite_militia_troop", record.ranged_elite_militia_troop);
+					if (!record.melee_militia_troop.Equals("")) writer.WriteAttributeString("melee_militia_troop", "NPCCharacter." + record.melee_militia_troop);
+					if (!record.melee_elite_militia_troop.Equals("")) writer.WriteAttributeString("melee_elite_militia_troop", "NPCCharacter." + record.melee_elite_militia_troop);
+					if (!record.ranged_militia_troop.Equals("")) writer.WriteAttributeString("ranged_militia_troop", "NPCCharacter." + record.ranged_militia_troop);
+					if (!record.ranged_elite_militia_troop.Equals("")) writer.WriteAttributeString("ranged_elite_militia_troop", "NPCCharacter." + record.ranged_elite_militia_troop);
 
-					if (!record.tournament_master.Equals("")) writer.WriteAttributeString("tournament_master", record.tournament_master);
-					if (!record.caravan_master.Equals("")) writer.WriteAttributeString("caravan_master", record.caravan_master);
-					if (!record.armed_trader.Equals("")) writer.WriteAttributeString("armed_trader", record.armed_trader);
-					if (!record.caravan_guard.Equals("")) writer.WriteAttributeString("caravan_guard", record.caravan_guard);
-					if (!record.veteran_caravan_guard.Equals("")) writer.WriteAttributeString("veteran_caravan_guard", record.veteran_caravan_guard);
+					if (!record.tournament_master.Equals("")) writer.WriteAttributeString("tournament_master", "NPCCharacter." + record.tournament_master);
+					if (!record.caravan_master.Equals("")) writer.WriteAttributeString("caravan_master", "NPCCharacter." + record.caravan_master);
+					if (!record.armed_trader.Equals("")) writer.WriteAttributeString("armed_trader", "NPCCharacter." + record.armed_trader);
+					if (!record.caravan_guard.Equals("")) writer.WriteAttributeString("caravan_guard", "NPCCharacter." + record.caravan_guard);
+					if (!record.veteran_caravan_guard.Equals("")) writer.WriteAttributeString("veteran_caravan_guard", "NPCCharacter." + record.veteran_caravan_guard);
 
 					if (!record.duel_preset.Equals("")) writer.WriteAttributeString("duel_preset", "NPCCharacter." + record.duel_preset);
 
@@ -1656,7 +1743,7 @@ namespace CSV_to_XML {
 					if (!record.bandit_raider.Equals("")) writer.WriteAttributeString("bandit_raider", "NPCCharacter." + record.bandit_raider);
 					if (!record.bandit_boss.Equals("")) writer.WriteAttributeString("bandit_boss", "NPCCharacter." + record.bandit_boss);
 
-					if (!record.board_game_type.Equals("")) writer.WriteAttributeString("board_game_type", "NPCCharacter." + record.board_game_type);
+					if (!record.board_game_type.Equals("")) writer.WriteAttributeString("board_game_type", record.board_game_type);
 
 					if (!record.male_names.Equals("")) {
 						writer.WriteStartElement("male_names");
