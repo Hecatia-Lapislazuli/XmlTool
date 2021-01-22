@@ -6,17 +6,21 @@ using System.Xml;
 using System.Linq;
 using CsvHelper;
 
-namespace CSV_to_XML {
+namespace XmlTool {
 	class Program {
+		public const string header_comment =
+			"This document was created with XmlTool, a tool originally developed for the Touhou Analepsia project by Urist McAurelian\n\n" +
+			"Feel free to check out our own project at https://forums.taleworlds.com/index.php?threads/tbd-bannerlord-mod-touhou-analepsia-illusory-nirvana.411674/ \n" +
+			"and join our discord with https://discord.gg/PUqYrGZ \n\n" +
+            "If you want to use this tool yourself for you own project, you can find it at BLANK.";
+
 		static void Main(string[] args) {
 			Console.WriteLine("~~~NEW PROGRAM~~~");
 
-			//Console.WriteLine("What is your root directory?");
 			string root = AppDomain.CurrentDomain.BaseDirectory;
 			string DSC = Path.DirectorySeparatorChar.ToString(); //For berevity's sake. 
-			//Console.WriteLine("Please input a address for the Settlement csv file: ");
 
-			Directory.CreateDirectory(root+"Output");
+			Directory.CreateDirectory(root + "Output");
 			Directory.CreateDirectory(root + "Output" + DSC + "Languages");
 
 			XmlWriterSettings localizationSettings = new XmlWriterSettings();
@@ -54,8 +58,14 @@ namespace CSV_to_XML {
 				}
 			}
 
-			//TODO better implement SettlementConverter.
-			if (File.Exists(root + "Data" + DSC + "settlements.xml")) SettlementConverter.settlement_XMLtoCSV(root + "Data" + DSC + "settlements.xml", root + "Output" + DSC + "settlements.csv");
+			if (Directory.Exists(root + "Data" + DSC + "Settlements")) {
+				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "Settlements")) {
+					if (!file.Split(".").Last().Equals("xml")) continue;
+					Console.WriteLine(file.Split(DSC).Last());
+					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Settlements");
+					SettlementConverter.settlement_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Settlements" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+				}
+			}
 
 			using (XmlWriter module_stringsWriter = XmlWriter.Create(root + "Output" + DSC + "module_strings.xml", localizationSettings)) {
 				module_stringsWriter.WriteStartElement("base");
@@ -72,13 +82,21 @@ namespace CSV_to_XML {
 					localizationWriter.WriteEndElement();
 					localizationWriter.WriteEndElement();
 				}
-				//TODO
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_spcultures_xml.xml", localizationSettings)) {
-					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Cultures.csv")) CultureConverter.Cultures_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Cultures.csv", root + "Output" + DSC + "spcultures.xml", localizationWriter, module_stringsWriter);
-					localizationWriter.WriteEndElement();
-					localizationWriter.WriteEndElement();
-				}
+				if (Directory.Exists(root + "Data" + DSC + "SPCultures")) { //file.Split(DSC).Last().Split(".").First() + ".xml"
+					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "SPCultures")) {
+						if (!file.Split(".").Last().Equals("csv")) continue;
+						Console.WriteLine(file.Split(DSC).Last().Split(".").First());
+
+						Directory.CreateDirectory(root + "Output" + DSC + "SPCultures" + DSC + "Languages");
+						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_" + file.Split(DSC).Last().Split(".").First() + "_xml.xml", localizationSettings)) {
+							initializeLocalizationWriter(localizationWriter);
+							CultureConverter.Cultures_CSVtoXML(file, root + "Output" + DSC + "SPCultures" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml", localizationWriter, module_stringsWriter);
+							localizationWriter.WriteEndElement();
+							localizationWriter.WriteEndElement();
+						}
+
+					}
+                }
 				//TODO
 				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_heroes_xml.xml", localizationSettings)) {
 					initializeLocalizationWriter(localizationWriter);
@@ -116,13 +134,35 @@ namespace CSV_to_XML {
 						PartyTemplateConverter.PartyTemplates_CSVtoXML(file, root + "Output" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml");
 					}
 				}
-				//TODO
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_settlements_xml.xml", localizationSettings)) {
-					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Settlements.csv")) SettlementConverter.settlement_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Settlements.csv", root + "Output" + DSC + "Touhou XML Data - Settlements.csv", root + "Output" + DSC + "settlements.xml", root + "Data" + DSC + "scene.xscene", root + "Output" + DSC + "scene.xscene", localizationWriter, module_stringsWriter);
-					localizationWriter.WriteEndElement();
-					localizationWriter.WriteEndElement();
-				}
+				if (Directory.Exists(root + "Data" + DSC + "Settlements")) {
+					string csv_file = null, xscene_file = null;
+
+					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "Settlements")) {
+						switch(file.Split(".").Last()) {
+							case "csv":
+								if (csv_file == null) csv_file = file;
+								else Console.WriteLine("Warning! There exists more than one csv in \"" + root + "Data" + DSC + "Settlements\", this is unsuported and unexpected behaviour may occur!");
+								break;
+							case "xscene":
+								if (xscene_file == null) xscene_file = file;
+								else Console.WriteLine("Warning! There exists more than one xscene in \"" + root + "Data" + DSC + "Settlements\", this is unsuported and unexpected behaviour may occur!");
+								break;
+							default:
+								continue;
+                        }
+					}
+					if (csv_file != null && xscene_file != null) {
+						Directory.CreateDirectory(root + "Output" + DSC + "Settlements");
+
+						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_settlements_xml.xml", localizationSettings)) {
+							initializeLocalizationWriter(localizationWriter);
+							SettlementConverter.settlement_CSVtoXML(csv_file, root + "Output" + DSC + "Settlements" + DSC + csv_file.Split(DSC).Last(), root + "Output" + DSC + "Settlements" + DSC + csv_file.Split(DSC).Last().Split(".").First() + ".xml", xscene_file, root + "Output" + DSC + "Settlements" + DSC + xscene_file.Split(DSC).Last().Split(".").First() + ".xscene", localizationWriter, module_stringsWriter);
+							localizationWriter.WriteEndElement();
+							localizationWriter.WriteEndElement();
+						}
+					} else if (csv_file == null && xscene_file == null) {
+					} else Console.WriteLine("You are missing either a xscene file and/or a csv file in \"" + root + "Data" + DSC + "Settlements\", to enable csv to xml conversion, please ensure both a xscene and csv file are present.");
+                }
 
 				module_stringsWriter.WriteEndElement();
 				module_stringsWriter.WriteEndElement();
@@ -153,5 +193,9 @@ namespace CSV_to_XML {
 			localizationWriter.WriteEndElement();
 			localizationWriter.WriteStartElement("strings");
 		}
+
+		public static void writeHeadderComment(XmlWriter writter) {
+			writter.WriteComment(header_comment);
+        }
 	}
 }

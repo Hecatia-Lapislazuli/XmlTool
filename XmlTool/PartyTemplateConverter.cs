@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
 using CsvHelper;
-using static CSV_to_XML.Program;
+using static XmlTool.Program;
 
-namespace CSV_to_XML {
+namespace XmlTool {
     public class PartyTemplateConverter {
 		public static void PartyTemplates_CSVtoXML(string fileInput, string fileOutput) {
 			StreamReader reader = new StreamReader(fileInput);
@@ -21,6 +21,9 @@ namespace CSV_to_XML {
 
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("partyTemplates");
+
+				writeHeadderComment(writer);
+
 				foreach (PartyTemplateRecord partyTemplateRecord in records) {
 					if (record.id.Equals("TODO")) break;
 					if (record.id.Equals("")) continue;

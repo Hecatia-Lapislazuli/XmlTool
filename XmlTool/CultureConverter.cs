@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
 using CsvHelper;
-using static CSV_to_XML.Program;
+using static XmlTool.Program;
 
-namespace CSV_to_XML {
+namespace XmlTool {
     public class CultureConverter {
 		public static void Cultures_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
@@ -21,6 +21,9 @@ namespace CSV_to_XML {
 
 			using (XmlWriter writer = XmlWriter.Create(fileOutput, settings)) {
 				writer.WriteStartElement("SPCultures");
+
+				writeHeadderComment(writer);
+
 				foreach (CultureRecord record in records) {
 					if (record.id.Equals("TODO")) break;
 					if (record.id.Equals("VANILLA")) break;

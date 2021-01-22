@@ -1,9 +1,9 @@
-﻿
+
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30717.126
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CSV to XML", "CSV to XML\CSV to XML.csproj", "{9F1C3925-C396-4C98-AE16-6D141751014D}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "XmlTool", "XmlTool\XmlTool.csproj", "{9F1C3925-C396-4C98-AE16-6D141751014D}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

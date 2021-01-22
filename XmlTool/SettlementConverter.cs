@@ -5,9 +5,9 @@ using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
 using CsvHelper;
-using static CSV_to_XML.Program;
+using static XmlTool.Program;
 
-namespace CSV_to_XML {
+namespace XmlTool {
     public class SettlementConverter {
 		public static void settlement_CSVtoXML(string csvInput, string csvOutput, string xmlOutput, string sceneFileInput, string sceneFileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			List<SettlementRecord> records = new CsvReader(new StreamReader(csvInput), CultureInfo.InvariantCulture).GetRecords<SettlementRecord>().ToList();
@@ -391,6 +391,9 @@ namespace CSV_to_XML {
 
 			using (XmlWriter writer = XmlWriter.Create(xmlOutput, settings)) {
 				writer.WriteStartElement("Settlements");
+
+				writeHeadderComment(writer);
+
 				foreach (SettlementRecord record in records) {
 					if (record.id.Equals("TODO")) break;
 					if (record.id.Equals("")) continue;
