@@ -1,4 +1,30 @@
-﻿using System;
+﻿//
+// CultureConverter.cs
+//
+// Author:
+//       Urist_McAurelian <Discord: Urist_McAurelian#2289>
+//
+// Copyright (c) 2021 Urist_McAurelian
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+using System;
 using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
@@ -8,7 +34,8 @@ using CsvHelper;
 using static XmlTool.Program;
 
 namespace XmlTool {
-    public class CultureConverter {
+	//Functionally same result after running through twice.
+	public class CultureConverter {
 		public static void Cultures_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -37,83 +64,86 @@ namespace XmlTool {
 					record.can_have_settlement = record.can_have_settlement.ToLower();
 					//						
 					//Defaults
-					if (record.default_party_template.Equals("")) record.default_party_template = "kingdom_hero_party_empire_template";
-					if (record.villager_party_template.Equals("")) record.villager_party_template = "villager_empire_template";
-					if (record.elite_caravan_party_template.Equals("")) record.elite_caravan_party_template = "elite_caravan_template_empire";
-					if (record.bandit_boss_party_template.Equals("") && record.is_bandit.Equals("true")) record.bandit_boss_party_template = "kingdom_hero_party_empire_template";
-					if (record.caravan_party_template.Equals("")) record.caravan_party_template = "caravan_template_empire";
-					if (record.militia_party_template.Equals("")) record.militia_party_template = "militia_empire_template";
-					if (record.rebels_party_template.Equals("")) record.rebels_party_template = "rebels_empire_template";
+#pragma warning disable CS0162 // Unreachable code detected
+					if (false) {//TODO implement an option for default settings.
+                        if (record.default_party_template.Equals("")) record.default_party_template = "kingdom_hero_party_empire_template";
+                        if (record.villager_party_template.Equals("")) record.villager_party_template = "villager_empire_template";
+						if (record.elite_caravan_party_template.Equals("")) record.elite_caravan_party_template = "elite_caravan_template_empire";
+						if (record.bandit_boss_party_template.Equals("") && record.is_bandit.Equals("true")) record.bandit_boss_party_template = "kingdom_hero_party_empire_template";
+						if (record.caravan_party_template.Equals("")) record.caravan_party_template = "caravan_template_empire";
+						if (record.militia_party_template.Equals("")) record.militia_party_template = "militia_empire_template";
+						if (record.rebels_party_template.Equals("")) record.rebels_party_template = "rebels_empire_template";
 
-					if (record.melee_militia_troop.Equals("")) record.melee_militia_troop = record.basic_troop;
-					if (record.melee_elite_militia_troop.Equals("")) record.melee_elite_militia_troop = record.elite_basic_troop;
-					if (record.ranged_militia_troop.Equals("")) record.ranged_militia_troop = record.basic_troop;
-					if (record.ranged_elite_militia_troop.Equals("")) record.ranged_elite_militia_troop = record.elite_basic_troop;
+						if (record.melee_militia_troop.Equals("")) record.melee_militia_troop = record.basic_troop;
+						if (record.melee_elite_militia_troop.Equals("")) record.melee_elite_militia_troop = record.elite_basic_troop;
+						if (record.ranged_militia_troop.Equals("")) record.ranged_militia_troop = record.basic_troop;
+						if (record.ranged_elite_militia_troop.Equals("")) record.ranged_elite_militia_troop = record.elite_basic_troop;
 
-					if (record.tournament_master.Equals("")) record.tournament_master = record.elite_basic_troop;
-					if (record.caravan_master.Equals("")) record.caravan_master = record.elite_basic_troop;
-					if (record.armed_trader.Equals("")) record.armed_trader = record.elite_basic_troop;
-					if (record.caravan_guard.Equals("")) record.caravan_guard = record.elite_basic_troop;
-					if (record.veteran_caravan_guard.Equals("")) record.veteran_caravan_guard = record.elite_basic_troop;
-					if (record.duel_preset.Equals("")) record.duel_preset = record.elite_basic_troop;
-					if (record.prison_guard.Equals("")) record.prison_guard = record.elite_basic_troop;
-					if (record.guard.Equals("")) record.guard = record.elite_basic_troop;
-					if (record.steward.Equals("")) record.steward = record.elite_basic_troop;
-					if (record.blacksmith.Equals("")) record.blacksmith = record.elite_basic_troop;
-					if (record.weaponsmith.Equals("")) record.weaponsmith = record.elite_basic_troop;
+						if (record.tournament_master.Equals("")) record.tournament_master = record.elite_basic_troop;
+						if (record.caravan_master.Equals("")) record.caravan_master = record.elite_basic_troop;
+						if (record.armed_trader.Equals("")) record.armed_trader = record.elite_basic_troop;
+						if (record.caravan_guard.Equals("")) record.caravan_guard = record.elite_basic_troop;
+						if (record.veteran_caravan_guard.Equals("")) record.veteran_caravan_guard = record.elite_basic_troop;
+						if (record.duel_preset.Equals("")) record.duel_preset = record.elite_basic_troop;
+						if (record.prison_guard.Equals("")) record.prison_guard = record.elite_basic_troop;
+						if (record.guard.Equals("")) record.guard = record.elite_basic_troop;
+						if (record.steward.Equals("")) record.steward = record.elite_basic_troop;
+						if (record.blacksmith.Equals("")) record.blacksmith = record.elite_basic_troop;
+						if (record.weaponsmith.Equals("")) record.weaponsmith = record.elite_basic_troop;
 
-					if (record.townswoman.Equals("")) record.townswoman = record.elite_basic_troop;
-					if (record.townswoman_infant.Equals("")) record.townswoman_infant = record.elite_basic_troop;
-					if (record.townswoman_child.Equals("")) record.townswoman_child = record.elite_basic_troop;
-					if (record.townswoman_teenager.Equals("")) record.townswoman_teenager = record.elite_basic_troop;
-					if (record.townsman.Equals("")) record.townsman = record.elite_basic_troop;
-					if (record.townsman_infant.Equals("")) record.townsman_infant = record.elite_basic_troop;
-					if (record.townsman_child.Equals("")) record.townsman_child = record.elite_basic_troop;
-					if (record.townsman_teenager.Equals("")) record.townsman_teenager = record.elite_basic_troop;
+						if (record.townswoman.Equals("")) record.townswoman = record.elite_basic_troop;
+						if (record.townswoman_infant.Equals("")) record.townswoman_infant = record.elite_basic_troop;
+						if (record.townswoman_child.Equals("")) record.townswoman_child = record.elite_basic_troop;
+						if (record.townswoman_teenager.Equals("")) record.townswoman_teenager = record.elite_basic_troop;
+						if (record.townsman.Equals("")) record.townsman = record.elite_basic_troop;
+						if (record.townsman_infant.Equals("")) record.townsman_infant = record.elite_basic_troop;
+						if (record.townsman_child.Equals("")) record.townsman_child = record.elite_basic_troop;
+						if (record.townsman_teenager.Equals("")) record.townsman_teenager = record.elite_basic_troop;
 
-					if (record.villager.Equals("")) record.villager = record.elite_basic_troop;
-					if (record.village_woman.Equals("")) record.village_woman = record.elite_basic_troop;
-					if (record.villager_male_child.Equals("")) record.villager_male_child = record.elite_basic_troop;
-					if (record.villager_male_teenager.Equals("")) record.villager_male_teenager = record.elite_basic_troop;
-					if (record.villager_female_child.Equals("")) record.villager_female_child = record.elite_basic_troop;
-					if (record.villager_female_teenager.Equals("")) record.villager_female_teenager = record.elite_basic_troop;
+						if (record.villager.Equals("")) record.villager = record.elite_basic_troop;
+						if (record.village_woman.Equals("")) record.village_woman = record.elite_basic_troop;
+						if (record.villager_male_child.Equals("")) record.villager_male_child = record.elite_basic_troop;
+						if (record.villager_male_teenager.Equals("")) record.villager_male_teenager = record.elite_basic_troop;
+						if (record.villager_female_child.Equals("")) record.villager_female_child = record.elite_basic_troop;
+						if (record.villager_female_teenager.Equals("")) record.villager_female_teenager = record.elite_basic_troop;
 
-					if (record.ransom_broker.Equals("")) record.ransom_broker = record.elite_basic_troop;
-					if (record.gangleader_bodyguard.Equals("")) record.gangleader_bodyguard = record.elite_basic_troop;
-					if (record.merchant_notary.Equals("")) record.merchant_notary = record.elite_basic_troop;
-					if (record.preacher_notary.Equals("")) record.preacher_notary = record.elite_basic_troop;
-					if (record.rural_notable_notary.Equals("")) record.rural_notable_notary = record.elite_basic_troop;
-					if (record.shop_worker.Equals("")) record.shop_worker = record.elite_basic_troop;
+						if (record.ransom_broker.Equals("")) record.ransom_broker = record.elite_basic_troop;
+						if (record.gangleader_bodyguard.Equals("")) record.gangleader_bodyguard = record.elite_basic_troop;
+						if (record.merchant_notary.Equals("")) record.merchant_notary = record.elite_basic_troop;
+						if (record.preacher_notary.Equals("")) record.preacher_notary = record.elite_basic_troop;
+						if (record.rural_notable_notary.Equals("")) record.rural_notable_notary = record.elite_basic_troop;
+						if (record.shop_worker.Equals("")) record.shop_worker = record.elite_basic_troop;
 
-					if (record.tavernkeeper.Equals("")) record.tavernkeeper = record.elite_basic_troop;
-					if (record.taverngamehost.Equals("")) record.taverngamehost = record.elite_basic_troop;
-					if (record.musician.Equals("")) record.musician = record.elite_basic_troop;
-					if (record.tavern_wench.Equals("")) record.tavern_wench = record.elite_basic_troop;
+						if (record.tavernkeeper.Equals("")) record.tavernkeeper = record.elite_basic_troop;
+						if (record.taverngamehost.Equals("")) record.taverngamehost = record.elite_basic_troop;
+						if (record.musician.Equals("")) record.musician = record.elite_basic_troop;
+						if (record.tavern_wench.Equals("")) record.tavern_wench = record.elite_basic_troop;
 
-					if (record.armorer.Equals("")) record.armorer = record.elite_basic_troop;
-					if (record.horseMerchant.Equals("")) record.horseMerchant = record.elite_basic_troop;
-					if (record.barber.Equals("")) record.barber = record.elite_basic_troop;
-					if (record.merchant.Equals("")) record.merchant = record.elite_basic_troop;
-					if (record.beggar.Equals("")) record.beggar = record.elite_basic_troop;
-					if (record.female_beggar.Equals("")) record.female_beggar = record.elite_basic_troop;
-					if (record.female_dancer.Equals("")) record.female_dancer = record.elite_basic_troop;
+						if (record.armorer.Equals("")) record.armorer = record.elite_basic_troop;
+						if (record.horseMerchant.Equals("")) record.horseMerchant = record.elite_basic_troop;
+						if (record.barber.Equals("")) record.barber = record.elite_basic_troop;
+						if (record.merchant.Equals("")) record.merchant = record.elite_basic_troop;
+						if (record.beggar.Equals("")) record.beggar = record.elite_basic_troop;
+						if (record.female_beggar.Equals("")) record.female_beggar = record.elite_basic_troop;
+						if (record.female_dancer.Equals("")) record.female_dancer = record.elite_basic_troop;
 
-					if (record.gear_practice_dummy.Equals("")) record.gear_practice_dummy = record.elite_basic_troop;
-					if (record.weapon_practice_stage_1.Equals("")) record.weapon_practice_stage_1 = record.elite_basic_troop;
-					if (record.weapon_practice_stage_2.Equals("")) record.weapon_practice_stage_2 = record.elite_basic_troop;
-					if (record.weapon_practice_stage_3.Equals("")) record.weapon_practice_stage_3 = record.elite_basic_troop;
+						if (record.gear_practice_dummy.Equals("")) record.gear_practice_dummy = record.elite_basic_troop;
+						if (record.weapon_practice_stage_1.Equals("")) record.weapon_practice_stage_1 = record.elite_basic_troop;
+						if (record.weapon_practice_stage_2.Equals("")) record.weapon_practice_stage_2 = record.elite_basic_troop;
+						if (record.weapon_practice_stage_3.Equals("")) record.weapon_practice_stage_3 = record.elite_basic_troop;
 
-					if (record.gear_dummy.Equals("")) record.gear_dummy = record.elite_basic_troop;
+						if (record.gear_dummy.Equals("")) record.gear_dummy = record.elite_basic_troop;
 
-					if (record.is_bandit.Equals("true")) {
-						if (record.bandit_bandit.Equals("")) record.bandit_bandit = record.elite_basic_troop;
-						if (record.bandit_chief.Equals("")) record.bandit_chief = record.elite_basic_troop;
-						if (record.bandit_raider.Equals("")) record.bandit_raider = record.elite_basic_troop;
-						if (record.bandit_boss.Equals("")) record.bandit_boss = record.elite_basic_troop;
+						if (record.is_bandit.Equals("true")) {
+							if (record.bandit_bandit.Equals("")) record.bandit_bandit = record.elite_basic_troop;
+							if (record.bandit_chief.Equals("")) record.bandit_chief = record.elite_basic_troop;
+							if (record.bandit_raider.Equals("")) record.bandit_raider = record.elite_basic_troop;
+							if (record.bandit_boss.Equals("")) record.bandit_boss = record.elite_basic_troop;
+						}
+
+						if (record.board_game_type.Equals("")) record.board_game_type = "Tablut";
 					}
-
-					if (record.board_game_type.Equals("")) record.board_game_type = "Tablut";
-
+#pragma warning restore CS0162 // Unreachable code detected
 					/*
 					if (record.tournament_template_one_participant_set_v1.Equals("")) record.tournament_template_one_participant_set_v1 = record.elite_basic_troop;
 					if (record.tournament_template_one_participant_set_v2.Equals("")) record.tournament_template_one_participant_set_v2 = record.elite_basic_troop;
@@ -136,11 +166,12 @@ namespace XmlTool {
 
 					//Write
 					writer.WriteAttributeString("id", record.id);
-					writer.WriteAttributeString("name", "{=Cultures.Culture." + record.id + ".name}" + record.name);
-
-					writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".name", record.name);
+					writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, record.name, record.id, "name", "Cultures.Culture"));
 
 					if (!record.is_main_culture.Equals("")) writer.WriteAttributeString("is_main_culture", record.is_main_culture);
+					if (!record.color.Equals("")) writer.WriteAttributeString("color", record.color);
+					if (!record.color2.Equals("")) writer.WriteAttributeString("color2", record.color2);
+
 					if (!record.can_have_settlement.Equals("")) writer.WriteAttributeString("can_have_settlement", record.can_have_settlement);
 					if (!record.town_edge_number.Equals("")) writer.WriteAttributeString("town_edge_number", record.town_edge_number);
 					if (!record.militia_bonus.Equals("")) writer.WriteAttributeString("militia_bonus", record.militia_bonus);
@@ -150,6 +181,8 @@ namespace XmlTool {
 					writer.WriteAttributeString("elite_basic_troop", "NPCCharacter." + record.elite_basic_troop);
 
 					if (!record.is_bandit.Equals("")) writer.WriteAttributeString("is_bandit", record.is_bandit);
+
+					if (!record.text.Equals("")) writer.WriteAttributeString("text", record.text);
 					if (!record.default_face_key.Equals("")) writer.WriteAttributeString("default_face_key", record.default_face_key);
 
 					if (!record.default_party_template.Equals("")) writer.WriteAttributeString("default_party_template", "PartyTemplate." + record.default_party_template);
@@ -189,7 +222,7 @@ namespace XmlTool {
 					if (!record.townsman_teenager.Equals("")) writer.WriteAttributeString("townsman_teenager", "NPCCharacter." + record.townsman_teenager);
 
 					if (!record.villager.Equals("")) writer.WriteAttributeString("villager", "NPCCharacter." + record.villager);
-					if (!record.village_woman.Equals("")) writer.WriteAttributeString("villager_woman", "NPCCharacter." + record.village_woman);
+					if (!record.village_woman.Equals("")) writer.WriteAttributeString("village_woman", "NPCCharacter." + record.village_woman);
 					if (!record.villager_male_child.Equals("")) writer.WriteAttributeString("villager_male_child", "NPCCharacter." + record.villager_male_child);
 					if (!record.villager_male_teenager.Equals("")) writer.WriteAttributeString("villager_male_teenager", "NPCCharacter." + record.villager_male_teenager);
 					if (!record.villager_female_child.Equals("")) writer.WriteAttributeString("villager_female_child", "NPCCharacter." + record.villager_female_child);
@@ -201,6 +234,7 @@ namespace XmlTool {
 
 					if (!record.merchant_notary.Equals("")) writer.WriteAttributeString("merchant_notary", "NPCCharacter." + record.merchant_notary);
 					if (!record.preacher_notary.Equals("")) writer.WriteAttributeString("preacher_notary", "NPCCharacter." + record.preacher_notary);
+					if (!record.artisan_notary.Equals("")) writer.WriteAttributeString("artisan_notary", "NPCCharacter." + record.artisan_notary);
 					if (!record.rural_notable_notary.Equals("")) writer.WriteAttributeString("rural_notable_notary", "NPCCharacter." + record.rural_notable_notary);
 
 					if (!record.shop_worker.Equals("")) writer.WriteAttributeString("shop_worker", "NPCCharacter." + record.shop_worker);
@@ -233,6 +267,7 @@ namespace XmlTool {
 
 					if (!record.board_game_type.Equals("")) writer.WriteAttributeString("board_game_type", record.board_game_type);
 
+
 					if (!record.male_names.Equals("")) {
 						writer.WriteStartElement("male_names");
 
@@ -240,8 +275,7 @@ namespace XmlTool {
 
 						foreach (string name in names) {
 							writer.WriteStartElement("name");
-							writer.WriteAttributeString("name", "{Cultures.Culture." + record.id + ".male_names." + name.ToLower() + "}" + name);
-							writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".male_names." + name.ToLower(), name);
+							writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, name, name.ToLower(), record.id + ".male_names", "Cultures.Culture"));
 							writer.WriteEndElement();
 						}
 
@@ -254,8 +288,7 @@ namespace XmlTool {
 
 						foreach (string name in names) {
 							writer.WriteStartElement("name");
-							writer.WriteAttributeString("name", "{Cultures.Culture." + record.id + ".female_names." + name.ToLower() + "}" + name);
-							writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".female_names." + name.ToLower(), name);
+							writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, name, name.ToLower(), record.id + ".female_names", "Cultures.Culture"));
 							writer.WriteEndElement();
 						}
 
@@ -268,62 +301,7 @@ namespace XmlTool {
 
 						foreach (string name in names) {
 							writer.WriteStartElement("name");
-							writer.WriteAttributeString("name", "{Cultures.Culture." + record.id + ".clan_names." + name.ToLower() + "}" + name);
-							writeLocalizationNode(localizationWriter, "Culture.Culture." + record.id + ".clan_names." + name.ToLower(), name);
-							writer.WriteEndElement();
-						}
-
-						writer.WriteEndElement();
-					}
-
-					if (!record.tournament_template_two_participant_set_v1.Equals("") || !record.tournament_template_two_participant_set_v2.Equals("") || !record.tournament_template_two_participant_set_v3.Equals("") || !record.tournament_template_two_participant_set_v4.Equals("")) {
-						writer.WriteStartElement("tournament_team_templates_two_participant");
-
-						if (!record.tournament_template_two_participant_set_v1.Equals("")) {
-							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_two_participant_set_v1);
-							writer.WriteEndElement();
-						}
-						if (!record.tournament_template_two_participant_set_v2.Equals("")) {
-							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_two_participant_set_v2);
-							writer.WriteEndElement();
-						}
-						if (!record.tournament_template_two_participant_set_v3.Equals("")) {
-							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_two_participant_set_v3);
-							writer.WriteEndElement();
-						}
-						if (!record.tournament_template_two_participant_set_v4.Equals("")) {
-							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_two_participant_set_v4);
-							writer.WriteEndElement();
-						}
-
-						writer.WriteEndElement();
-					}
-
-					if (!record.tournament_template_four_participant_set_v1.Equals("") || !record.tournament_template_four_participant_set_v2.Equals("") || !record.tournament_template_four_participant_set_v3.Equals("") || !record.tournament_template_four_participant_set_v4.Equals("")) {
-						writer.WriteStartElement("tournament_team_templates_four_participant");
-
-						if (!record.tournament_template_four_participant_set_v1.Equals("")) {
-							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_four_participant_set_v1);
-							writer.WriteEndElement();
-						}
-						if (!record.tournament_template_four_participant_set_v2.Equals("")) {
-							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_four_participant_set_v2);
-							writer.WriteEndElement();
-						}
-						if (!record.tournament_template_four_participant_set_v3.Equals("")) {
-							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_four_participant_set_v3);
-							writer.WriteEndElement();
-						}
-						if (!record.tournament_template_four_participant_set_v4.Equals("")) {
-							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_four_participant_set_v4);
+							writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, name, name.ToLower(), record.id + ".clan_names", "Cultures.Culture"));
 							writer.WriteEndElement();
 						}
 
@@ -335,31 +313,87 @@ namespace XmlTool {
 
 						if (!record.tournament_template_one_participant_set_v1.Equals("")) {
 							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_one_participant_set_v1);
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_one_participant_set_v1);
 							writer.WriteEndElement();
 						}
 						if (!record.tournament_template_one_participant_set_v2.Equals("")) {
 							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_one_participant_set_v2);
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_one_participant_set_v2);
 							writer.WriteEndElement();
 						}
 						if (!record.tournament_template_one_participant_set_v3.Equals("")) {
 							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_one_participant_set_v3);
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_one_participant_set_v3);
 							writer.WriteEndElement();
 						}
 						if (!record.tournament_template_one_participant_set_v4.Equals("")) {
 							writer.WriteStartElement("template");
-							writer.WriteAttributeString("name", record.tournament_template_one_participant_set_v4);
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_one_participant_set_v4);
 							writer.WriteEndElement();
 						}
 
 						writer.WriteEndElement();
 					}
 
+					if (!record.tournament_template_two_participant_set_v1.Equals("") || !record.tournament_template_two_participant_set_v2.Equals("") || !record.tournament_template_two_participant_set_v3.Equals("") || !record.tournament_template_two_participant_set_v4.Equals("")) {
+						writer.WriteStartElement("tournament_team_templates_two_participant");
+
+						if (!record.tournament_template_two_participant_set_v1.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_two_participant_set_v1);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_two_participant_set_v2.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_two_participant_set_v2);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_two_participant_set_v3.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_two_participant_set_v3);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_two_participant_set_v4.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_two_participant_set_v4);
+							writer.WriteEndElement();
+						}
+
+						writer.WriteEndElement();
+					}
+
+					if (!record.tournament_template_four_participant_set_v1.Equals("") || !record.tournament_template_four_participant_set_v2.Equals("") || !record.tournament_template_four_participant_set_v3.Equals("") || !record.tournament_template_four_participant_set_v4.Equals("")) {
+						writer.WriteStartElement("tournament_team_templates_four_participant");
+
+						if (!record.tournament_template_four_participant_set_v1.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_four_participant_set_v1);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_four_participant_set_v2.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_four_participant_set_v2);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_four_participant_set_v3.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_four_participant_set_v3);
+							writer.WriteEndElement();
+						}
+						if (!record.tournament_template_four_participant_set_v4.Equals("")) {
+							writer.WriteStartElement("template");
+							writer.WriteAttributeString("name", "NPCCharacter." + record.tournament_template_four_participant_set_v4);
+							writer.WriteEndElement();
+						}
+
+						writer.WriteEndElement();
+					}
+
+					//TODO actually switch this over to the new format... as it is, due to it's more... specialized nature, it's being left as is, however it will need to be done eventually.
+#pragma warning disable CS0618 // Type or member is obsolete
 					if (!record.str_culture_description.Equals("")) {
-						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_culture_description", record.str_culture_description);
-						writeLocalizationNode(module_strings_writer, "str_culture_description." + record.id, "{=Cultures.Culture." + record.id + ".str_culture_description}" + record.str_culture_description);
+                        writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_culture_description", record.str_culture_description);
+                        writeLocalizationNode(module_strings_writer, "str_culture_description." + record.id, "{=Cultures.Culture." + record.id + ".str_culture_description}" + record.str_culture_description);
 					}
 					if (!record.str_culture_rich_name.Equals("")) {
 						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_culture_rich_name", record.str_culture_rich_name);
@@ -409,6 +443,7 @@ namespace XmlTool {
 						writeLocalizationNode(localizationWriter, "Cultures.Culture." + record.id + ".str_neutral_term_for_culture", record.str_neutral_term_for_culture);
 						writeLocalizationNode(module_strings_writer, "str_neutral_term_for_culture." + record.id, "{=Cultures.Culture." + record.id + ".str_neutral_term_for_culture}" + record.str_neutral_term_for_culture);
 					}
+#pragma warning restore CS0618 // Type or member is obsolete
 
 					writer.WriteEndElement();
 				}
@@ -429,89 +464,95 @@ namespace XmlTool {
 						CultureRecord record = new CultureRecord();
 
 						record.id = xmlReader.GetAttribute("id");
-						record.name = Trim(xmlReader.GetAttribute("name"));
+						record.name = TrimB(xmlReader.GetAttribute("name"));
 						record.is_main_culture = xmlReader.GetAttribute("is_main_culture");
+						record.color = xmlReader.GetAttribute("color");
+						record.color2 = xmlReader.GetAttribute("color2");
 						record.can_have_settlement = xmlReader.GetAttribute("can_have_settlement");
 						record.town_edge_number = xmlReader.GetAttribute("town_edge_number");
 						record.militia_bonus = xmlReader.GetAttribute("militia_bonus");
 						record.prosperity_bonus = xmlReader.GetAttribute("prosperity_bonus");
 						record.encounter_background_mesh = xmlReader.GetAttribute("encounter_background_mesh");
 
-						record.basic_troop = Trim(xmlReader.GetAttribute("basic_troop"));
-						record.elite_basic_troop = Trim(xmlReader.GetAttribute("elite_basic_troop"));
+						record.basic_troop = TrimD(xmlReader.GetAttribute("basic_troop"));
+						record.elite_basic_troop = TrimD(xmlReader.GetAttribute("elite_basic_troop"));
 
 						record.is_bandit = xmlReader.GetAttribute("is_bandit");
+
+						record.text = xmlReader.GetAttribute("text");
 						record.default_face_key = xmlReader.GetAttribute("default_face_key");
 
-						record.default_party_template = Trim(xmlReader.GetAttribute("default_party_template"));
-						record.villager_party_template = Trim(xmlReader.GetAttribute("villager_party_template"));
-						record.elite_caravan_party_template = Trim(xmlReader.GetAttribute("elite_caravan_party_template"));
-						record.bandit_boss_party_template = Trim(xmlReader.GetAttribute("bandit_boss_party_template"));
-						record.caravan_party_template = Trim(xmlReader.GetAttribute("caravan_party_template"));
-						record.militia_party_template = Trim(xmlReader.GetAttribute("militia_party_template"));
-						record.rebels_party_template = Trim(xmlReader.GetAttribute("rebels_party_template"));
+						record.default_party_template = TrimD(xmlReader.GetAttribute("default_party_template"));
+						record.villager_party_template = TrimD(xmlReader.GetAttribute("villager_party_template"));
+						record.elite_caravan_party_template = TrimD(xmlReader.GetAttribute("elite_caravan_party_template"));
+						record.bandit_boss_party_template = TrimD(xmlReader.GetAttribute("bandit_boss_party_template"));
+						record.caravan_party_template = TrimD(xmlReader.GetAttribute("caravan_party_template"));
+						record.militia_party_template = TrimD(xmlReader.GetAttribute("militia_party_template"));
+						record.rebels_party_template = TrimD(xmlReader.GetAttribute("rebels_party_template"));
 
-						record.melee_militia_troop = Trim(xmlReader.GetAttribute("melee_militia_troop"));
-						record.melee_elite_militia_troop = Trim(xmlReader.GetAttribute("melee_elite_militia_troop"));
-						record.ranged_militia_troop = Trim(xmlReader.GetAttribute("ranged_militia_troop"));
-						record.ranged_elite_militia_troop = Trim(xmlReader.GetAttribute("ranged_elite_militia_troop"));
-						record.tournament_master = Trim(xmlReader.GetAttribute("tournament_master"));
-						record.caravan_master = Trim(xmlReader.GetAttribute("caravan_master"));
-						record.armed_trader = Trim(xmlReader.GetAttribute("armed_trader"));
-						record.caravan_guard = Trim(xmlReader.GetAttribute("caravan_guard"));
-						record.veteran_caravan_guard = Trim(xmlReader.GetAttribute("veteran_caravan_guard"));
+						record.melee_militia_troop = TrimD(xmlReader.GetAttribute("melee_militia_troop"));
+						record.melee_elite_militia_troop = TrimD(xmlReader.GetAttribute("melee_elite_militia_troop"));
+						record.ranged_militia_troop = TrimD(xmlReader.GetAttribute("ranged_militia_troop"));
+						record.ranged_elite_militia_troop = TrimD(xmlReader.GetAttribute("ranged_elite_militia_troop"));
+						record.tournament_master = TrimD(xmlReader.GetAttribute("tournament_master"));
+						record.caravan_master = TrimD(xmlReader.GetAttribute("caravan_master"));
+						record.armed_trader = TrimD(xmlReader.GetAttribute("armed_trader"));
+						record.caravan_guard = TrimD(xmlReader.GetAttribute("caravan_guard"));
+						record.veteran_caravan_guard = TrimD(xmlReader.GetAttribute("veteran_caravan_guard"));
 
-						record.duel_preset = Trim(xmlReader.GetAttribute("duel_preset"));
-						record.prison_guard = Trim(xmlReader.GetAttribute("prison_guard"));
-						record.guard = Trim(xmlReader.GetAttribute("guard"));
-						record.steward = Trim(xmlReader.GetAttribute("steward"));
-						record.blacksmith = Trim(xmlReader.GetAttribute("blacksmith"));
-						record.weaponsmith = Trim(xmlReader.GetAttribute("weaponsmith"));
+						record.duel_preset = TrimD(xmlReader.GetAttribute("duel_preset"));
+						record.prison_guard = TrimD(xmlReader.GetAttribute("prison_guard"));
+						record.guard = TrimD(xmlReader.GetAttribute("guard"));
+						record.steward = TrimD(xmlReader.GetAttribute("steward"));
+						record.blacksmith = TrimD(xmlReader.GetAttribute("blacksmith"));
+						record.weaponsmith = TrimD(xmlReader.GetAttribute("weaponsmith"));
 
-						record.townswoman = Trim(xmlReader.GetAttribute("townswoman"));
-						record.townswoman_infant = Trim(xmlReader.GetAttribute("townswoman_infant"));
-						record.townswoman_child = Trim(xmlReader.GetAttribute("townswoman_child"));
-						record.townswoman_teenager = Trim(xmlReader.GetAttribute("townswoman_teenager"));
-						record.townsman = Trim(xmlReader.GetAttribute("townsman"));
-						record.townsman_infant = Trim(xmlReader.GetAttribute("townsman_infant"));
-						record.townsman_child = Trim(xmlReader.GetAttribute("townsman_child"));
-						record.townsman_teenager = Trim(xmlReader.GetAttribute("townsman_teenager"));
-						record.villager = Trim(xmlReader.GetAttribute("villager"));
-						record.village_woman = Trim(xmlReader.GetAttribute("village_woman"));//This may be in error in CSV to XML
-						record.villager_male_child = Trim(xmlReader.GetAttribute("villager_male_child"));
-						record.villager_male_teenager = Trim(xmlReader.GetAttribute("villager_male_teenager"));
-						record.villager_female_child = Trim(xmlReader.GetAttribute("villager_female_child"));
-						record.villager_female_teenager = Trim(xmlReader.GetAttribute("villager_female_teenager"));
+						record.townswoman = TrimD(xmlReader.GetAttribute("townswoman"));
+						record.townswoman_infant = TrimD(xmlReader.GetAttribute("townswoman_infant"));
+						record.townswoman_child = TrimD(xmlReader.GetAttribute("townswoman_child"));
+						record.townswoman_teenager = TrimD(xmlReader.GetAttribute("townswoman_teenager"));
+						record.townsman = TrimD(xmlReader.GetAttribute("townsman"));
+						record.townsman_infant = TrimD(xmlReader.GetAttribute("townsman_infant"));
+						record.townsman_child = TrimD(xmlReader.GetAttribute("townsman_child"));
+						record.townsman_teenager = TrimD(xmlReader.GetAttribute("townsman_teenager"));
+						record.villager = TrimD(xmlReader.GetAttribute("villager"));
+						record.village_woman = TrimD(xmlReader.GetAttribute("village_woman"));//This may be in error in CSV to XML
+						record.villager_male_child = TrimD(xmlReader.GetAttribute("villager_male_child"));
+						record.villager_male_teenager = TrimD(xmlReader.GetAttribute("villager_male_teenager"));
+						record.villager_female_child = TrimD(xmlReader.GetAttribute("villager_female_child"));
+						record.villager_female_teenager = TrimD(xmlReader.GetAttribute("villager_female_teenager"));
 
-						record.ransom_broker = Trim(xmlReader.GetAttribute("ransom_broker"));
-						record.gangleader_bodyguard = Trim(xmlReader.GetAttribute("gangleader_bodyguard"));
-						record.merchant_notary = Trim(xmlReader.GetAttribute("merchant_notary"));
-						record.preacher_notary = Trim(xmlReader.GetAttribute("preacher_notary"));
-						record.rural_notable_notary = Trim(xmlReader.GetAttribute("rural_notable_notary"));
-						record.shop_worker = Trim(xmlReader.GetAttribute("shop_worker"));
-						record.tavernkeeper = Trim(xmlReader.GetAttribute("tavernkeeper"));
-						record.taverngamehost = Trim(xmlReader.GetAttribute("taverngamehost"));
-						record.musician = Trim(xmlReader.GetAttribute("musician"));
-						record.tavern_wench = Trim(xmlReader.GetAttribute("tavern_wench"));
+						record.ransom_broker = TrimD(xmlReader.GetAttribute("ransom_broker"));
+						record.gangleader_bodyguard = TrimD(xmlReader.GetAttribute("gangleader_bodyguard"));
+						record.merchant_notary = TrimD(xmlReader.GetAttribute("merchant_notary"));
+						record.preacher_notary = TrimD(xmlReader.GetAttribute("preacher_notary"));
+						record.artisan_notary = TrimD(xmlReader.GetAttribute("artisan_notary"));
+						record.rural_notable_notary = TrimD(xmlReader.GetAttribute("rural_notable_notary"));
+						record.shop_worker = TrimD(xmlReader.GetAttribute("shop_worker"));
+						record.tavernkeeper = TrimD(xmlReader.GetAttribute("tavernkeeper"));
+						record.taverngamehost = TrimD(xmlReader.GetAttribute("taverngamehost"));
+						record.musician = TrimD(xmlReader.GetAttribute("musician"));
+						record.tavern_wench = TrimD(xmlReader.GetAttribute("tavern_wench"));
 
-						record.armorer = Trim(xmlReader.GetAttribute("armorer"));
-						record.horseMerchant = Trim(xmlReader.GetAttribute("horseMerchant"));
-						record.barber = Trim(xmlReader.GetAttribute("barber"));
-						record.merchant = Trim(xmlReader.GetAttribute("merchant"));
+						record.armorer = TrimD(xmlReader.GetAttribute("armorer"));
+						record.horseMerchant = TrimD(xmlReader.GetAttribute("horseMerchant"));
+						record.barber = TrimD(xmlReader.GetAttribute("barber"));
+						record.merchant = TrimD(xmlReader.GetAttribute("merchant"));
 
-						record.beggar = Trim(xmlReader.GetAttribute("beggar"));
-						record.female_beggar = Trim(xmlReader.GetAttribute("female_beggar"));
-						record.female_dancer = Trim(xmlReader.GetAttribute("female_dancer"));
-						record.gear_practice_dummy = Trim(xmlReader.GetAttribute("gear_practice_dummy"));
-						record.weapon_practice_stage_1 = Trim(xmlReader.GetAttribute("weapon_practice_stage_1"));
-						record.weapon_practice_stage_2 = Trim(xmlReader.GetAttribute("weapon_practice_stage_2"));
-						record.weapon_practice_stage_3 = Trim(xmlReader.GetAttribute("weapon_practice_stage_3"));
-						record.gear_dummy = Trim(xmlReader.GetAttribute("gear_dummy"));
+						record.beggar = TrimD(xmlReader.GetAttribute("beggar"));
+						record.female_beggar = TrimD(xmlReader.GetAttribute("female_beggar"));
+						record.female_dancer = TrimD(xmlReader.GetAttribute("female_dancer"));
+						record.gear_practice_dummy = TrimD(xmlReader.GetAttribute("gear_practice_dummy"));
+						record.weapon_practice_stage_1 = TrimD(xmlReader.GetAttribute("weapon_practice_stage_1"));
+						record.weapon_practice_stage_2 = TrimD(xmlReader.GetAttribute("weapon_practice_stage_2"));
+						record.weapon_practice_stage_3 = TrimD(xmlReader.GetAttribute("weapon_practice_stage_3"));
+						record.gear_dummy = TrimD(xmlReader.GetAttribute("gear_dummy"));
 
-						record.bandit_bandit = Trim(xmlReader.GetAttribute("bandit_bandit"));
-						record.bandit_chief = Trim(xmlReader.GetAttribute("bandit_chief"));
-						record.bandit_raider = Trim(xmlReader.GetAttribute("bandit_raider"));
-						record.bandit_boss = Trim(xmlReader.GetAttribute("bandit_boss"));
+						record.bandit_bandit = TrimD(xmlReader.GetAttribute("bandit_bandit"));
+						record.bandit_chief = TrimD(xmlReader.GetAttribute("bandit_chief"));
+						record.bandit_raider = TrimD(xmlReader.GetAttribute("bandit_raider"));
+						record.bandit_boss = TrimD(xmlReader.GetAttribute("bandit_boss"));
+
 						record.board_game_type = xmlReader.GetAttribute("board_game_type");
 
 						int c0 = 0;
@@ -520,7 +561,7 @@ namespace XmlTool {
 
 					Lazyloop:
 						while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
-						if (!xmlReader.Name.Equals("name")) Console.WriteLine("\t {0}", xmlReader.Name);
+						//if (!xmlReader.Name.Equals("name")) Console.WriteLine("\t {0}", xmlReader.Name);
 						LazyloopSwitch:
 						switch (xmlReader.Name) {
 							case "Culture":
@@ -530,24 +571,28 @@ namespace XmlTool {
 								continue;
 							case "tournament_team_templates_one_participant":
 								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
-								Console.WriteLine("\t >{0}", xmlReader.Name);
+								//Console.WriteLine("\t >{0}", xmlReader.Name);
 								if (!xmlReader.Name.Equals("template")) {
+									if (xmlReader.Name.Equals("Culture")) {
+										//Console.WriteLine("Bah bah black sheep, have you any wool? 1");
+										goto case "Culture";
+									}
 									if (xmlReader.Name.Equals("Culture")) goto case "Culture";
 									goto LazyloopSwitch;
 								}
 
 								switch (c0) {
 									case 0:
-										record.tournament_template_one_participant_set_v1 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_one_participant_set_v1 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 1:
-										record.tournament_template_one_participant_set_v2 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_one_participant_set_v2 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 2:
-										record.tournament_template_one_participant_set_v3 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_one_participant_set_v3 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 3:
-										record.tournament_template_one_participant_set_v4 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_one_participant_set_v4 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 								}
 
@@ -555,24 +600,27 @@ namespace XmlTool {
 								goto case "tournament_team_templates_one_participant";
 							case "tournament_team_templates_two_participant":
 								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
-								Console.WriteLine("\t >>{0}", xmlReader.Name);
+								//Console.WriteLine("\t >>{0}", xmlReader.Name);
 								if (!xmlReader.Name.Equals("template")) {
-									if (xmlReader.Name.Equals("Culture")) goto case "Culture";
+									if (xmlReader.Name.Equals("Culture")) {
+										//Console.WriteLine("Bah bah black sheep, have you any wool? 2");
+										goto case "Culture";
+									}
 									goto LazyloopSwitch;
 								}
 
 								switch (c1) {
 									case 0:
-										record.tournament_template_two_participant_set_v1 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_two_participant_set_v1 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 1:
-										record.tournament_template_two_participant_set_v2 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_two_participant_set_v2 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 2:
-										record.tournament_template_two_participant_set_v3 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_two_participant_set_v3 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 3:
-										record.tournament_template_two_participant_set_v4 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_two_participant_set_v4 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 								}
 
@@ -580,29 +628,74 @@ namespace XmlTool {
 								goto case "tournament_team_templates_two_participant";
 							case "tournament_team_templates_four_participant":
 								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
-								Console.WriteLine("\t >>>{0}", xmlReader.Name);
+								//Console.WriteLine("\t >>>{0}", xmlReader.Name);
 								if (!xmlReader.Name.Equals("template")) {
-									if (xmlReader.Name.Equals("Culture")) goto case "Culture";
+									if (xmlReader.Name.Equals("Culture")) {
+										//Console.WriteLine("Bah bah black sheep, have you any wool? 3");
+										goto case "Culture";
+									}
 									goto LazyloopSwitch;
 								}
 
 								switch (c2) {
 									case 0:
-										record.tournament_template_four_participant_set_v1 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_four_participant_set_v1 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 1:
-										record.tournament_template_four_participant_set_v2 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_four_participant_set_v2 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 2:
-										record.tournament_template_four_participant_set_v3 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_four_participant_set_v3 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 									case 3:
-										record.tournament_template_four_participant_set_v4 = Trim(xmlReader.GetAttribute("name"));
+										record.tournament_template_four_participant_set_v4 = TrimB(xmlReader.GetAttribute("name"));
 										break;
 								}
 
 								c2++;
 								goto case "tournament_team_templates_four_participant";
+							case "male_names":
+								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
+								//Console.WriteLine("\t >>>{0}", xmlReader.Name);
+								if (!xmlReader.Name.Equals("name")) {
+									if (xmlReader.Name.Equals("Culture")) {
+										//Console.WriteLine("Bah bah black sheep, have you any wool? 3");
+										goto case "Culture";
+									}
+									goto LazyloopSwitch;
+								}
+								if (record.male_names == null || record.male_names.Equals("")) record.male_names = TrimB(xmlReader.GetAttribute("name"));
+								else record.male_names += ";" + TrimB(xmlReader.GetAttribute("name"));
+
+								goto case "male_names";
+							case "female_names":
+								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
+								//Console.WriteLine("\t >>>{0}", xmlReader.Name);
+								if (!xmlReader.Name.Equals("name")) {
+									if (xmlReader.Name.Equals("Culture")) {
+										//Console.WriteLine("Bah bah black sheep, have you any wool? 3");
+										goto case "Culture";
+									}
+									goto LazyloopSwitch;
+								}
+								if (record.female_names == null || record.female_names.Equals("")) record.female_names = TrimB(xmlReader.GetAttribute("name"));
+								else record.female_names += ";" + TrimB(xmlReader.GetAttribute("name"));
+
+								goto case "female_names";
+							case "clan_names":
+								while (xmlReader.Read() && !xmlReader.NodeType.Equals(XmlNodeType.Element)) ;
+								//Console.WriteLine("\t >>>{0}", xmlReader.Name);
+								if (!xmlReader.Name.Equals("name")) {
+									if (xmlReader.Name.Equals("Culture")) {
+										Console.WriteLine("Bah bah black sheep, have you any wool? 3");
+										goto case "Culture";
+									}
+									goto LazyloopSwitch;
+								}
+								if (record.clan_names == null || record.clan_names.Equals("")) record.clan_names = TrimB(xmlReader.GetAttribute("name"));
+								else record.clan_names += ";" + TrimB(xmlReader.GetAttribute("name"));
+
+								goto case "clan_names";
 						}
 						if (xmlReader.EOF) {
 							if (!records.Contains(record)) records.Add(record);
@@ -685,6 +778,7 @@ namespace XmlTool {
 			public string gangleader_bodyguard { get; set; }
 			public string merchant_notary { get; set; }
 			public string preacher_notary { get; set; }
+			public string artisan_notary { get; set; }
 			public string rural_notable_notary { get; set; }
 			public string shop_worker { get; set; }
 			public string tavernkeeper { get; set; }
@@ -740,7 +834,10 @@ namespace XmlTool {
 			public string str_faction_formal_name_for_culture { get; set; }
 			public string str_neutral_term_for_culture { get; set; }
 
-
+			//place these somewhere that make sense
+			public string text { get; set; }
+			public string color { get; set; }
+			public string color2 { get; set; }
 		}
 	}
 }

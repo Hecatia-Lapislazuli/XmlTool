@@ -1,4 +1,30 @@
-﻿using System;
+﻿//
+// PartyTemplate.cs
+//
+// Author:
+//       Urist_McAurelian <Discord: Urist_McAurelian#2289>
+//
+// Copyright (c) 2021 Urist_McAurelian
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+using System;
 using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
@@ -8,7 +34,8 @@ using CsvHelper;
 using static XmlTool.Program;
 
 namespace XmlTool {
-    public class PartyTemplateConverter {
+	//Functionally same result after running through twice... mostly. Trimming can occur for some of the longer PartyTemplates.
+	public class PartyTemplateConverter {
 		public static void PartyTemplates_CSVtoXML(string fileInput, string fileOutput) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
@@ -303,34 +330,34 @@ namespace XmlTool {
 							if (xmlReader.Name.Equals("stacks")) continue;
 							switch (counter) {
 								case 0:
-									record.stack0 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack0 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 1:
-									record.stack1 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack1 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 2:
-									record.stack2 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack2 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 3:
-									record.stack3 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack3 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 4:
-									record.stack4 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack4 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 5:
-									record.stack5 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack5 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 6:
-									record.stack6 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack6 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 7:
-									record.stack7 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack7 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 8:
-									record.stack8 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack8 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 								case 9:
-									record.stack9 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + Trim(xmlReader.GetAttribute("troop"));
+									record.stack9 = xmlReader.GetAttribute("min_value") + ";" + xmlReader.GetAttribute("max_value") + ";" + TrimD(xmlReader.GetAttribute("troop"));
 									break;
 							}
 							counter++;

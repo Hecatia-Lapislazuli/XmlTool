@@ -1,4 +1,30 @@
-﻿using System;
+﻿//
+// SettlementConverter.cs
+//
+// Author:
+//       Urist_McAurelian <Discord: Urist_McAurelian#2289>
+//
+// Copyright (c) 2021 Urist_McAurelian
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+using System;
 using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
@@ -411,9 +437,7 @@ namespace XmlTool {
 
 					//Write
 					writer.WriteAttributeString(null, "id", null, record.id);
-					writer.WriteAttributeString(null, "name", null, "{=Settlements.Settlement." + record.id + ".name}" + record.name);
-
-					writeLocalizationNode(localizationWriter, "Settlements.Settlement." + record.id + ".name", record.name);
+					if (!record.name.Equals("")) writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, record.name, record.id, "name", "Settlements.Settlement"));
 
 					if (!record.owner.Equals("")) writer.WriteAttributeString(null, "owner", null, "Faction." + record.owner);
 					writer.WriteAttributeString(null, "posX", null, record.posX);
@@ -424,9 +448,8 @@ namespace XmlTool {
 					if (!record.gate_posX.Equals("")) writer.WriteAttributeString(null, "gate_posY", null, record.gate_posY);
 					if (!record.gate_rotation.Equals("")) writer.WriteAttributeString(null, "gate_rotation", null, record.gate_rotation);
 					if (!record.type.Equals("")) writer.WriteAttributeString(null, "type", null, record.type);
-					if (!record.text.Equals("")) writer.WriteAttributeString(null, "text", null, "{=Settlements.Settlement." + record.id + ".text}" + record.text);
 
-					if (!record.text.Equals("")) writeLocalizationNode(localizationWriter, "Settlements.Settlement." + record.id + ".text", record.text);
+					if (!record.text.Equals("")) writer.WriteAttributeString("text", GetLocalizedString(localizationWriter, record.text, record.id, "text", "Settlements.Settlement"));
 
 					if (!record.Comp_Town_is_castle.Equals("") || !record.Comp_Village_village_type.Equals("") || !record.Comp_Hideout_map_icon.Equals("")) {
 						writer.WriteStartElement("Components");

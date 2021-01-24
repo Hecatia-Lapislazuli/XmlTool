@@ -1,18 +1,45 @@
-﻿using System;
+﻿//
+// Program.cs
+//
+// Author:
+//       Urist_McAurelian <Discord: Urist_McAurelian#2289>
+//
+// Copyright (c) 2021 Urist_McAurelian
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to deal
+// in the Software without restriction, including without limitation the rights
+// to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+// copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+// OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+// THE SOFTWARE.
+
+using System;
 using System.Globalization;
 using System.IO;
 using System.Collections.Generic;
 using System.Xml;
 using System.Linq;
 using CsvHelper;
+using Microsoft.XmlDiffPatch;
 
 namespace XmlTool {
 	class Program {
 		public const string header_comment =
-			"This document was created with XmlTool, a tool originally developed for the Touhou Analepsia project by Urist McAurelian\n\n" +
+			"This document was created with XmlTool, a tool originally developed for the Touhou Analepsia project by Urist McAurelian.\n\n" +
 			"Feel free to check out our own project at https://forums.taleworlds.com/index.php?threads/tbd-bannerlord-mod-touhou-analepsia-illusory-nirvana.411674/ \n" +
-			"and join our discord with https://discord.gg/PUqYrGZ \n\n" +
-            "If you want to use this tool yourself for you own project, you can find it at BLANK.";
+			"and join our discord at https://discord.gg/PUqYrGZ \n\n" +
+			"If you want to use this tool yourself for you own project, you can find it at https://github.com/RomanResistance/XmlTool";
 
 		static void Main(string[] args) {
 			Console.WriteLine("~~~NEW PROGRAM~~~");
@@ -26,24 +53,47 @@ namespace XmlTool {
 			XmlWriterSettings localizationSettings = new XmlWriterSettings();
 			localizationSettings.Indent = true;
 
-			//TODO ClanConverter XML -> CSV converter
+
+			if (Directory.Exists(root + "Data" + DSC + "Clans")) {
+				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "Clans")) {
+					if (!file.Split(".").Last().Equals("xml")) continue;
+					//Console.WriteLine(file.Split(DSC).Last());
+					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Clans");
+					ClanConverter.Clans_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Clans" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+				}
+			}
 
 			if (Directory.Exists(root + "Data" + DSC + "SPCultures")) {
 				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "SPCultures")) {
 					if (!file.Split(".").Last().Equals("xml")) continue;
-					Console.WriteLine(file.Split(DSC).Last());
+					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "SPCultures");
 					CultureConverter.Cultures_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "SPCultures" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
 			}
 
-			//TODO HeroConverter XML -> CSV converter
-			//TODO KingdomConverter XML -> CSV converter
+			if (Directory.Exists(root + "Data" + DSC + "Heroes")) {
+				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "Heroes")) {
+					if (!file.Split(".").Last().Equals("xml")) continue;
+					//Console.WriteLine(file.Split(DSC).Last());
+					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Heroes");
+					HeroConverter.Heroes_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Heroes" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+				}
+			}
+
+			if (Directory.Exists(root + "Data" + DSC + "Kingdoms")) {
+				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "Kingdoms")) {
+					if (!file.Split(".").Last().Equals("xml")) continue;
+					//Console.WriteLine(file.Split(DSC).Last());
+					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Kingdoms");
+					KingdomConverter.Kingdoms_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Kingdoms" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+				}
+			}
 
 			if (Directory.Exists(root + "Data" + DSC + "NPCCharacters")) {
 				foreach(string file in Directory.GetFiles(root + "Data" + DSC + "NPCCharacters")) {
 					if (!file.Split(".").Last().Equals("xml")) continue;
-					Console.WriteLine(file.Split(DSC).Last());
+					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "NPCCharacters");
                     NPCCharacterConverter.NPCCharacters_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "NPCCharacters" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
@@ -52,7 +102,7 @@ namespace XmlTool {
 			if (Directory.Exists(root + "Data" + DSC + "partyTemplates")) {
 				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "partyTemplates")) {
 					if (!file.Split(".").Last().Equals("xml")) continue;
-					Console.WriteLine(file.Split(DSC).Last());
+					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "partyTemplates");
 					PartyTemplateConverter.PartyTemplates_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
@@ -61,7 +111,7 @@ namespace XmlTool {
 			if (Directory.Exists(root + "Data" + DSC + "Settlements")) {
 				foreach (string file in Directory.GetFiles(root + "Data" + DSC + "Settlements")) {
 					if (!file.Split(".").Last().Equals("xml")) continue;
-					Console.WriteLine(file.Split(DSC).Last());
+					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Settlements");
 					SettlementConverter.settlement_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Settlements" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
@@ -74,18 +124,29 @@ namespace XmlTool {
 				module_stringsWriter.WriteAttributeString("type", "string");
 				module_stringsWriter.WriteStartElement("strings");
 
+				if (Directory.Exists(root + "Data" + DSC + "Clans")) { //TODO it works as it is, but could be better... Idealy support for multiple files in Data/Clans, regardless of whether that support is really needed.
+					string clans_csv = null;
+					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "Clans")) {
+						if (!file.Split(".").Last().Equals("csv")) continue;
+						//Console.WriteLine(file.Split(DSC).Last().Split(".").First());
 
-				//TODO
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_spclans_xml.xml", localizationSettings)) {
-					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Clans.csv")) ClanConverter.Clans_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Clans.csv", root + "Output" + DSC + "spclans.xml", localizationWriter, module_stringsWriter);
-					localizationWriter.WriteEndElement();
-					localizationWriter.WriteEndElement();
+						Directory.CreateDirectory(root + "Output" + DSC + "Clans" + DSC + "Languages");
+						clans_csv = file;
+						break;
+					}
+					if (clans_csv != null) {
+						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Clans" + DSC + "Languages" + DSC + "std_spclans_xml.xml", localizationSettings)) {
+							initializeLocalizationWriter(localizationWriter);
+							ClanConverter.Clans_CSVtoXML(clans_csv, root + "Output" + DSC + "Clans" + DSC + "spclans.xml", localizationWriter, module_stringsWriter);
+							localizationWriter.WriteEndElement();
+							localizationWriter.WriteEndElement();
+						}
+					}
 				}
 				if (Directory.Exists(root + "Data" + DSC + "SPCultures")) { //file.Split(DSC).Last().Split(".").First() + ".xml"
 					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "SPCultures")) {
 						if (!file.Split(".").Last().Equals("csv")) continue;
-						Console.WriteLine(file.Split(DSC).Last().Split(".").First());
+						//Console.WriteLine(file.Split(DSC).Last().Split(".").First());
 
 						Directory.CreateDirectory(root + "Output" + DSC + "SPCultures" + DSC + "Languages");
 						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_" + file.Split(DSC).Last().Split(".").First() + "_xml.xml", localizationSettings)) {
@@ -97,24 +158,48 @@ namespace XmlTool {
 
 					}
                 }
-				//TODO
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_heroes_xml.xml", localizationSettings)) {
-					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Heroes.csv")) HeroConverter.heroes_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Heroes.csv", root + "Output" + DSC + "heroes.xml", localizationWriter, module_stringsWriter);
-					localizationWriter.WriteEndElement();
-					localizationWriter.WriteEndElement();
+				if (Directory.Exists(root + "Data" + DSC + "Heroes")) { //TODO it works as it is, but could be better... Idealy support for multiple files in Data/Heroes, regardless of whether that support is really needed.
+					string heroes_csv = null;
+					foreach(string file in Directory.GetFiles(root + "Data" + DSC + "Heroes")) {
+						if (!file.Split(".").Last().Equals("csv")) continue;
+						//Console.WriteLine(file.Split(DSC).Last().Split(".").First());
+
+						Directory.CreateDirectory(root + "Output" + DSC + "Heroes" + DSC + "Languages");
+						heroes_csv = file;
+						break;
+					}
+					if (heroes_csv != null) {
+						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Heroes" + DSC + "Languages" + DSC + "std_heroes_xml.xml", localizationSettings)) {
+							initializeLocalizationWriter(localizationWriter);
+							HeroConverter.heroes_CSVtoXML(heroes_csv, root + "Output" + DSC + "Heroes" + DSC + "heroes.xml", localizationWriter, module_stringsWriter);
+							localizationWriter.WriteEndElement();
+							localizationWriter.WriteEndElement();
+						}
+					}
 				}
-				//TODO
-				using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_spkingdoms_xml.xml", localizationSettings)) {
-					initializeLocalizationWriter(localizationWriter);
-					if (File.Exists(root + "Data" + DSC + "Touhou XML Data - Kingdoms.csv")) KingdomConverter.Kingdoms_CSVtoXML(root + "Data" + DSC + "Touhou XML Data - Kingdoms.csv", root + "Output" + DSC + "spkingdoms.xml", localizationWriter, module_stringsWriter);
-					localizationWriter.WriteEndElement();
-					localizationWriter.WriteEndElement();
+				if (Directory.Exists(root + "Data" + DSC + "Kingdoms")) { //TODO it works as it is, but could be better... Idealy support for multiple files in Data/Kingdoms, regardless of whether that support is really needed.
+					string kingdoms_csv = null;
+					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "Kingdoms")) {
+						if (!file.Split(".").Last().Equals("csv")) continue;
+						//Console.WriteLine(file.Split(DSC).Last().Split(".").First());
+
+						Directory.CreateDirectory(root + "Output" + DSC + "Kingdoms" + DSC + "Languages");
+						kingdoms_csv = file;
+						break;
+					}
+					if (kingdoms_csv != null) {
+						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Kingdoms" + DSC + "Languages" + DSC + "std_spkingdoms_xml.xml", localizationSettings)) {
+							initializeLocalizationWriter(localizationWriter);
+							KingdomConverter.Kingdoms_CSVtoXML(kingdoms_csv, root + "Output" + DSC + "Kingdoms" + DSC + "spkingdoms.xml", localizationWriter, module_stringsWriter);
+							localizationWriter.WriteEndElement();
+							localizationWriter.WriteEndElement();
+						}
+					}
 				}
 				if (Directory.Exists(root + "Data" + DSC + "NPCCharacters")) {
 					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "NPCCharacters")) {
 						if (!file.Split(".").Last().Equals("csv")) continue;
-						Console.WriteLine(file.Split(DSC).Last().Split(".").First());
+						//Console.WriteLine(file.Split(DSC).Last().Split(".").First());
 
 						Directory.CreateDirectory(root + "Output" + DSC + "NPCCharacters" + DSC + "Languages");
 						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "NPCCharacters" + DSC + "Languages" + DSC + "std_" + file.Split(DSC).Last().Split(".").First() + "_xml.xml", localizationSettings)) {
@@ -128,7 +213,7 @@ namespace XmlTool {
 				if (Directory.Exists(root + "Data" + DSC + "partyTemplates")) {
 					foreach (string file in Directory.GetFiles(root + "Data" + DSC + "partyTemplates")) {
 						if (!file.Split(".").Last().Equals("csv")) continue;
-						Console.WriteLine(file.Split(DSC).Last().Split(".").First());
+						//Console.WriteLine(file.Split(DSC).Last().Split(".").First());
 
 						Directory.CreateDirectory(root + "Output" + DSC + "partyTemplates");
 						PartyTemplateConverter.PartyTemplates_CSVtoXML(file, root + "Output" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml");
@@ -167,18 +252,62 @@ namespace XmlTool {
 				module_stringsWriter.WriteEndElement();
 				module_stringsWriter.WriteEndElement();
 			}
+
+			//Damnable MacOS...
+			IEnumerable<string> filenames = Directory.EnumerateFiles(root, ".DS_STORE", SearchOption.AllDirectories);
+			foreach(string f in filenames) {
+				File.Delete(f);
+            }
+
+			Directory.CreateDirectory(root + "Differences/NPCCharacters");
+
+			Console.WriteLine(XMLfilesIdentical(root + "Data/SPCultures/spcultures.xml", root + "Output/SPCultures/spcultures.xml", root + "Differences" + DSC + "diff_spcultures.xml"));
+			Console.WriteLine(XMLfilesIdentical(root + "Data/Clans/spclans.xml", root + "Output/Clans/spclans.xml", root + "Differences" + DSC + "diff_spclans.xml"));
+			Console.WriteLine(XMLfilesIdentical(root + "Data/Kingdoms/spkingdoms.xml", root + "Output/Kingdoms/spkingdoms.xml", root + "Differences" + DSC + "diff_spkingdoms.xml"));
+
+			Console.WriteLine(XMLfilesIdentical(root + "Data/NPCCharacters/bandits.xml", root + "Output/NPCCharacters/bandits.xml", root + "Differences" + DSC + "NPCCharacters" + DSC + "diff_bandits.xml"));
+			foreach (string file in Directory.EnumerateFiles(root + "Data" + DSC + "NPCCharacters").Select(Path.GetFileName)) {
+				string f1 = root + "Data" + DSC + "NPCCharacters" + DSC + file, f2 = root + "Output" + DSC + "NPCCharacters" + DSC + file;
+				if (File.Exists(f1) && File.Exists(f2)) {
+					Console.WriteLine(XMLfilesIdentical(f1, f2, root + "Differences" + DSC + "NPCCharacters" + DSC + "diff_" + file));
+				}
+            }
+
+			Console.WriteLine("~~~Info~~~");
+			if(NPCCharacterConverter.NeededEquipmentSets!=-1) Console.WriteLine("Up to {0} Equipment Sets on {2} NPCCharacters were trimmed. Please yell at Urist_McAurelian#2289 on Discord that you need support for more Equipment Sets. \n At the moment, the converter only supports having {1} equipment sets.", NPCCharacterConverter.NeededEquipmentSets-NPCCharacterConverter.AllowedEquipmentSets, NPCCharacterConverter.AllowedEquipmentSets, NPCCharacterConverter.AffectedNPCCharacters);
 		}
 
-		public static string Trim(string s) {
+		public static string TrimB(string s) {
 			if (s == null) return null;
-			return s.Split(".").Last().Split("}").Last();
+			return s.Split("}").Last();
+		}
+		public static string TrimD(string s) {
+			if (s == null) return null;
+			return s.Split(".").Last();
 		}
 
+		[Obsolete("Use GetLocalizedString instead")]
 		public static void writeLocalizationNode(XmlWriter writer, string id, string text) {
 			writer.WriteStartElement("string");
 			writer.WriteAttributeString("id", id);
 			writer.WriteAttributeString("text", text);
 			writer.WriteEndElement();
+		}
+
+		// Returns the localized string with it's id.
+		public static string GetLocalizedString(XmlWriter writer, string text, string id, string key = null, string converter_type = null) {
+			id = id?.Replace(" ", "_");
+
+			string tag = id;
+			if (key != null) tag = key + "." + tag;
+			if (converter_type != null) tag = converter_type + "." + tag;
+
+			writer.WriteStartElement("string");
+			writer.WriteAttributeString("id", tag);
+			writer.WriteAttributeString("text", text);
+			writer.WriteEndElement();
+
+			return "{=" + tag + "}" + text;
 		}
 
 		public static void initializeLocalizationWriter(XmlWriter localizationWriter) {
@@ -197,5 +326,26 @@ namespace XmlTool {
 		public static void writeHeadderComment(XmlWriter writter) {
 			writter.WriteComment(header_comment);
         }
+
+		public static bool XMLfilesIdentical(string originalFile, string finalFile, string diff) {
+			XmlWriterSettings settings = new XmlWriterSettings() {
+				Indent = true,
+				IndentChars = "\t"
+			};
+
+			XmlDiff xmlDiff = new XmlDiff();
+			XmlReader original = XmlReader.Create(originalFile);
+			XmlReader final = XmlReader.Create(finalFile);
+
+			XmlWriter writer = XmlWriter.Create(diff, settings);
+
+			xmlDiff.Options = XmlDiffOptions.IgnorePI |
+							  XmlDiffOptions.IgnoreChildOrder |
+							  XmlDiffOptions.IgnoreComments |
+							  XmlDiffOptions.IgnoreWhitespace |
+							  XmlDiffOptions.IgnoreXmlDecl;
+
+			return xmlDiff.Compare(original, final, writer);
+		}
 	}
 }
