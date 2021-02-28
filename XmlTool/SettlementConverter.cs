@@ -35,8 +35,12 @@ using static XmlTool.Program;
 
 namespace XmlTool {
     public class SettlementConverter {
-		public static void settlement_CSVtoXML(string csvInput, string csvOutput, string xmlOutput, string sceneFileInput, string sceneFileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
+		public static void CSVtoXML(string csvInput, string csvOutput, string xmlOutput, string sceneFileInput, string sceneFileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			List<SettlementRecord> records = new CsvReader(new StreamReader(csvInput), CultureInfo.InvariantCulture).GetRecords<SettlementRecord>().ToList();
+
+			int prev_records = records.Count;
+			records = (from x in records where !skip_record(x) select x).ToList();
+			Console.WriteLine("{0} record(s) were removed.", prev_records-records.Count);
 
 			XmlWriterSettings settings = new XmlWriterSettings();
 			settings.Indent = true;
@@ -71,6 +75,10 @@ namespace XmlTool {
 													int positionCounterY = 1;
 
 													foreach (SettlementRecord record in records.Except(addedRecords)) {
+
+														//TODO implement Hideout support
+														if (record.GetSettlementType().Equals("hideout")) continue;
+
 														//break;//Get rid of this for the more so... experimental portions of the code.
 
 														sceneWriter.WriteStartElement("game_entity");
@@ -86,6 +94,10 @@ namespace XmlTool {
 																break;
 															case "town":
 																sceneWriter.WriteAttributeString("old_prefab_name", "__empty_object");
+																break;
+															case "hideout":
+																Console.WriteLine("Hideouts are not yet supported");
+																//sceneWriter.WriteAttributeString("old_prefab_name", "__empty_object");
 																break;
 														}
 														sceneWriter.WriteAttributeString("season_mask", "255");
@@ -200,8 +212,9 @@ namespace XmlTool {
 																	}
 																}
 																break;
+																//TODO Hideout Support
 															default:
-																Console.WriteLine("You... Shouldn't be here. {0}", record.GetSettlementType());
+																Console.WriteLine("You... Shouldn't be here. {1}: {0}", record.GetSettlementType(), record.id);
 																break;
 														}
 														sceneWriter.WriteEndElement();
@@ -320,12 +333,14 @@ namespace XmlTool {
 														//*/
 														SettlementRecord record = null;
 														foreach (SettlementRecord r in records) {
+															if (r.GetSettlementType().Equals("hideout")) continue; //TODO implement hideouts
 															if (r.id_scene.Equals(sceneReader.GetAttribute("name"))) {
 																record = r;
 																break;
 															}
 														}
 														foreach (SettlementRecord r in records) {
+															if (r.GetSettlementType().Equals("hideout")) continue; //TODO implement hideouts
 															if (r.id.Equals(sceneReader.GetAttribute("name"))) {
 																if (record != null && record != r) {
 																	throw new Exception("There already exists an id " + r.id + ".");
@@ -421,6 +436,8 @@ namespace XmlTool {
 				writeHeadderComment(writer);
 
 				foreach (SettlementRecord record in records) {
+					if (record.GetSettlementType().Equals("hideout")) continue; //TODO implement hideouts
+
 					if (record.id.Equals("TODO")) break;
 					if (record.id.Equals("")) continue;
 
@@ -437,7 +454,7 @@ namespace XmlTool {
 
 					//Write
 					writer.WriteAttributeString(null, "id", null, record.id);
-					if (!record.name.Equals("")) writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, record.name, record.id, "name", "Settlements.Settlement"));
+					writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, record.name, record.id, "name", "Settlements.Settlement"));
 
 					if (!record.owner.Equals("")) writer.WriteAttributeString(null, "owner", null, "Faction." + record.owner);
 					writer.WriteAttributeString(null, "posX", null, record.posX);
@@ -656,19 +673,19 @@ namespace XmlTool {
 						if (!record.CommonAreas_Area0_type.Equals("")) {
 							writer.WriteStartElement("Area");
 							writer.WriteAttributeString(null, "type", null, record.CommonAreas_Area0_type);
-							writer.WriteAttributeString(null, "name", null, "{=CommonAreas.Area." + record.CommonAreas_Area0_name + "}" + record.CommonAreas_Area0_name);
+							writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, record.CommonAreas_Area0_name, record.CommonAreas_Area0_name, "CommonAreas.Area", "Settlements.Settlement"));
 							writer.WriteEndElement();
 						}
 						if (!record.CommonAreas_Area1_type.Equals("")) {
 							writer.WriteStartElement("Area");
 							writer.WriteAttributeString(null, "type", null, record.CommonAreas_Area1_type);
-							writer.WriteAttributeString(null, "name", null, "{=CommonAreas.Area." + record.CommonAreas_Area0_name + "}" + record.CommonAreas_Area1_name);
+							writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, record.CommonAreas_Area1_name, record.CommonAreas_Area1_name, "CommonAreas.Area", "Settlements.Settlement"));
 							writer.WriteEndElement();
 						}
 						if (!record.CommonAreas_Area2_type.Equals("")) {
 							writer.WriteStartElement("Area");
 							writer.WriteAttributeString(null, "type", null, record.CommonAreas_Area2_type);
-							writer.WriteAttributeString(null, "name", null, "{=CommonAreas.Area." + record.CommonAreas_Area0_name + "}" + record.CommonAreas_Area2_name);
+							writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, record.CommonAreas_Area2_name, record.CommonAreas_Area2_name, "CommonAreas.Area", "Settlements.Settlement"));
 							writer.WriteEndElement();
 						}
 						writer.WriteEndElement();
@@ -680,25 +697,26 @@ namespace XmlTool {
 			}
 		}
 
-		public static void settlement_XMLtoCSV(string xmlInput, string csvOutput) {
+		public static void XMLtoCSV(string xmlInput, string csvOutput) {
 			List<SettlementRecord> records = new List<SettlementRecord>();
 
 			using (XmlReader xmlReader = XmlReader.Create(xmlInput)) {
 				while (xmlReader.Read()) {
+				SettlementStart:
 					if (xmlReader.NodeType != XmlNodeType.Element) continue;
 
 					if (xmlReader.Name.Equals("Settlement")) {
 						SettlementRecord record = new SettlementRecord();
 
 						record.id = xmlReader.GetAttribute("id");
-						record.name = xmlReader.GetAttribute("name").Split("}").Last();
-						if (xmlReader.GetAttribute("owner") != null) record.owner = xmlReader.GetAttribute("owner").Split(".").Last();
+						record.name = TrimB(xmlReader.GetAttribute("name"));
+						if (xmlReader.GetAttribute("owner") != null) record.owner = TrimD(xmlReader.GetAttribute("owner"));
 
 						record.posX = xmlReader.GetAttribute("posX");
 						record.posY = xmlReader.GetAttribute("posY");
 
 						if (xmlReader.GetAttribute("prosperity") != null) record.prosperity = xmlReader.GetAttribute("prosperity");
-						if (xmlReader.GetAttribute("culture") != null) record.culture = xmlReader.GetAttribute("culture").Split(".").Last();
+						if (xmlReader.GetAttribute("culture") != null) record.culture = TrimD(xmlReader.GetAttribute("culture"));
 
 						if (xmlReader.GetAttribute("gate_posX") != null) record.gate_posX = xmlReader.GetAttribute("gate_posX");
 						if (xmlReader.GetAttribute("gate_posY") != null) record.gate_posY = xmlReader.GetAttribute("gate_posY");
@@ -706,10 +724,10 @@ namespace XmlTool {
 						if (xmlReader.GetAttribute("gate_rotation") != null) record.gate_rotation = xmlReader.GetAttribute("gate_rotation");
 
 						if (xmlReader.GetAttribute("type") != null) record.type = xmlReader.GetAttribute("type");
-						if (xmlReader.GetAttribute("text") != null) record.text = xmlReader.GetAttribute("text").Split("}").Last();
+						if (xmlReader.GetAttribute("text") != null) record.text = TrimB(xmlReader.GetAttribute("text"));
 
-						SettlementNodeSwitch:
 						while (xmlReader.Read()) {
+						SettlementNodeSwitch:
 							if (!xmlReader.NodeType.Equals(XmlNodeType.Element)) continue;
 							switch (xmlReader.Name) {
 								case "Components":
@@ -728,12 +746,12 @@ namespace XmlTool {
 											case "Village":
 												if (xmlReader.GetAttribute("background_crop_position") != null) record.Comp_Village_background_crop_position = xmlReader.GetAttribute("background_crop_position");
 												if (xmlReader.GetAttribute("background_mesh") != null) record.Comp_Village_background_mesh = xmlReader.GetAttribute("background_mesh");
-												if (xmlReader.GetAttribute("bound") != null) record.Comp_Village_bound = xmlReader.GetAttribute("bound").Split(".").Last();
+												if (xmlReader.GetAttribute("bound") != null) record.Comp_Village_bound = TrimD(xmlReader.GetAttribute("bound"));
 												if (xmlReader.GetAttribute("castle_background_mesh") != null) record.Comp_Village_castle_background_mesh = xmlReader.GetAttribute("castle_background_mesh");
 												if (xmlReader.GetAttribute("gate_rotation") != null) record.Comp_Village_gate_rotation = xmlReader.GetAttribute("gate_rotation");
 												if (xmlReader.GetAttribute("hearth") != null) record.Comp_Village_hearth = xmlReader.GetAttribute("hearth");
-												if (xmlReader.GetAttribute("trade_bound") != null) record.Comp_Village_trade_bound = xmlReader.GetAttribute("trade_bound").Split(".").Last();
-												if (xmlReader.GetAttribute("village_type") != null) record.Comp_Village_village_type = xmlReader.GetAttribute("village_type").Split(".").Last();
+												if (xmlReader.GetAttribute("trade_bound") != null) record.Comp_Village_trade_bound = TrimD(xmlReader.GetAttribute("trade_bound"));
+												if (xmlReader.GetAttribute("village_type") != null) record.Comp_Village_village_type = TrimD(xmlReader.GetAttribute("village_type"));
 												if (xmlReader.GetAttribute("wait_mesh") != null) record.Comp_Village_wait_mesh = xmlReader.GetAttribute("wait_mesh");
 
 												break;
@@ -746,13 +764,16 @@ namespace XmlTool {
 												if (xmlReader.GetAttribute("wait_mesh") != null) record.Comp_Hideout_wait_mesh = xmlReader.GetAttribute("wait_mesh");
 
 												break;
+											case "Settlement":
+												goto SettlementStart;
 											default:
+												if (!xmlReader.Name.Equals("Locations")) Console.WriteLine(xmlReader.Name);
 												goto SettlementNodeSwitch;
 										}
 									}
 									break;
 								case "Locations":
-									if (xmlReader.GetAttribute("complex_template") != null) record.Locations_complex_template = xmlReader.GetAttribute("complex_template").Split(".").Last();
+									record.Locations_complex_template = TrimD(xmlReader.GetAttribute("complex_template"));
 
 									int counterLocations = 0;
 									while (xmlReader.Read()) {
@@ -840,15 +861,15 @@ namespace XmlTool {
 											case "Area":
 												switch (counterCommonAreas) {
 													case 0:
-														if (xmlReader.GetAttribute("name") != null) record.CommonAreas_Area0_name = xmlReader.GetAttribute("name").Split("}").Last();
+														if (xmlReader.GetAttribute("name") != null) TrimB(record.CommonAreas_Area0_name = xmlReader.GetAttribute("name"));
 														if (xmlReader.GetAttribute("type") != null) record.CommonAreas_Area0_type = xmlReader.GetAttribute("type");
 														break;
 													case 1:
-														if (xmlReader.GetAttribute("name") != null) record.CommonAreas_Area1_name = xmlReader.GetAttribute("name").Split("}").Last();
+														if (xmlReader.GetAttribute("name") != null) TrimB(record.CommonAreas_Area1_name = xmlReader.GetAttribute("name"));
 														if (xmlReader.GetAttribute("type") != null) record.CommonAreas_Area1_type = xmlReader.GetAttribute("type");
 														break;
 													case 2:
-														if (xmlReader.GetAttribute("name") != null) record.CommonAreas_Area2_name = xmlReader.GetAttribute("name").Split("}").Last();
+														if (xmlReader.GetAttribute("name") != null) TrimB(record.CommonAreas_Area2_name = xmlReader.GetAttribute("name"));
 														if (xmlReader.GetAttribute("type") != null) record.CommonAreas_Area2_type = xmlReader.GetAttribute("type");
 														break;
 												}
@@ -1002,11 +1023,19 @@ namespace XmlTool {
 				if (Comp_Town_is_castle.ToLowerInvariant().Equals("true")) return "castle";
 				if (Comp_Town_is_castle.ToLowerInvariant().Equals("false")) return "town";
 				if (!Comp_Village_village_type.Equals("")) return "village";
+				if (!Comp_Hideout_scene_name.Equals("") || !type.Equals("")) return "hideout";
 
 				return "other";
 			}
 			public bool auto_assigned = false;
 			public int auto_position_counter = 0;
 		}
+
+		public static bool skip_record(SettlementRecord record) {
+			if (record.id.Equals("")) return true;
+			if (record.id.StartsWith("#")) return true;
+
+			return false;
+        }
 	}
 }

@@ -36,7 +36,7 @@ using static XmlTool.Program;
 namespace XmlTool {
 	//Functionally same result after running through twice... mostly. Trimming can occur for some of the longer PartyTemplates.
 	public class PartyTemplateConverter {
-		public static void PartyTemplates_CSVtoXML(string fileInput, string fileOutput) {
+		public static void CSVtoXML(string fileInput, string fileOutput) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -299,7 +299,7 @@ namespace XmlTool {
 				writer.WriteEndElement();
 			}
 		}
-		public static void PartyTemplates_XMLtoCSV(string xmlInput, string csvOutput) {
+		public static void XMLtoCSV(string xmlInput, string csvOutput) {
 			List<PartyTemplateRecord> records = new List<PartyTemplateRecord>();
 
 			using (XmlReader xmlReader = XmlReader.Create(xmlInput)) {

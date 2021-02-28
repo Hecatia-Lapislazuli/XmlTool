@@ -36,7 +36,7 @@ using static XmlTool.Program;
 namespace XmlTool {
 	//Functionally same result after running through twice.
 	public class ClanConverter {
-		public static void Clans_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
+		public static void CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -108,7 +108,7 @@ namespace XmlTool {
 				writer.WriteEndElement();
 			}
 		}
-		public static void Clans_XMLtoCSV(string xmlInput, string csvOutput) {
+		public static void XMLtoCSV(string xmlInput, string csvOutput) {
 			List<ClanRecord> records = new List<ClanRecord>();
 
 			using (XmlReader root = XmlReader.Create(xmlInput)) {

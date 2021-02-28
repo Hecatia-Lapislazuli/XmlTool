@@ -59,7 +59,7 @@ namespace XmlTool {
 					if (!file.Split(".").Last().Equals("xml")) continue;
 					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Clans");
-					ClanConverter.Clans_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Clans" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+					ClanConverter.XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Clans" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
 			}
 
@@ -68,7 +68,7 @@ namespace XmlTool {
 					if (!file.Split(".").Last().Equals("xml")) continue;
 					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "SPCultures");
-					CultureConverter.Cultures_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "SPCultures" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+					CultureConverter.XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "SPCultures" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
 			}
 
@@ -77,7 +77,7 @@ namespace XmlTool {
 					if (!file.Split(".").Last().Equals("xml")) continue;
 					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Heroes");
-					HeroConverter.Heroes_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Heroes" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+					HeroConverter.XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Heroes" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
 			}
 
@@ -86,7 +86,7 @@ namespace XmlTool {
 					if (!file.Split(".").Last().Equals("xml")) continue;
 					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Kingdoms");
-					KingdomConverter.Kingdoms_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Kingdoms" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+					KingdomConverter.XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Kingdoms" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
 			}
 
@@ -95,7 +95,7 @@ namespace XmlTool {
 					if (!file.Split(".").Last().Equals("xml")) continue;
 					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "NPCCharacters");
-                    NPCCharacterConverter.NPCCharacters_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "NPCCharacters" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+                    NPCCharacterConverter.XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "NPCCharacters" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
 			}
 
@@ -104,7 +104,7 @@ namespace XmlTool {
 					if (!file.Split(".").Last().Equals("xml")) continue;
 					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "partyTemplates");
-					PartyTemplateConverter.PartyTemplates_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+					PartyTemplateConverter.XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
 			}
 
@@ -113,7 +113,7 @@ namespace XmlTool {
 					if (!file.Split(".").Last().Equals("xml")) continue;
 					//Console.WriteLine(file.Split(DSC).Last());
 					Directory.CreateDirectory(root + "Output" + DSC + "CSVs" + DSC + "Settlements");
-					SettlementConverter.settlement_XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Settlements" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
+					SettlementConverter.XMLtoCSV(file, root + "Output" + DSC + "CSVs" + DSC + "Settlements" + DSC + file.Split(DSC).Last().Split(".").First() + ".csv");
 				}
 			}
 
@@ -137,7 +137,7 @@ namespace XmlTool {
 					if (clans_csv != null) {
 						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Clans" + DSC + "Languages" + DSC + "std_spclans_xml.xml", localizationSettings)) {
 							initializeLocalizationWriter(localizationWriter);
-							ClanConverter.Clans_CSVtoXML(clans_csv, root + "Output" + DSC + "Clans" + DSC + "spclans.xml", localizationWriter, module_stringsWriter);
+							ClanConverter.CSVtoXML(clans_csv, root + "Output" + DSC + "Clans" + DSC + "spclans.xml", localizationWriter, module_stringsWriter);
 							localizationWriter.WriteEndElement();
 							localizationWriter.WriteEndElement();
 						}
@@ -151,7 +151,7 @@ namespace XmlTool {
 						Directory.CreateDirectory(root + "Output" + DSC + "SPCultures" + DSC + "Languages");
 						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_" + file.Split(DSC).Last().Split(".").First() + "_xml.xml", localizationSettings)) {
 							initializeLocalizationWriter(localizationWriter);
-							CultureConverter.Cultures_CSVtoXML(file, root + "Output" + DSC + "SPCultures" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml", localizationWriter, module_stringsWriter);
+							CultureConverter.CSVtoXML(file, root + "Output" + DSC + "SPCultures" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml", localizationWriter, module_stringsWriter);
 							localizationWriter.WriteEndElement();
 							localizationWriter.WriteEndElement();
 						}
@@ -171,7 +171,7 @@ namespace XmlTool {
 					if (heroes_csv != null) {
 						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Heroes" + DSC + "Languages" + DSC + "std_heroes_xml.xml", localizationSettings)) {
 							initializeLocalizationWriter(localizationWriter);
-							HeroConverter.heroes_CSVtoXML(heroes_csv, root + "Output" + DSC + "Heroes" + DSC + "heroes.xml", localizationWriter, module_stringsWriter);
+							HeroConverter.CSVtoXML(heroes_csv, root + "Output" + DSC + "Heroes" + DSC + "heroes.xml", localizationWriter, module_stringsWriter);
 							localizationWriter.WriteEndElement();
 							localizationWriter.WriteEndElement();
 						}
@@ -190,7 +190,7 @@ namespace XmlTool {
 					if (kingdoms_csv != null) {
 						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Kingdoms" + DSC + "Languages" + DSC + "std_spkingdoms_xml.xml", localizationSettings)) {
 							initializeLocalizationWriter(localizationWriter);
-							KingdomConverter.Kingdoms_CSVtoXML(kingdoms_csv, root + "Output" + DSC + "Kingdoms" + DSC + "spkingdoms.xml", localizationWriter, module_stringsWriter);
+							KingdomConverter.CSVtoXML(kingdoms_csv, root + "Output" + DSC + "Kingdoms" + DSC + "spkingdoms.xml", localizationWriter, module_stringsWriter);
 							localizationWriter.WriteEndElement();
 							localizationWriter.WriteEndElement();
 						}
@@ -204,7 +204,7 @@ namespace XmlTool {
 						Directory.CreateDirectory(root + "Output" + DSC + "NPCCharacters" + DSC + "Languages");
 						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "NPCCharacters" + DSC + "Languages" + DSC + "std_" + file.Split(DSC).Last().Split(".").First() + "_xml.xml", localizationSettings)) {
 							initializeLocalizationWriter(localizationWriter);
-							NPCCharacterConverter.NPCCharacters_CSVtoXML(file, root + "Output" + DSC + "NPCCharacters" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml", localizationWriter, module_stringsWriter);
+							NPCCharacterConverter.CSVtoXML(file, root + "Output" + DSC + "NPCCharacters" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml", localizationWriter, module_stringsWriter);
 							localizationWriter.WriteEndElement();
 							localizationWriter.WriteEndElement();
 						}
@@ -216,7 +216,7 @@ namespace XmlTool {
 						//Console.WriteLine(file.Split(DSC).Last().Split(".").First());
 
 						Directory.CreateDirectory(root + "Output" + DSC + "partyTemplates");
-						PartyTemplateConverter.PartyTemplates_CSVtoXML(file, root + "Output" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml");
+						PartyTemplateConverter.CSVtoXML(file, root + "Output" + DSC + "partyTemplates" + DSC + file.Split(DSC).Last().Split(".").First() + ".xml");
 					}
 				}
 				if (Directory.Exists(root + "Data" + DSC + "Settlements")) {
@@ -241,7 +241,7 @@ namespace XmlTool {
 
 						using (XmlWriter localizationWriter = XmlWriter.Create(root + "Output" + DSC + "Languages" + DSC + "std_settlements_xml.xml", localizationSettings)) {
 							initializeLocalizationWriter(localizationWriter);
-							SettlementConverter.settlement_CSVtoXML(csv_file, root + "Output" + DSC + "Settlements" + DSC + csv_file.Split(DSC).Last(), root + "Output" + DSC + "Settlements" + DSC + csv_file.Split(DSC).Last().Split(".").First() + ".xml", xscene_file, root + "Output" + DSC + "Settlements" + DSC + xscene_file.Split(DSC).Last().Split(".").First() + ".xscene", localizationWriter, module_stringsWriter);
+							SettlementConverter.CSVtoXML(csv_file, root + "Output" + DSC + "Settlements" + DSC + csv_file.Split(DSC).Last(), root + "Output" + DSC + "Settlements" + DSC + csv_file.Split(DSC).Last().Split(".").First() + ".xml", xscene_file, root + "Output" + DSC + "Settlements" + DSC + xscene_file.Split(DSC).Last().Split(".").First() + ".xscene", localizationWriter, module_stringsWriter);
 							localizationWriter.WriteEndElement();
 							localizationWriter.WriteEndElement();
 						}
@@ -265,13 +265,14 @@ namespace XmlTool {
 			Console.WriteLine(XMLfilesIdentical(root + "Data/Clans/spclans.xml", root + "Output/Clans/spclans.xml", root + "Differences" + DSC + "diff_spclans.xml"));
 			Console.WriteLine(XMLfilesIdentical(root + "Data/Kingdoms/spkingdoms.xml", root + "Output/Kingdoms/spkingdoms.xml", root + "Differences" + DSC + "diff_spkingdoms.xml"));
 
-			Console.WriteLine(XMLfilesIdentical(root + "Data/NPCCharacters/bandits.xml", root + "Output/NPCCharacters/bandits.xml", root + "Differences" + DSC + "NPCCharacters" + DSC + "diff_bandits.xml"));
 			foreach (string file in Directory.EnumerateFiles(root + "Data" + DSC + "NPCCharacters").Select(Path.GetFileName)) {
 				string f1 = root + "Data" + DSC + "NPCCharacters" + DSC + file, f2 = root + "Output" + DSC + "NPCCharacters" + DSC + file;
 				if (File.Exists(f1) && File.Exists(f2)) {
 					Console.WriteLine(XMLfilesIdentical(f1, f2, root + "Differences" + DSC + "NPCCharacters" + DSC + "diff_" + file));
 				}
             }
+
+			Console.WriteLine(XMLfilesIdentical(root + "Data/Settlements/settlements.xml", root + "Output/Settlements/settlements.xml", root + "Differences" + DSC + "Settlements" + DSC + "diff_settlements.xml"));
 
 			Console.WriteLine("~~~Info~~~");
 			if(NPCCharacterConverter.NeededEquipmentSets!=-1) Console.WriteLine("Up to {0} Equipment Sets on {2} NPCCharacters were trimmed. Please yell at Urist_McAurelian#2289 on Discord that you need support for more Equipment Sets. \n At the moment, the converter only supports having {1} equipment sets.", NPCCharacterConverter.NeededEquipmentSets-NPCCharacterConverter.AllowedEquipmentSets, NPCCharacterConverter.AllowedEquipmentSets, NPCCharacterConverter.AffectedNPCCharacters);
@@ -294,18 +295,26 @@ namespace XmlTool {
 			writer.WriteEndElement();
 		}
 
+		private static List<string> localized_strings = new List<string>();
+
 		// Returns the localized string with it's id.
 		public static string GetLocalizedString(XmlWriter writer, string text, string id, string key = null, string converter_type = null) {
 			id = id?.Replace(" ", "_");
 
 			string tag = id;
+			if (id == null || id.Equals("")) return "{=!}" + text;
+
 			if (key != null) tag = key + "." + tag;
 			if (converter_type != null) tag = converter_type + "." + tag;
 
-			writer.WriteStartElement("string");
-			writer.WriteAttributeString("id", tag);
-			writer.WriteAttributeString("text", text);
-			writer.WriteEndElement();
+			if (!localized_strings.Contains(tag)) {
+				localized_strings.Add(tag);
+
+				writer.WriteStartElement("string");
+				writer.WriteAttributeString("id", tag);
+				writer.WriteAttributeString("text", text);
+				writer.WriteEndElement();
+			} //else Console.WriteLine("The localization '{0}' has been written more than once.", tag);
 
 			return "{=" + tag + "}" + text;
 		}
@@ -337,6 +346,7 @@ namespace XmlTool {
 			XmlReader original = XmlReader.Create(originalFile);
 			XmlReader final = XmlReader.Create(finalFile);
 
+			Directory.CreateDirectory(diff.Replace(Path.GetFileName(diff), ""));
 			XmlWriter writer = XmlWriter.Create(diff, settings);
 
 			xmlDiff.Options = XmlDiffOptions.IgnorePI |

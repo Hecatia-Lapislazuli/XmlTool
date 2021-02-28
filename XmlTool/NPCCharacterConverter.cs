@@ -42,7 +42,7 @@ namespace XmlTool {
         public static int AffectedNPCCharacters = 0;
 #pragma warning restore CA2211 // Non-constant fields should not be visible
 
-		public static void NPCCharacters_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
+		public static void CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -95,13 +95,16 @@ namespace XmlTool {
 					if (!record.is_template.Equals("")) writer.WriteAttributeString(null, "is_template", null, record.is_template);//
 					if (!record.is_child_template.Equals("")) writer.WriteAttributeString(null, "is_child_template", null, record.is_child_template);//
 					if (!record.culture.Equals("")) writer.WriteAttributeString(null, "culture", null, "Culture." + record.culture);
+					//New
+					if (!record.is_hidden_encyclopedia.Equals("")) writer.WriteAttributeString(null, "is_hidden_encyclopedia", null, record.is_hidden_encyclopedia);
+					
 					if (!record.name.Equals("")) writer.WriteAttributeString("name", GetLocalizedString(localizationWriter, record.name, record.id, "name", "NPCCharacters.NPCCharacter"));
 					if (!record.banner_symbol_mesh_name.Equals("")) writer.WriteAttributeString(null, "banner_symbol_mesh_name", null, record.banner_symbol_mesh_name);////
 					if (!record.banner_symbol_color.Equals("")) writer.WriteAttributeString(null, "banner_symbol_color", null, record.banner_symbol_color);//
 					if (!record.banner_key.Equals("")) writer.WriteAttributeString(null, "banner_key", null, record.banner_key);////
 					if (!record.occupation.Equals("")) writer.WriteAttributeString(null, "occupation", null, record.occupation);////
-					if (!record.civilianTemplate.Equals("")) writer.WriteAttributeString(null, "civilianTemplate", null, "NPCCharacter." + record.civilianTemplate);//
-					if (!record.battleTemplate.Equals("")) writer.WriteAttributeString(null, "battleTemplate", null, "NPCCharacter." + record.battleTemplate);//
+					//if (!record.civilianTemplate.Equals("")) writer.WriteAttributeString(null, "civilianTemplate", null, "NPCCharacter." + record.civilianTemplate);//
+					//if (!record.battleTemplate.Equals("")) writer.WriteAttributeString(null, "battleTemplate", null, "NPCCharacter." + record.battleTemplate);//
 					if (!record.is_companion.Equals("")) writer.WriteAttributeString(null, "is_companion", null, record.is_companion);////
 					if (!record.offset.Equals("")) writer.WriteAttributeString(null, "offset", null, record.offset);////
 					if (!record.is_mercenary.Equals("")) writer.WriteAttributeString(null, "is_mercenary", null, record.is_mercenary);////
@@ -219,6 +222,14 @@ namespace XmlTool {
 
 							writer.WriteEndElement();
 						}
+
+						if(!record.BodyPropertiesTemplate.Equals("")) {
+							writer.WriteStartElement("BodyPropertiesTemplate");
+
+							writer.WriteAttributeString("value", record.BodyPropertiesTemplate);
+
+							writer.WriteEndElement();
+                        }
 
 						writer.WriteEndElement();
 					}
@@ -367,6 +378,7 @@ namespace XmlTool {
 					}
 
 					//Equipment Set
+					/*
 					if (!record.equipmentSet0.Equals("")) WriteEquipmentSetData(writer, record.equipmentSet0);
 					if (!record.equipmentSet1.Equals("")) WriteEquipmentSetData(writer, record.equipmentSet1);
 					if (!record.equipmentSet2.Equals("")) WriteEquipmentSetData(writer, record.equipmentSet2);
@@ -399,6 +411,7 @@ namespace XmlTool {
 					if (!record.equipmentSet27.Equals("")) WriteEquipmentSetData(writer, record.equipmentSet27);
 					if (!record.equipmentSet28.Equals("")) WriteEquipmentSetData(writer, record.equipmentSet28);
 					if (!record.equipmentSet29.Equals("")) WriteEquipmentSetData(writer, record.equipmentSet29);
+					*/
 
 					if (!record.upgrade_targets_upgrade_target0_id.Equals("") || !record.upgrade_targets_upgrade_target1_id.Equals("") ||
 						!record.upgrade_targets_upgrade_target2_id.Equals("") || !record.upgrade_targets_upgrade_target3_id.Equals("")) {
@@ -428,13 +441,29 @@ namespace XmlTool {
 						writer.WriteEndElement();
 					}
 
+					//Equipments - New
+					writer.WriteStartElement("Equipments");
+
+					if (!record.EquipmentData0.Equals("")) WriteEquipmentData(writer, record.EquipmentData0);
+					if (!record.EquipmentData1.Equals("")) WriteEquipmentData(writer, record.EquipmentData1);
+					if (!record.EquipmentData2.Equals("")) WriteEquipmentData(writer, record.EquipmentData2);
+					if (!record.EquipmentData3.Equals("")) WriteEquipmentData(writer, record.EquipmentData3);
+					if (!record.EquipmentData4.Equals("")) WriteEquipmentData(writer, record.EquipmentData4);
+					if (!record.EquipmentData5.Equals("")) WriteEquipmentData(writer, record.EquipmentData5);
+					if (!record.EquipmentData6.Equals("")) WriteEquipmentData(writer, record.EquipmentData6);
+					if (!record.EquipmentData7.Equals("")) WriteEquipmentData(writer, record.EquipmentData7);
+					if (!record.EquipmentData8.Equals("")) WriteEquipmentData(writer, record.EquipmentData8);
+					if (!record.EquipmentData9.Equals("")) WriteEquipmentData(writer, record.EquipmentData9);
+
+					writer.WriteEndElement();
+
 					writer.WriteEndElement();
 				}
 				writer.WriteEndElement();
 			}
 		} //Unfinished
 
-		public static void NPCCharacters_XMLtoCSV(string xmlInput, string csvOutput) {
+		public static void XMLtoCSV(string xmlInput, string csvOutput) {
 			List<NPCCharacterRecord> records = new List<NPCCharacterRecord>();
 
 			using (XmlReader xmlReader = XmlReader.Create(xmlInput)) {
@@ -478,8 +507,6 @@ namespace XmlTool {
 						record.default_equipment_set = TrimD(xmlReader.GetAttribute("default_equipment_set"));
 						record.skill_template = TrimD(xmlReader.GetAttribute("skill_template"));
 						record.upgrade_requires = TrimD(xmlReader.GetAttribute("upgrade_requires"));
-
-						int equipmentSet_counter = 0;
 
 						while (xmlReader.Read()) {
 						NextIteration:;
@@ -687,128 +714,6 @@ namespace XmlTool {
 								case "feats": // And again, doesn't seem to be used - implement eventually, though.
 									xmlReader.Skip();
 									break;
-								case "equipmentSet":
-									string equipmentSet_result = "";
-
-									if (xmlReader.GetAttribute("civilian") is null || xmlReader.GetAttribute("civilian").Equals("false")) equipmentSet_result += "false";
-									else equipmentSet_result += "true";
-
-									while (xmlReader.Read()) {
-										if (xmlReader.NodeType != XmlNodeType.Element) continue;
-										//Console.WriteLine("\t\t" + xmlReader.Name);
-
-										switch (xmlReader.Name) {
-											case "equipment":
-												equipmentSet_result += ";" + xmlReader.GetAttribute("slot") + ";" + xmlReader.GetAttribute("id");
-												if (xmlReader.GetAttribute("amount") is null) equipmentSet_result += ";-1";
-												else equipmentSet_result += ";" + xmlReader.GetAttribute("amount");
-												break;
-											default:
-												goto equipmentSet_end;
-										}
-									}
-								equipmentSet_end:
-									switch (equipmentSet_counter) {
-										case 0:
-											record.equipmentSet0 = equipmentSet_result;
-											break;
-										case 1:
-											record.equipmentSet1 = equipmentSet_result;
-											break;
-										case 2:
-											record.equipmentSet2 = equipmentSet_result;
-											break;
-										case 3:
-											record.equipmentSet3 = equipmentSet_result;
-											break;
-										case 4:
-											record.equipmentSet4 = equipmentSet_result;
-											break;
-										case 5:
-											record.equipmentSet5 = equipmentSet_result;
-											break;
-										case 6:
-											record.equipmentSet6 = equipmentSet_result;
-											break;
-										case 7:
-											record.equipmentSet7 = equipmentSet_result;
-											break;
-										case 8:
-											record.equipmentSet8 = equipmentSet_result;
-											break;
-										case 9:
-											record.equipmentSet9 = equipmentSet_result;
-											break;
-										case 10:
-											record.equipmentSet10 = equipmentSet_result;
-											break;
-										case 11:
-											record.equipmentSet11 = equipmentSet_result;
-											break;
-										case 12:
-											record.equipmentSet12 = equipmentSet_result;
-											break;
-										case 13:
-											record.equipmentSet13 = equipmentSet_result;
-											break;
-										case 14:
-											record.equipmentSet14 = equipmentSet_result;
-											break;
-										case 15:
-											record.equipmentSet15 = equipmentSet_result;
-											break;
-										case 16:
-											record.equipmentSet16 = equipmentSet_result;
-											break;
-										case 17:
-											record.equipmentSet17 = equipmentSet_result;
-											break;
-										case 18:
-											record.equipmentSet18 = equipmentSet_result;
-											break;
-										case 19:
-											record.equipmentSet19 = equipmentSet_result;
-											break;
-										case 20:
-											record.equipmentSet20 = equipmentSet_result;
-											break;
-										case 21:
-											record.equipmentSet21 = equipmentSet_result;
-											break;
-										case 22:
-											record.equipmentSet22 = equipmentSet_result;
-											break;
-										case 23:
-											record.equipmentSet23 = equipmentSet_result;
-											break;
-										case 24:
-											record.equipmentSet24 = equipmentSet_result;
-											break;
-										case 25:
-											record.equipmentSet25 = equipmentSet_result;
-											break;
-										case 26:
-											record.equipmentSet26 = equipmentSet_result;
-											break;
-										case 27:
-											record.equipmentSet27 = equipmentSet_result;
-											break;
-										case 28:
-											record.equipmentSet28 = equipmentSet_result;
-											break;
-										case 29:
-											record.equipmentSet29 = equipmentSet_result;
-											break;
-										default:
-											if (equipmentSet_counter == AllowedEquipmentSets) AffectedNPCCharacters++;
-											if (NeededEquipmentSets < equipmentSet_counter) NeededEquipmentSets = equipmentSet_counter;
-											break;
-									}
-									equipmentSet_counter++;
-									goto NextIteration;
-								case "equipment": //TODO probably implement it as raw data, rather than something for a csv, though... Or perhaps create a format for it in the csv?
-									xmlReader.Skip();
-									break;
 								case "upgrade_targets":
 									int upgrade_targets_counter = 0;
 									while (xmlReader.Read()) {
@@ -839,6 +744,49 @@ namespace XmlTool {
 										}
 									}
 									break;
+								case "Equipments":
+									XmlDocument equipmentdata = new XmlDocument();
+									equipmentdata.Load(xmlReader.ReadSubtree());
+
+									int EquipmentData_counter = 0;
+									string EquipmentData_equipment_string = "equipment;";
+									foreach (XmlNode node in  equipmentdata.DocumentElement.ChildNodes) {
+										string EquipmentData_string = "";
+										switch(node.Name) {
+											case "EquipmentRoster":
+												EquipmentData_string = "EquipmentRoster;";
+												if (node.Attributes["civilian"]?.Value != null) {
+													EquipmentData_string += node.Attributes["civilian"].Value;
+                                                }
+												foreach(XmlNode equipmentnode in node.ChildNodes) {
+													EquipmentData_string += ";" + equipmentnode.Attributes["slot"].Value + ";" + equipmentnode.Attributes["id"].Value;
+													if (equipmentnode.Attributes["amount"]?.Value != null) EquipmentData_string += ";" + equipmentnode.Attributes["amount"].Value;
+													else EquipmentData_string += ";-1";
+												}
+
+												break;
+											case "EquipmentSet":
+												EquipmentData_string = "EquipmentSet;";
+												if (node.Attributes["civilian"]?.Value != null) {
+													EquipmentData_string += node.Attributes["civilian"].Value;
+												}
+												EquipmentData_string += ";" + node.Attributes["id"].Value;
+												break;
+											case "equipment":
+												EquipmentData_equipment_string += ";" + node.Attributes["slot"].Value + ";" + node.Attributes["id"].Value;
+												if (node.Attributes["amount"]?.Value != null) EquipmentData_equipment_string += ";" + node.Attributes["amount"].Value;
+												else EquipmentData_equipment_string += ";-1";
+												break;
+										}
+										if (EquipmentData_string.Equals("")) continue;
+										EquipmentDataSelectionSwitch(EquipmentData_counter, record, EquipmentData_string);
+										EquipmentData_counter++;
+									}
+									if (!EquipmentData_equipment_string.Equals("equipment;")) {
+										EquipmentDataSelectionSwitch(EquipmentData_counter, record, EquipmentData_equipment_string);
+										EquipmentData_counter++;
+									}
+									break;//I think this should work... hopefully.
 								default:
 									records.Add(record);
 									goto StartLoop;
@@ -853,6 +801,47 @@ namespace XmlTool {
 			using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(csvOutput), CultureInfo.InvariantCulture)) {
 				csvWriter.WriteRecords(records);
 				csvWriter.Flush();
+			}
+		}
+		private static int needed_slots = 0;
+		private static void EquipmentDataSelectionSwitch(int EquipmentData_counter, NPCCharacterRecord record, string data) {
+			switch (EquipmentData_counter) {
+				case 0:
+					record.EquipmentData0 = data;
+					break;
+				case 1:
+					record.EquipmentData1 = data;
+					break;
+				case 2:
+					record.EquipmentData2 = data;
+					break;
+				case 3:
+					record.EquipmentData3 = data;
+					break;
+				case 4:
+					record.EquipmentData4 = data;
+					break;
+				case 5:
+					record.EquipmentData5 = data;
+					break;
+				case 6:
+					record.EquipmentData6 = data;
+					break;
+				case 7:
+					record.EquipmentData7 = data;
+					break;
+				case 8:
+					record.EquipmentData8 = data;
+					break;
+				case 9:
+					record.EquipmentData9 = data;
+					break;
+				default:
+					if (needed_slots<EquipmentData_counter-10) {
+						needed_slots++;
+						Console.WriteLine(needed_slots + " more EquipmentData records are needed!");
+					}
+					break;
 			}
 		}
 
@@ -942,6 +931,7 @@ namespace XmlTool {
 			public string Traits_trait9 { get; set; }
 
 			//equipmentSet
+			/*
 			public string equipmentSet0 { get; set; }
 			public string equipmentSet1 { get; set; }
 			public string equipmentSet2 { get; set; }
@@ -952,7 +942,6 @@ namespace XmlTool {
 			public string equipmentSet7 { get; set; }
 			public string equipmentSet8 { get; set; }
 			public string equipmentSet9 { get; set; }
-
 			public string equipmentSet10 { get; set; }
 			public string equipmentSet11 { get; set; }
 			public string equipmentSet12 { get; set; }
@@ -974,8 +963,23 @@ namespace XmlTool {
 			public string equipmentSet27 { get; set; }
 			public string equipmentSet28 { get; set; }
 			public string equipmentSet29 { get; set; }
+			*/
+			//new things
+			public string EquipmentData0 { get; set; }
+			public string EquipmentData1 { get; set; }
+			public string EquipmentData2 { get; set; }
+			public string EquipmentData3 { get; set; }
+			public string EquipmentData4 { get; set; }
+			public string EquipmentData5 { get; set; }
+			public string EquipmentData6 { get; set; }
+			public string EquipmentData7 { get; set; }
+			public string EquipmentData8 { get; set; }
+			public string EquipmentData9 { get; set; }
 
+			public string is_hidden_encyclopedia { get; set; }
+			public string BodyPropertiesTemplate { get; set; }
 		}
+        [Obsolete]
 		public static void WriteEquipmentSetData(XmlWriter writer, string data) {
 			writer.WriteStartElement("equipmentSet");
 			string[] eqData = data.Split(";");
@@ -998,6 +1002,63 @@ namespace XmlTool {
 				}
 			}
 
+			writer.WriteEndElement();
+		}
+		public static void WriteEquipmentData(XmlWriter writer, string data) {
+			//data - type;civilian;TYPE
+			//TYPE(EquipmentRoster)	-	slot;id;amount;slot;id;amount;...
+			//TYPE(EquipmentSet)	-	id
+			//TYPE(equipment)		-	slot;id;amount
+			string[] eqData = data.Split(";");
+			if(eqData.Length<3) {
+				if (eqData.Length > 1 && eqData[0].Equals("EquipmentRoster")) {
+					writer.WriteStartElement("EquipmentRoster");
+					if (!eqData[1].Equals("")) writer.WriteAttributeString("civilian", eqData[1].ToLower());
+					writer.WriteEndElement();
+					return;
+				}
+				Console.WriteLine("Not enough arguments for EquipmentData!");
+				Console.WriteLine(data);
+				Console.WriteLine();
+				return;
+            }
+			string typeData = eqData[2];
+			for(int i = 3; i<eqData.Length; i++) {
+				typeData += ";"+eqData[i];
+            }
+			switch(eqData[0]) {
+				case "EquipmentRoster":
+					writer.WriteStartElement("EquipmentRoster");
+					if (!eqData[1].Equals("")) writer.WriteAttributeString("civilian", eqData[1].ToLower());
+					string[] tpData0 = typeData.Split(";");
+					for (int i = 0; i < tpData0.Length; i+=3) {
+                        WriteEquipment(writer, tpData0[i + 0] + ";" + tpData0[i + 1] + ";" + tpData0[i + 2]);
+					}
+					writer.WriteEndElement();
+					break;
+				case "EquipmentSet":
+					writer.WriteStartElement("EquipmentSet");
+					writer.WriteAttributeString("id", typeData);
+                    if(!eqData[1].Equals("")) writer.WriteAttributeString("civilian", eqData[1].ToLower());
+					writer.WriteEndElement();
+					break;
+				case "equipment":
+					string[] tpData1 = typeData.Split(";");
+					for (int i = 0; i < tpData1.Length; i += 3) {
+						WriteEquipment(writer, tpData1[i + 0] + ";" + tpData1[i + 1] + ";" + tpData1[i + 2]);
+					}
+					break;
+				default:
+					Console.WriteLine("Invalid Equipment type \"" + eqData[0] + "\"");
+					break;
+			}
+		}
+		public static void WriteEquipment(XmlWriter writer, string data) {
+			string[] eqData = data.Split(";");
+			writer.WriteStartElement("equipment");
+			writer.WriteAttributeString("slot", eqData[0]);
+			writer.WriteAttributeString("id", eqData[1]);
+			if (!eqData[2].Equals("-1")) writer.WriteAttributeString("amount", eqData[2]);
 			writer.WriteEndElement();
 		}
 	}

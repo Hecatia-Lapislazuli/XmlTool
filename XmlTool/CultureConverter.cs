@@ -36,7 +36,7 @@ using static XmlTool.Program;
 namespace XmlTool {
 	//Functionally same result after running through twice.
 	public class CultureConverter {
-		public static void Cultures_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
+		public static void CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -451,7 +451,7 @@ namespace XmlTool {
 			}
 		}
 
-		public static void Cultures_XMLtoCSV(string xmlInput, string csvOutput) {
+		public static void XMLtoCSV(string xmlInput, string csvOutput) {
 			List<CultureRecord> records = new List<CultureRecord>();
 
 			using (XmlReader xmlReader = XmlReader.Create(xmlInput)) {

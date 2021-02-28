@@ -36,7 +36,7 @@ using static XmlTool.Program;
 namespace XmlTool {
 	//Functionally same result after running through twice.
 	public class KingdomConverter {
-		public static void Kingdoms_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
+		public static void CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -190,7 +190,7 @@ namespace XmlTool {
 				writer.WriteEndElement();
 			}
 		}
-		public static void Kingdoms_XMLtoCSV(string xmlInput, string csvOutput) {
+		public static void XMLtoCSV(string xmlInput, string csvOutput) {
 			List<KingdomRecord> records = new List<KingdomRecord>();
 
 			using (XmlReader root = XmlReader.Create(xmlInput)) {

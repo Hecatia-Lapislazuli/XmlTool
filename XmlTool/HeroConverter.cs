@@ -36,7 +36,7 @@ using static XmlTool.Program;
 namespace XmlTool {
 	//Functionally same result after running through twice.
     public class HeroConverter {
-		public static void heroes_CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
+		public static void CSVtoXML(string fileInput, string fileOutput, XmlWriter localizationWriter, XmlWriter module_strings_writer) {
 			StreamReader reader = new StreamReader(fileInput);
 			CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
 
@@ -80,7 +80,7 @@ namespace XmlTool {
 				writer.WriteEndElement();
 			}
 		}
-		public static void Heroes_XMLtoCSV(string xmlInput, string csvOutput) {
+		public static void XMLtoCSV(string xmlInput, string csvOutput) {
 			List<HeroRecord> records = new List<HeroRecord>();
 
 			using (XmlReader root = XmlReader.Create(xmlInput)) {
