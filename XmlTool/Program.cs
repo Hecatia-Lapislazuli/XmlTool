@@ -258,7 +258,7 @@ namespace XmlTool {
 			foreach(string f in filenames) {
 				File.Delete(f);
             }
-
+			/*
 			Directory.CreateDirectory(root + "Differences/NPCCharacters");
 
 			Console.WriteLine(XMLfilesIdentical(root + "Data/SPCultures/spcultures.xml", root + "Output/SPCultures/spcultures.xml", root + "Differences" + DSC + "diff_spcultures.xml"));
@@ -273,7 +273,7 @@ namespace XmlTool {
             }
 
 			Console.WriteLine(XMLfilesIdentical(root + "Data/Settlements/settlements.xml", root + "Output/Settlements/settlements.xml", root + "Differences" + DSC + "Settlements" + DSC + "diff_settlements.xml"));
-
+			*/
 			Console.WriteLine("~~~Info~~~");
 			if(NPCCharacterConverter.NeededEquipmentSets!=-1) Console.WriteLine("Up to {0} Equipment Sets on {2} NPCCharacters were trimmed. Please yell at Urist_McAurelian#2289 on Discord that you need support for more Equipment Sets. \n At the moment, the converter only supports having {1} equipment sets.", NPCCharacterConverter.NeededEquipmentSets-NPCCharacterConverter.AllowedEquipmentSets, NPCCharacterConverter.AllowedEquipmentSets, NPCCharacterConverter.AffectedNPCCharacters);
 		}

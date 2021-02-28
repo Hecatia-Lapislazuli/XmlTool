@@ -38,7 +38,7 @@ namespace XmlTool {
 	public class NPCCharacterConverter {
 #pragma warning disable CA2211 // Non-constant fields should not be visible
 		public static int NeededEquipmentSets = -1;
-        public static int AllowedEquipmentSets = 30;
+        public static int AllowedEquipmentSets = 10;
         public static int AffectedNPCCharacters = 0;
 #pragma warning restore CA2211 // Non-constant fields should not be visible
 
@@ -803,7 +803,7 @@ namespace XmlTool {
 				csvWriter.Flush();
 			}
 		}
-		private static int needed_slots = 0;
+
 		private static void EquipmentDataSelectionSwitch(int EquipmentData_counter, NPCCharacterRecord record, string data) {
 			switch (EquipmentData_counter) {
 				case 0:
@@ -837,9 +837,9 @@ namespace XmlTool {
 					record.EquipmentData9 = data;
 					break;
 				default:
-					if (needed_slots<EquipmentData_counter-10) {
-						needed_slots++;
-						Console.WriteLine(needed_slots + " more EquipmentData records are needed!");
+					AffectedNPCCharacters++;
+					if (EquipmentData_counter - AllowedEquipmentSets > NeededEquipmentSets) {
+						NeededEquipmentSets = EquipmentData_counter - AllowedEquipmentSets;
 					}
 					break;
 			}
